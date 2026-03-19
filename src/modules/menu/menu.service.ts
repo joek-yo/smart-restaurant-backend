@@ -1,6 +1,4 @@
 // src/modules/menu/menu.service.ts
-// MenuService handles category and product management for restaurant menus.
-// Strict-mode safe + explicit ObjectId conversion.
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -53,7 +51,7 @@ export class MenuService {
     dto: UpdateCategoryDto,
   ): Promise<Category | null> {
     return this.categoryModel
-      .findByIdAndUpdate(id, dto, { new: true })
+      .findByIdAndUpdate(id, { $set: dto }, { new: true })
       .exec();
   }
 
@@ -96,18 +94,48 @@ export class MenuService {
       .exec();
   }
 
+  /**
+   * ✅ FIXED: Reliable product update (stock included)
+   */
   async updateProduct(
     id: string,
     dto: UpdateProductDto,
   ): Promise<Product | null> {
+    const product = await this.productModel.findById(id);
+
+    if (!product) return null;
+
+    // Handle ObjectId conversion
     if (dto.category_id) {
-      dto.category_id =
-        new Types.ObjectId(dto.category_id) as any;
+      product.category_id = new Types.ObjectId(dto.category_id);
     }
 
-    return this.productModel
-      .findByIdAndUpdate(id, dto, { new: true })
-      .exec();
+    // 🔥 Manual field updates (guaranteed to work)
+    if (dto.name !== undefined) {
+      product.name = dto.name;
+    }
+
+    if (dto.price !== undefined) {
+      product.price = dto.price;
+    }
+
+    if (dto.description !== undefined) {
+      product.description = dto.description;
+    }
+
+    if (dto.is_available !== undefined) {
+      product.is_available = dto.is_available;
+    }
+
+    if (dto.stock !== undefined) {
+      product.stock = dto.stock;
+    }
+
+    if (dto.is_out_of_stock !== undefined) {
+      product.is_out_of_stock = dto.is_out_of_stock;
+    }
+
+    return product.save();
   }
 
   async deleteProduct(

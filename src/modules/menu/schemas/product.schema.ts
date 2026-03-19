@@ -1,5 +1,4 @@
 // src/modules/menu/schemas/product.schema.ts
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
@@ -28,7 +27,12 @@ export class Product {
 
   @Prop({ default: true })
   is_available!: boolean;
+
+  @Prop({ default: 0 })
+  stock!: number; // <-- new: tracks product inventory
+
+  @Prop({ default: false })
+  is_out_of_stock!: boolean; // <-- new: flags out-of-stock products
 }
 
-export const ProductSchema =
-  SchemaFactory.createForClass(Product);
+export const ProductSchema = SchemaFactory.createForClass(Product);
