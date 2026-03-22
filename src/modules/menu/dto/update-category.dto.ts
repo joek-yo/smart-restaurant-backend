@@ -1,9 +1,8 @@
 // src/modules/menu/dto/update-category.dto.ts
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateCategoryDto } from './create-category.dto';
-import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
   // All fields are optional automatically due to PartialType
-  // Swagger decorators are inherited from CreateCategoryDto
+  // No Swagger decorators
 }

@@ -57,7 +57,7 @@ export class Order {
   status!: OrderStatus;
 
   @Prop({ type: Number, required: true })
-  queue_number!: number; // dynamic queue number
+  queue_number!: number;
 
   @Prop()
   notes?: string;
