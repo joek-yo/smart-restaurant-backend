@@ -20,7 +20,15 @@
     "emitDecoratorMetadata": true,
     "skipLibCheck": true,
     "incremental": true,
-    "baseUrl": "./"
+
+    // 🔹 Updated for aliasing
+    "baseUrl": "src",
+    "paths": {
+      "@domains/*": ["domains/*"],
+      "@application/*": ["application/*"],
+      "@interfaces/*": ["interfaces/*"],
+      "@infra/*": ["infrastructure/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
