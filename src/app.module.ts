@@ -5,13 +5,13 @@ import { ConfigModule } from '@nestjs/config';
 
 import { DatabaseModule } from './database/database.module';
 
-// ⛔ still old (fine for now)
+// Modules
 import { RestaurantsModule } from './modules/restaurants/restaurants.module';
-import { OrdersModule } from './modules/orders/orders.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
 
-// ✅ NEW MENU
+// ✅ High-end domain modules
 import { MenuModule } from './domains/menu/menu.module';
+import { OrdersModule } from './interfaces/orders/orders.module'; // updated path
 
 @Module({
   imports: [
@@ -19,8 +19,8 @@ import { MenuModule } from './domains/menu/menu.module';
     DatabaseModule,
 
     RestaurantsModule,
-    MenuModule, // ✅ now using domains/
-    OrdersModule,
+    MenuModule,
+    OrdersModule,  // ✅ clean, modern Orders module
     SessionsModule,
   ],
 })
