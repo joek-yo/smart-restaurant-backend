@@ -1,21 +1,27 @@
 // src/interfaces/orders/orders.controller.ts
-import { Body, Controller, Patch, Post, Param, Inject, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from '@domains/orders/dto/create-order.dto';
-import { UpdateOrderStatusDto } from '@domains/orders/dto/update-order-status.dto';
-import { CreateOrderUseCase } from '@application/orders/use-cases/create-order.usecase';
-import { OrderRepository } from '@domains/orders/repositories/order.repository';
+
+import { Body, Controller, Patch, Post, Param, Inject, NotFoundException, forwardRef } from '@nestjs/common';
+import { CreateOrderDto } from '../../domains/orders/dto/create-order.dto';
+import { UpdateOrderStatusDto } from '../../domains/orders/dto/update-order-status.dto';
+import { OrderRepository } from '../../domains/orders/repositories/order.repository';
+
+// Use relative path for precision
+import { CreateOrderUseCase } from '../../application/orders/use-cases/create-order.usecase';
 
 @Controller('orders')
 export class OrdersController {
   constructor(
+    @Inject(forwardRef(() => CreateOrderUseCase))
     private readonly createOrderUseCase: CreateOrderUseCase,
-    @Inject('OrderRepository') private readonly orderRepo: OrderRepository,
+    
+    @Inject('OrderRepository') 
+    private readonly orderRepo: OrderRepository,
   ) {}
 
   /** POST /orders — create new order */
   @Post()
   async create(@Body() dto: CreateOrderDto) {
-    const businessId = 'default'; // can replace with auth/session later
+    const businessId = 'default'; 
     return this.createOrderUseCase.execute(businessId, dto);
   }
 

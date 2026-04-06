@@ -1,18 +1,17 @@
 // src/application/orders/use-cases/create-order.usecase.ts
 import { Injectable, Inject } from '@nestjs/common';
-import { OrderRepository } from '../../../domains/orders/repositories/order.repository';
+import { OrderRepository } from '@domains/orders/repositories/order.repository';
 import { QueueNumberService } from '../../../domains/orders/services/queue-number.service';
 import { EventBus } from '../../../common/events/event-bus';
-import { OrderCreatedEvent } from '../../../domains/orders/events/order-created.event';
-import { CreateOrderDto, CreateOrderItemDto } from '../../../domains/orders/dto/create-order.dto';
-import { Order, OrderItem } from '../../../domains/orders/entities/order.entity';
-import { OrderStatus } from '../../../domains/orders/entities/order-status.enum';
+import { OrderCreatedEvent } from '@domains/orders/events/order-created.event';
+import { CreateOrderDto, CreateOrderItemDto } from '@domains/orders/dto/create-order.dto';
+import { Order, OrderItem } from '@domains/orders/entities/order.entity';
+import { OrderStatus } from '@domains/orders/entities/order-status.enum';
 
 @Injectable()
 export class CreateOrderUseCase {
   constructor(
-    @Inject('OrderRepository')
-    private readonly orderRepo: OrderRepository,
+    @Inject('OrderRepository') private readonly orderRepo: OrderRepository,
     private readonly queueService: QueueNumberService,
     private readonly eventBus: EventBus,
   ) {}

@@ -2,12 +2,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CounterDocument } from '../../counters/schemas/counter.schema'; // ✅ only import the type
+import { CounterDocument } from '../../counters/schemas/counter.schema';
 
 @Injectable()
-export class QueueNumberService {
+export class QueueNumberService {   // ✅ must be exported
   constructor(
-    @InjectModel('Counter') // ✅ use the string name of the model
+    @InjectModel('Counter')
     private readonly counterModel: Model<CounterDocument>,
   ) {}
 

@@ -1,4 +1,8 @@
 // src/main.ts
+
+// 1️⃣ Add this first to enable module-alias for compiled JS
+import 'module-alias/register';
+
 import * as dns from 'node:dns';
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
@@ -13,8 +17,8 @@ async function bootstrap() {
   // ✅ Global validation with DTO support
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,       // Strip unknown properties
-      transform: true,       // Map JSON → DTO instances
+      whitelist: true,       
+      transform: true,       
       forbidNonWhitelisted: false,
     }),
   );

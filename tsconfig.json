@@ -21,7 +21,7 @@
     "skipLibCheck": true,
     "incremental": true,
 
-    // 🔹 Updated for aliasing
+    // 🔹 Aliasing
     "baseUrl": "src",
     "paths": {
       "@domains/*": ["domains/*"],
