@@ -1,0 +1,1995 @@
+{
+  "collection": {
+    "item": [
+      {
+        "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+        "name": "Sessions - Add to Cart",
+        "request": {
+          "url": {
+            "port": "5000",
+            "path": [
+              "sessions",
+              "add-to-cart"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 201 Created', () => pm.response.to.have.status(201));",
+                "pm.test('Response contains session data', () => {",
+                "    const json = pm.response.json();",
+                "    pm.expect(json).to.have.property('userId');",
+                "});"
+              ],
+              "_lastExecutionId": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+            }
+          }
+        ]
+      },
+      {
+        "id": "b1f6f17a-aefa-4118-baf9-e4633f379f76",
+        "name": "Sessions - Get by Phone",
+        "request": {
+          "url": {
+            "port": "5000",
+            "path": [
+              "sessions",
+              "1234567890"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "GET"
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "8140811a-06fd-4c14-897e-4064b18a2d05",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                "pm.test('Body is an object or array', () => {",
+                "    pm.expect(pm.response.json()).to.be.an('object');",
+                "});"
+              ],
+              "_lastExecutionId": "d5bcf345-072c-4f7d-8f1c-19569333492a"
+            }
+          }
+        ]
+      },
+      {
+        "id": "277b3ffc-88e2-42d6-b63c-442c6f8d8995",
+        "name": "Menu - List Products",
+        "request": {
+          "url": {
+            "port": "5000",
+            "path": [
+              "menu",
+              "products",
+              "biz001"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "method": "GET"
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "ef31067c-890b-49e9-a174-ccf5b446cc18",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                "pm.test('Returns a list of products', () => {",
+                "    pm.expect(pm.response.json()).to.be.an('array');",
+                "});"
+              ],
+              "_lastExecutionId": "c57fb0f4-3dd2-4687-88b2-44ebe6ae244e"
+            }
+          }
+        ]
+      },
+      {
+        "id": "df30920a-a13e-439f-b3e6-9992877a2aa5",
+        "name": "Sessions - Checkout",
+        "request": {
+          "url": {
+            "port": "5000",
+            "path": [
+              "sessions",
+              "checkout"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"paymentMethod\": \"card\" }"
+          }
+        },
+        "response": [],
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "c1d831a4-74ed-4127-9a62-2f43eab66d02",
+              "type": "text/javascript",
+              "exec": [
+                "pm.test('Status is 201 or 200', () => {",
+                "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                "});"
+              ],
+              "_lastExecutionId": "be625ee3-19be-4ac9-a948-9b2545fd21d3"
+            }
+          }
+        ]
+      }
+    ],
+    "event": [],
+    "variable": [],
+    "info": {
+      "_postman_id": "543d3f1d-db28-427c-982c-92e2734f755d",
+      "name": "SmartRestaurant Full API",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "description": {
+        "content": "Full API test suite for SmartRestaurant backend with automated assertions",
+        "type": "text/plain"
+      }
+    }
+  },
+  "environment": {
+    "_": {
+      "postman_variable_scope": "environment"
+    },
+    "id": "ffe8ae0c-c384-4494-9ba1-6ffe1afc4ab8",
+    "name": "SmartRestaurant Env",
+    "values": [
+      {
+        "type": "any",
+        "value": "b123",
+        "key": "businessId"
+      },
+      {
+        "type": "any",
+        "value": "u123",
+        "key": "userId"
+      },
+      {
+        "type": "any",
+        "value": "p123",
+        "key": "productId"
+      },
+      {
+        "type": "any",
+        "value": "c123",
+        "key": "categoryId"
+      }
+    ]
+  },
+  "globals": {
+    "id": "0681a596-f762-4325-b6a6-2b7ca3f303b4",
+    "values": []
+  },
+  "run": {
+    "stats": {
+      "iterations": {
+        "total": 1,
+        "pending": 0,
+        "failed": 0
+      },
+      "items": {
+        "total": 4,
+        "pending": 0,
+        "failed": 0
+      },
+      "scripts": {
+        "total": 4,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequests": {
+        "total": 4,
+        "pending": 0,
+        "failed": 0
+      },
+      "requests": {
+        "total": 4,
+        "pending": 0,
+        "failed": 0
+      },
+      "tests": {
+        "total": 4,
+        "pending": 0,
+        "failed": 0
+      },
+      "assertions": {
+        "total": 7,
+        "pending": 0,
+        "failed": 3
+      },
+      "testScripts": {
+        "total": 4,
+        "pending": 0,
+        "failed": 0
+      },
+      "prerequestScripts": {
+        "total": 0,
+        "pending": 0,
+        "failed": 0
+      }
+    },
+    "timings": {
+      "responseAverage": 46.5,
+      "responseMin": 3,
+      "responseMax": 145,
+      "responseSd": 57.76893628932421,
+      "dnsAverage": 0,
+      "dnsMin": 0,
+      "dnsMax": 0,
+      "dnsSd": 0,
+      "firstByteAverage": 0,
+      "firstByteMin": 0,
+      "firstByteMax": 0,
+      "firstByteSd": 0,
+      "started": 1775693914360,
+      "completed": 1775693914904
+    },
+    "executions": [
+      {
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 4,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "780bb4d4-8540-4f8e-b744-1f8548d836ca",
+          "httpRequestId": "aaebed9b-a4e4-4e6c-825f-2b4cbfba456a"
+        },
+        "item": {
+          "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+          "name": "Sessions - Add to Cart",
+          "request": {
+            "url": {
+              "port": "5000",
+              "path": [
+                "sessions",
+                "add-to-cart"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 Created', () => pm.response.to.have.status(201));",
+                  "pm.test('Response contains session data', () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('userId');",
+                  "});"
+                ],
+                "_lastExecutionId": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "5000",
+            "path": [
+              "sessions",
+              "add-to-cart"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "309d3b68-22c9-4c44-8d48-159845d25748",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:5000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "133",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+          }
+        },
+        "response": {
+          "id": "f4ee08de-fe28-4368-b932-4164a50433d8",
+          "status": "Not Found",
+          "code": 404,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "84"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"54-jz1zNJJvHRM5hbrx26z/Dtem2Ro\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 09 Apr 2026 00:18:34 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              67,
+              97,
+              110,
+              110,
+              111,
+              116,
+              32,
+              80,
+              79,
+              83,
+              84,
+              32,
+              47,
+              115,
+              101,
+              115,
+              115,
+              105,
+              111,
+              110,
+              115,
+              47,
+              97,
+              100,
+              100,
+              45,
+              116,
+              111,
+              45,
+              99,
+              97,
+              114,
+              116,
+              34,
+              44,
+              34,
+              101,
+              114,
+              114,
+              111,
+              114,
+              34,
+              58,
+              34,
+              78,
+              111,
+              116,
+              32,
+              70,
+              111,
+              117,
+              110,
+              100,
+              34,
+              44,
+              34,
+              115,
+              116,
+              97,
+              116,
+              117,
+              115,
+              67,
+              111,
+              100,
+              101,
+              34,
+              58,
+              52,
+              48,
+              52,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 30,
+          "responseSize": 84
+        },
+        "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+        "assertions": [
+          {
+            "assertion": "Status is 201 Created",
+            "skipped": false,
+            "error": {
+              "name": "AssertionError",
+              "index": 0,
+              "test": "Status is 201 Created",
+              "message": "expected response to have status code 201 but got 404",
+              "stack": "AssertionError: expected response to have status code 201 but got 404\n   at Object.eval sandbox-script.js:1:1)"
+            }
+          },
+          {
+            "assertion": "Response contains session data",
+            "skipped": false,
+            "error": {
+              "name": "AssertionError",
+              "index": 1,
+              "test": "Response contains session data",
+              "message": "expected { …(3) } to have property 'userId'",
+              "stack": "AssertionError: expected { …(3) } to have property 'userId'\n   at Object.eval sandbox-script.js:2:1)"
+            }
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "fd86687d-9a06-4351-b841-14179e9a01ed",
+          "length": 4,
+          "cycles": 1,
+          "position": 1,
+          "iteration": 0,
+          "httpRequestId": "ccac16fa-ca6d-46e3-a689-649a1fa6055d"
+        },
+        "item": {
+          "id": "b1f6f17a-aefa-4118-baf9-e4633f379f76",
+          "name": "Sessions - Get by Phone",
+          "request": {
+            "url": {
+              "port": "5000",
+              "path": [
+                "sessions",
+                "1234567890"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "8140811a-06fd-4c14-897e-4064b18a2d05",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('Body is an object or array', () => {",
+                  "    pm.expect(pm.response.json()).to.be.an('object');",
+                  "});"
+                ],
+                "_lastExecutionId": "d5bcf345-072c-4f7d-8f1c-19569333492a"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "5000",
+            "path": [
+              "sessions",
+              "1234567890"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "7062547e-25be-4cd3-b8e8-6e6d5ba3f937",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:5000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "GET"
+        },
+        "response": {
+          "id": "003eb157-88ae-4682-a1e3-966d545f5477",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "70"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"46-SGjSELfB9dVScTUW2SXH0sLkOBU\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 09 Apr 2026 00:18:34 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              112,
+              104,
+              111,
+              110,
+              101,
+              34,
+              58,
+              34,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              48,
+              34,
+              44,
+              34,
+              115,
+              116,
+              101,
+              112,
+              34,
+              58,
+              34,
+              115,
+              116,
+              97,
+              114,
+              116,
+              34,
+              44,
+              34,
+              104,
+              105,
+              115,
+              116,
+              111,
+              114,
+              121,
+              34,
+              58,
+              91,
+              93,
+              44,
+              34,
+              99,
+              97,
+              114,
+              116,
+              34,
+              58,
+              91,
+              93,
+              44,
+              34,
+              100,
+              97,
+              116,
+              97,
+              34,
+              58,
+              123,
+              125,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 8,
+          "responseSize": 70
+        },
+        "id": "b1f6f17a-aefa-4118-baf9-e4633f379f76",
+        "assertions": [
+          {
+            "assertion": "Status is 200 OK",
+            "skipped": false
+          },
+          {
+            "assertion": "Body is an object or array",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "f9ca9b39-e74a-44f3-8785-798aba668e58",
+          "length": 4,
+          "cycles": 1,
+          "position": 2,
+          "iteration": 0,
+          "httpRequestId": "888d20dd-c675-46dd-b2ce-5f2b15bb631c"
+        },
+        "item": {
+          "id": "277b3ffc-88e2-42d6-b63c-442c6f8d8995",
+          "name": "Menu - List Products",
+          "request": {
+            "url": {
+              "port": "5000",
+              "path": [
+                "menu",
+                "products",
+                "biz001"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "method": "GET"
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "ef31067c-890b-49e9-a174-ccf5b446cc18",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns a list of products', () => {",
+                  "    pm.expect(pm.response.json()).to.be.an('array');",
+                  "});"
+                ],
+                "_lastExecutionId": "c57fb0f4-3dd2-4687-88b2-44ebe6ae244e"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "5000",
+            "path": [
+              "menu",
+              "products",
+              "biz001"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "fc1eb973-7bd3-4b15-b06b-a0ab878d138a",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:5000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            }
+          ],
+          "method": "GET"
+        },
+        "response": {
+          "id": "f63c86a5-603c-4684-9f48-dfa08998081a",
+          "status": "OK",
+          "code": 200,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "2"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"2-l9Fw4VUO7kr8CvBlt4zaMCqXZ0w\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 09 Apr 2026 00:18:34 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              91,
+              93
+            ]
+          },
+          "cookie": [],
+          "responseTime": 145,
+          "responseSize": 2
+        },
+        "id": "277b3ffc-88e2-42d6-b63c-442c6f8d8995",
+        "assertions": [
+          {
+            "assertion": "Status is 200 OK",
+            "skipped": false
+          },
+          {
+            "assertion": "Returns a list of products",
+            "skipped": false
+          }
+        ]
+      },
+      {
+        "cursor": {
+          "ref": "79e18894-9ab2-4334-a287-fb351f8b27be",
+          "length": 4,
+          "cycles": 1,
+          "position": 3,
+          "iteration": 0,
+          "httpRequestId": "7d728448-2c73-406b-8d63-58f7729d1a50"
+        },
+        "item": {
+          "id": "df30920a-a13e-439f-b3e6-9992877a2aa5",
+          "name": "Sessions - Checkout",
+          "request": {
+            "url": {
+              "port": "5000",
+              "path": [
+                "sessions",
+                "checkout"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"paymentMethod\": \"card\" }"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "c1d831a4-74ed-4127-9a62-2f43eab66d02",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 or 200', () => {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ],
+                "_lastExecutionId": "be625ee3-19be-4ac9-a948-9b2545fd21d3"
+              }
+            }
+          ]
+        },
+        "request": {
+          "url": {
+            "protocol": "http",
+            "port": "5000",
+            "path": [
+              "sessions",
+              "checkout"
+            ],
+            "host": [
+              "localhost"
+            ],
+            "query": [],
+            "variable": []
+          },
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "key": "User-Agent",
+              "value": "PostmanRuntime/7.39.1",
+              "system": true
+            },
+            {
+              "key": "Accept",
+              "value": "*/*",
+              "system": true
+            },
+            {
+              "key": "Cache-Control",
+              "value": "no-cache",
+              "system": true
+            },
+            {
+              "key": "Postman-Token",
+              "value": "e73460f9-e486-44d2-8daa-105b9684f568",
+              "system": true
+            },
+            {
+              "key": "Host",
+              "value": "localhost:5000",
+              "system": true
+            },
+            {
+              "key": "Accept-Encoding",
+              "value": "gzip, deflate, br",
+              "system": true
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive",
+              "system": true
+            },
+            {
+              "key": "Content-Length",
+              "value": "119",
+              "system": true
+            }
+          ],
+          "method": "POST",
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"paymentMethod\": \"card\" }"
+          }
+        },
+        "response": {
+          "id": "eacfcbc5-b6ba-4751-b4ca-467bfd281539",
+          "status": "Not Found",
+          "code": 404,
+          "header": [
+            {
+              "key": "X-Powered-By",
+              "value": "Express"
+            },
+            {
+              "key": "Content-Type",
+              "value": "application/json; charset=utf-8"
+            },
+            {
+              "key": "Content-Length",
+              "value": "81"
+            },
+            {
+              "key": "ETag",
+              "value": "W/\"51-HAN0iwWAIxxpgF3gs61t10gI+VU\""
+            },
+            {
+              "key": "Date",
+              "value": "Thu, 09 Apr 2026 00:18:34 GMT"
+            },
+            {
+              "key": "Connection",
+              "value": "keep-alive"
+            },
+            {
+              "key": "Keep-Alive",
+              "value": "timeout=5"
+            }
+          ],
+          "stream": {
+            "type": "Buffer",
+            "data": [
+              123,
+              34,
+              109,
+              101,
+              115,
+              115,
+              97,
+              103,
+              101,
+              34,
+              58,
+              34,
+              67,
+              97,
+              110,
+              110,
+              111,
+              116,
+              32,
+              80,
+              79,
+              83,
+              84,
+              32,
+              47,
+              115,
+              101,
+              115,
+              115,
+              105,
+              111,
+              110,
+              115,
+              47,
+              99,
+              104,
+              101,
+              99,
+              107,
+              111,
+              117,
+              116,
+              34,
+              44,
+              34,
+              101,
+              114,
+              114,
+              111,
+              114,
+              34,
+              58,
+              34,
+              78,
+              111,
+              116,
+              32,
+              70,
+              111,
+              117,
+              110,
+              100,
+              34,
+              44,
+              34,
+              115,
+              116,
+              97,
+              116,
+              117,
+              115,
+              67,
+              111,
+              100,
+              101,
+              34,
+              58,
+              52,
+              48,
+              52,
+              125
+            ]
+          },
+          "cookie": [],
+          "responseTime": 3,
+          "responseSize": 81
+        },
+        "id": "df30920a-a13e-439f-b3e6-9992877a2aa5",
+        "assertions": [
+          {
+            "assertion": "Status is 201 or 200",
+            "skipped": false,
+            "error": {
+              "name": "AssertionError",
+              "index": 0,
+              "test": "Status is 201 or 200",
+              "message": "expected 404 to be one of [ 200, 201 ]",
+              "stack": "AssertionError: expected 404 to be one of [ 200, 201 ]\n   at Object.eval sandbox-script.js:1:4)"
+            }
+          }
+        ]
+      }
+    ],
+    "transfers": {
+      "responseTotal": 237
+    },
+    "failures": [
+      {
+        "error": {
+          "name": "AssertionError",
+          "index": 0,
+          "test": "Status is 201 Created",
+          "message": "expected response to have status code 201 but got 404",
+          "stack": "AssertionError: expected response to have status code 201 but got 404\n   at Object.eval sandbox-script.js:1:1)",
+          "checksum": "a1682507ac8b7e6765d3ecd937891b40",
+          "id": "cc2d00ea-2748-4f57-9c91-2c4600af0278",
+          "timestamp": 1775693914464,
+          "stacktrace": [
+            {
+              "fileName": "sandbox-script.js",
+              "lineNumber": 1,
+              "functionName": "Object.eval",
+              "typeName": "Object",
+              "methodName": "eval",
+              "columnNumber": 1,
+              "native": false
+            }
+          ]
+        },
+        "at": "assertion:0 in test-script",
+        "source": {
+          "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+          "name": "Sessions - Add to Cart",
+          "request": {
+            "url": {
+              "port": "5000",
+              "path": [
+                "sessions",
+                "add-to-cart"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 Created', () => pm.response.to.have.status(201));",
+                  "pm.test('Response contains session data', () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('userId');",
+                  "});"
+                ],
+                "_lastExecutionId": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+              }
+            }
+          ]
+        },
+        "parent": {
+          "item": [
+            {
+              "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+              "name": "Sessions - Add to Cart",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "add-to-cart"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201 Created', () => pm.response.to.have.status(201));",
+                      "pm.test('Response contains session data', () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json).to.have.property('userId');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b1f6f17a-aefa-4118-baf9-e4633f379f76",
+              "name": "Sessions - Get by Phone",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "1234567890"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "8140811a-06fd-4c14-897e-4064b18a2d05",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                      "pm.test('Body is an object or array', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('object');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "d5bcf345-072c-4f7d-8f1c-19569333492a"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "277b3ffc-88e2-42d6-b63c-442c6f8d8995",
+              "name": "Menu - List Products",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "menu",
+                    "products",
+                    "biz001"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "ef31067c-890b-49e9-a174-ccf5b446cc18",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                      "pm.test('Returns a list of products', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('array');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "c57fb0f4-3dd2-4687-88b2-44ebe6ae244e"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "df30920a-a13e-439f-b3e6-9992877a2aa5",
+              "name": "Sessions - Checkout",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "checkout"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"paymentMethod\": \"card\" }"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "c1d831a4-74ed-4127-9a62-2f43eab66d02",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201 or 200', () => {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                      "});"
+                    ],
+                    "_lastExecutionId": "be625ee3-19be-4ac9-a948-9b2545fd21d3"
+                  }
+                }
+              ]
+            }
+          ],
+          "event": [],
+          "variable": [],
+          "info": {
+            "_postman_id": "543d3f1d-db28-427c-982c-92e2734f755d",
+            "name": "SmartRestaurant Full API",
+            "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+            "description": {
+              "content": "Full API test suite for SmartRestaurant backend with automated assertions",
+              "type": "text/plain"
+            }
+          }
+        },
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 4,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "780bb4d4-8540-4f8e-b744-1f8548d836ca",
+          "httpRequestId": "aaebed9b-a4e4-4e6c-825f-2b4cbfba456a",
+          "scriptId": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+          "execution": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+        }
+      },
+      {
+        "error": {
+          "name": "AssertionError",
+          "index": 1,
+          "test": "Response contains session data",
+          "message": "expected { …(3) } to have property 'userId'",
+          "stack": "AssertionError: expected { …(3) } to have property 'userId'\n   at Object.eval sandbox-script.js:2:1)",
+          "checksum": "f896814bb1c0192c5f0f5733e5424702",
+          "id": "44d48d58-b373-40e3-a35e-81fdc9816685",
+          "timestamp": 1775693914468,
+          "stacktrace": [
+            {
+              "fileName": "sandbox-script.js",
+              "lineNumber": 2,
+              "functionName": "Object.eval",
+              "typeName": "Object",
+              "methodName": "eval",
+              "columnNumber": 1,
+              "native": false
+            }
+          ]
+        },
+        "at": "assertion:1 in test-script",
+        "source": {
+          "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+          "name": "Sessions - Add to Cart",
+          "request": {
+            "url": {
+              "port": "5000",
+              "path": [
+                "sessions",
+                "add-to-cart"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 Created', () => pm.response.to.have.status(201));",
+                  "pm.test('Response contains session data', () => {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('userId');",
+                  "});"
+                ],
+                "_lastExecutionId": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+              }
+            }
+          ]
+        },
+        "parent": {
+          "item": [
+            {
+              "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+              "name": "Sessions - Add to Cart",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "add-to-cart"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201 Created', () => pm.response.to.have.status(201));",
+                      "pm.test('Response contains session data', () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json).to.have.property('userId');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b1f6f17a-aefa-4118-baf9-e4633f379f76",
+              "name": "Sessions - Get by Phone",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "1234567890"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "8140811a-06fd-4c14-897e-4064b18a2d05",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                      "pm.test('Body is an object or array', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('object');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "d5bcf345-072c-4f7d-8f1c-19569333492a"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "277b3ffc-88e2-42d6-b63c-442c6f8d8995",
+              "name": "Menu - List Products",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "menu",
+                    "products",
+                    "biz001"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "ef31067c-890b-49e9-a174-ccf5b446cc18",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                      "pm.test('Returns a list of products', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('array');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "c57fb0f4-3dd2-4687-88b2-44ebe6ae244e"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "df30920a-a13e-439f-b3e6-9992877a2aa5",
+              "name": "Sessions - Checkout",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "checkout"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"paymentMethod\": \"card\" }"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "c1d831a4-74ed-4127-9a62-2f43eab66d02",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201 or 200', () => {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                      "});"
+                    ],
+                    "_lastExecutionId": "be625ee3-19be-4ac9-a948-9b2545fd21d3"
+                  }
+                }
+              ]
+            }
+          ],
+          "event": [],
+          "variable": [],
+          "info": {
+            "_postman_id": "543d3f1d-db28-427c-982c-92e2734f755d",
+            "name": "SmartRestaurant Full API",
+            "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+            "description": {
+              "content": "Full API test suite for SmartRestaurant backend with automated assertions",
+              "type": "text/plain"
+            }
+          }
+        },
+        "cursor": {
+          "position": 0,
+          "iteration": 0,
+          "length": 4,
+          "cycles": 1,
+          "empty": false,
+          "eof": false,
+          "bof": true,
+          "cr": false,
+          "ref": "780bb4d4-8540-4f8e-b744-1f8548d836ca",
+          "httpRequestId": "aaebed9b-a4e4-4e6c-825f-2b4cbfba456a",
+          "scriptId": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+          "execution": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+        }
+      },
+      {
+        "error": {
+          "name": "AssertionError",
+          "index": 0,
+          "test": "Status is 201 or 200",
+          "message": "expected 404 to be one of [ 200, 201 ]",
+          "stack": "AssertionError: expected 404 to be one of [ 200, 201 ]\n   at Object.eval sandbox-script.js:1:4)",
+          "checksum": "034113d8094cfe0edcf676ce4023e2d4",
+          "id": "e77e081e-1a57-4f91-974c-a046f77f8e1a",
+          "timestamp": 1775693914878,
+          "stacktrace": [
+            {
+              "fileName": "sandbox-script.js",
+              "lineNumber": 1,
+              "functionName": "Object.eval",
+              "typeName": "Object",
+              "methodName": "eval",
+              "columnNumber": 4,
+              "native": false
+            }
+          ]
+        },
+        "at": "assertion:0 in test-script",
+        "source": {
+          "id": "df30920a-a13e-439f-b3e6-9992877a2aa5",
+          "name": "Sessions - Checkout",
+          "request": {
+            "url": {
+              "port": "5000",
+              "path": [
+                "sessions",
+                "checkout"
+              ],
+              "host": [
+                "localhost"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"paymentMethod\": \"card\" }"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "id": "c1d831a4-74ed-4127-9a62-2f43eab66d02",
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 201 or 200', () => {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});"
+                ],
+                "_lastExecutionId": "be625ee3-19be-4ac9-a948-9b2545fd21d3"
+              }
+            }
+          ]
+        },
+        "parent": {
+          "item": [
+            {
+              "id": "6117b0e1-1c53-40d7-810c-6bbe89a7f792",
+              "name": "Sessions - Add to Cart",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "add-to-cart"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"productId\": \"prod789\", \"quantity\": 2 }"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "f00a9e86-4de9-4ff3-8e98-c70d80a6bf35",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201 Created', () => pm.response.to.have.status(201));",
+                      "pm.test('Response contains session data', () => {",
+                      "    const json = pm.response.json();",
+                      "    pm.expect(json).to.have.property('userId');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "384de31a-9a66-4d42-aac8-276fc76dc2d2"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "b1f6f17a-aefa-4118-baf9-e4633f379f76",
+              "name": "Sessions - Get by Phone",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "1234567890"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "8140811a-06fd-4c14-897e-4064b18a2d05",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                      "pm.test('Body is an object or array', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('object');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "d5bcf345-072c-4f7d-8f1c-19569333492a"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "277b3ffc-88e2-42d6-b63c-442c6f8d8995",
+              "name": "Menu - List Products",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "menu",
+                    "products",
+                    "biz001"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "method": "GET"
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "ef31067c-890b-49e9-a174-ccf5b446cc18",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 200 OK', () => pm.response.to.have.status(200));",
+                      "pm.test('Returns a list of products', () => {",
+                      "    pm.expect(pm.response.json()).to.be.an('array');",
+                      "});"
+                    ],
+                    "_lastExecutionId": "c57fb0f4-3dd2-4687-88b2-44ebe6ae244e"
+                  }
+                }
+              ]
+            },
+            {
+              "id": "df30920a-a13e-439f-b3e6-9992877a2aa5",
+              "name": "Sessions - Checkout",
+              "request": {
+                "url": {
+                  "port": "5000",
+                  "path": [
+                    "sessions",
+                    "checkout"
+                  ],
+                  "host": [
+                    "localhost"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{ \"businessId\": \"biz001\", \"branchId\": \"branch01\", \"userId\": \"user123\", \"phone\": \"1234567890\", \"paymentMethod\": \"card\" }"
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "id": "c1d831a4-74ed-4127-9a62-2f43eab66d02",
+                    "type": "text/javascript",
+                    "exec": [
+                      "pm.test('Status is 201 or 200', () => {",
+                      "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                      "});"
+                    ],
+                    "_lastExecutionId": "be625ee3-19be-4ac9-a948-9b2545fd21d3"
+                  }
+                }
+              ]
+            }
+          ],
+          "event": [],
+          "variable": [],
+          "info": {
+            "_postman_id": "543d3f1d-db28-427c-982c-92e2734f755d",
+            "name": "SmartRestaurant Full API",
+            "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+            "description": {
+              "content": "Full API test suite for SmartRestaurant backend with automated assertions",
+              "type": "text/plain"
+            }
+          }
+        },
+        "cursor": {
+          "ref": "79e18894-9ab2-4334-a287-fb351f8b27be",
+          "length": 4,
+          "cycles": 1,
+          "position": 3,
+          "iteration": 0,
+          "httpRequestId": "7d728448-2c73-406b-8d63-58f7729d1a50",
+          "scriptId": "c1d831a4-74ed-4127-9a62-2f43eab66d02",
+          "execution": "be625ee3-19be-4ac9-a948-9b2545fd21d3"
+        }
+      }
+    ],
+    "error": null
+  }
+}

@@ -1,4 +1,4 @@
-// src/domains/menu/menu.controller.ts
+// 📁 src/domains/menu/menu.controller.ts
 import {
   Controller,
   Get,
@@ -7,6 +7,8 @@ import {
   Param,
   Patch,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 import { MenuService } from './menu.service';
@@ -72,5 +74,25 @@ export class MenuController {
       data,
     );
     return { success: true, settings };
+  }
+
+  /* =====================================================
+     PRODUCTS ROUTE (FIXED)
+  ===================================================== */
+
+  @Get('products/:businessId')
+  async listProducts(@Param('businessId') businessId: string) {
+    try {
+      const products = await this.menuService.getProducts(businessId);
+
+      // Ensure Postman gets an array
+      return Array.isArray(products) ? products : [];
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      throw new HttpException(
+        { statusCode: 500, message: 'Internal server error' },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

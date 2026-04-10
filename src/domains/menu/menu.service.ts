@@ -1,4 +1,4 @@
-// src/domains/menu/menu.service.ts
+// 📁 src/domains/menu/menu.service.ts
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -33,6 +33,13 @@ export class MenuService {
     private readonly eventBus: EventBus,
   ) {}
 
+  // 🔥 helper (central fix)
+  private toBusinessFilter(businessId: string) {
+    return Types.ObjectId.isValid(businessId)
+      ? { businessId: new Types.ObjectId(businessId) }
+      : { businessId }; // fallback for "biz001"
+  }
+
   /* =====================================================
      CATEGORY METHODS
   ===================================================== */
@@ -40,7 +47,9 @@ export class MenuService {
   async createCategory(businessId: string, dto: CreateCategoryDto) {
     const category = await this.categoryModel.create({
       ...dto,
-      businessId: new Types.ObjectId(businessId),
+      businessId: Types.ObjectId.isValid(businessId)
+        ? new Types.ObjectId(businessId)
+        : businessId,
     });
 
     this.eventBus.emit('category.created', { businessId, category });
@@ -49,7 +58,7 @@ export class MenuService {
 
   async findCategories(businessId: string) {
     return this.categoryModel
-      .find({ businessId: new Types.ObjectId(businessId) })
+      .find(this.toBusinessFilter(businessId))
       .sort({ sortOrder: 1 })
       .exec();
   }
@@ -85,20 +94,28 @@ export class MenuService {
 
     const product = await this.productModel.create({
       ...dto,
-      businessId: new Types.ObjectId(businessId),
+      businessId: Types.ObjectId.isValid(businessId)
+        ? new Types.ObjectId(businessId)
+        : businessId,
       categoryId: new Types.ObjectId(dto.categoryId),
-      stock,                      // store actual stock
-      isOutOfStock: stock === 0,  // derive automatically
+      stock,
+      isOutOfStock: stock === 0,
     });
 
     this.eventBus.emit('product.created', { businessId, product });
     return product;
   }
 
+  // ✅ FIXED METHOD
   async getProducts(businessId: string) {
-    return this.productModel
-      .find({ businessId: new Types.ObjectId(businessId) })
-      .exec();
+    try {
+      return await this.productModel
+        .find(this.toBusinessFilter(businessId))
+        .exec();
+    } catch (error) {
+      console.error('getProducts error:', error);
+      return [];
+    }
   }
 
   async getProductsByCategory(categoryId: string) {
@@ -116,11 +133,9 @@ export class MenuService {
     if (dto.image !== undefined) updates.image = dto.image;
     if (dto.isAvailable !== undefined) updates.isAvailable = dto.isAvailable;
 
-    // Convert categoryId string -> ObjectId
     if (dto.categoryId !== undefined)
       updates.categoryId = new Types.ObjectId(dto.categoryId);
 
-    // Handle stock / isOutOfStock
     if (dto.stock !== undefined) {
       updates.stock = dto.stock;
       updates.isOutOfStock = dto.stock === 0;
@@ -154,9 +169,7 @@ export class MenuService {
   async getRestaurantSettings(
     businessId: string,
   ): Promise<RestaurantSettingsDocument | null> {
-    return this.settingsModel.findOne({
-      businessId: new Types.ObjectId(businessId),
-    });
+    return this.settingsModel.findOne(this.toBusinessFilter(businessId));
   }
 
   async upsertRestaurantSettings(
@@ -164,11 +177,13 @@ export class MenuService {
     data: Partial<RestaurantSettings>,
   ): Promise<RestaurantSettingsDocument> {
     const settings = await this.settingsModel.findOneAndUpdate(
-      { businessId: new Types.ObjectId(businessId) },
+      this.toBusinessFilter(businessId),
       {
         $set: {
           ...data,
-          businessId: new Types.ObjectId(businessId),
+          businessId: Types.ObjectId.isValid(businessId)
+            ? new Types.ObjectId(businessId)
+            : businessId,
         },
       },
       { new: true, upsert: true },

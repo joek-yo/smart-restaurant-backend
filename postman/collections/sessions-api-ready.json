@@ -1,0 +1,105 @@
+{
+  "info": {
+    "name": "Sessions API Collection",
+    "_postman_id": "sessions-api-collection-001",
+    "description": "Automated tests for Sessions module (multi-business, multi-branch)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Add to Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/add",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions","add"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 2\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Session by Phone",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/{{PHONE}}",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions","{{PHONE}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Quantity",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{BASE_URL}}/sessions/quantity", "host": ["{{BASE_URL}}"], "path": ["sessions","quantity"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 3\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Remove from Cart",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{BASE_URL}}/sessions/remove", "host": ["{{BASE_URL}}"], "path": ["sessions","remove"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Checkout Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{BASE_URL}}/sessions/checkout", "host": ["{{BASE_URL}}"], "path": ["sessions","checkout"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"paymentMethod\": \"card\"\n}"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Reset Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": { "raw": "{{BASE_URL}}/sessions/reset", "host": ["{{BASE_URL}}"], "path": ["sessions","reset"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\"\n}"
+        }
+      },
+      "response": []
+    }
+  ]
+}

@@ -1,27 +1,38 @@
-// src/domains/sessions/repositories/session-cache.repository.ts
-import { Injectable } from '@nestjs/common';
+// FILE: src/domains/sessions/repositories/session-cache.repository.ts
+
+import { Injectable, Inject } from '@nestjs/common';
 import { SessionEntity } from '../entities/session.entity';
 import Redis from 'ioredis';
 
-export interface SessionCacheRepository {
-  set(session: SessionEntity, ttlSeconds?: number): Promise<void>;
-  get(sessionId: string): Promise<SessionEntity | null>;
-  delete(sessionId: string): Promise<void>;
+// ========================
+// ABSTRACT CONTRACT
+// ========================
+export abstract class SessionCacheRepository {
+  abstract set(session: SessionEntity, ttlSeconds?: number): Promise<void>;
+  abstract get(sessionId: string): Promise<SessionEntity | null>;
+  abstract delete(sessionId: string): Promise<void>;
 }
 
-// In-memory fallback
+// ========================
+// IN-MEMORY IMPLEMENTATION
+// ========================
 @Injectable()
-export class InMemorySessionCacheRepository implements SessionCacheRepository {
-  private cache: Map<string, { session: SessionEntity; expiresAt: number }> = new Map();
+export class InMemorySessionCacheRepository extends SessionCacheRepository {
+  private cache: Map<string, { session: SessionEntity; expiresAt: number }> =
+    new Map();
 
   async set(session: SessionEntity, ttlSeconds = 3600): Promise<void> {
     const key = this.buildKey(session);
     const expiresAt = Date.now() + ttlSeconds * 1000;
+
     this.cache.set(key, { session, expiresAt });
   }
 
   async get(sessionId: string): Promise<SessionEntity | null> {
-    const keys = Array.from(this.cache.keys()).filter(k => k.endsWith(sessionId));
+    const keys = Array.from(this.cache.keys()).filter((k) =>
+      k.endsWith(sessionId),
+    );
+
     if (!keys.length) return null;
 
     const entry = this.cache.get(keys[0]);
@@ -36,28 +47,48 @@ export class InMemorySessionCacheRepository implements SessionCacheRepository {
   }
 
   async delete(sessionId: string): Promise<void> {
-    const keys = Array.from(this.cache.keys()).filter(k => k.endsWith(sessionId));
-    keys.forEach(k => this.cache.delete(k));
+    const keys = Array.from(this.cache.keys()).filter((k) =>
+      k.endsWith(sessionId),
+    );
+
+    keys.forEach((k) => this.cache.delete(k));
   }
 
   private buildKey(session: SessionEntity): string {
-    return `${session.businessId || 'default'}:${session.branchId || 'default'}:${session.id}`;
+    return `${session.businessId || 'default'}:${
+      session.branchId || 'default'
+    }:${session.id}`;
   }
 }
 
-// Redis implementation
+// ========================
+// REDIS IMPLEMENTATION (SAFE DISABLED)
+// ========================
 @Injectable()
-export class RedisSessionCacheRepository implements SessionCacheRepository {
-  constructor(private readonly redisClient: Redis) {}
+export class RedisSessionCacheRepository extends SessionCacheRepository {
+  constructor(
+    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
+  ) {
+    super();
+  }
 
   async set(session: SessionEntity, ttlSeconds = 3600): Promise<void> {
+    if (!this.redisClient) return;
+
     const key = this.buildKey(session);
-    await this.redisClient.set(key, JSON.stringify(session), 'EX', ttlSeconds);
+
+    await this.redisClient.set(
+      key,
+      JSON.stringify(session),
+      'EX',
+      ttlSeconds,
+    );
   }
 
   async get(sessionId: string): Promise<SessionEntity | null> {
-    const pattern = `*:${sessionId}`;
-    const keys = await this.redisClient.keys(pattern);
+    if (!this.redisClient) return null;
+
+    const keys = await this.redisClient.keys(`*:*:${sessionId}`);
     if (!keys.length) return null;
 
     const data = await this.redisClient.get(keys[0]);
@@ -67,11 +98,17 @@ export class RedisSessionCacheRepository implements SessionCacheRepository {
   }
 
   async delete(sessionId: string): Promise<void> {
-    const keys = await this.redisClient.keys(`*:${sessionId}`);
-    if (keys.length) await this.redisClient.del(keys);
+    if (!this.redisClient) return;
+
+    const keys = await this.redisClient.keys(`*:*:${sessionId}`);
+    if (keys.length) {
+      await this.redisClient.del(...keys);
+    }
   }
 
   private buildKey(session: SessionEntity): string {
-    return `${session.businessId || 'default'}:${session.branchId || 'default'}:${session.id}`;
+    return `${session.businessId || 'default'}:${
+      session.branchId || 'default'
+    }:${session.id}`;
   }
 }

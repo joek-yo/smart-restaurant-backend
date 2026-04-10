@@ -1,4 +1,4 @@
-// 📁 src/domains/sessions/services/session-manager.service.ts
+// FILE: src/domains/sessions/services/session-manager.service.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -7,8 +7,9 @@ import { SessionRepository } from '../repositories/session.repository';
 import { CartItemRepository } from '../repositories/cart-item.repository';
 import { SessionCacheRepository } from '../repositories/session-cache.repository';
 
-import { Session } from '../entities/session.entity';
-import { CartItem } from '../entities/cart-item.entity';
+import { SessionEntity } from '../entities/session.entity';
+import { CartItemEntity } from '../entities/cart-item.entity';
+import { CartItemVO } from '../value-objects/cart-item.vo';
 
 import { CartItemAddedEvent } from '../events/cart-item-added.event';
 import { CartItemRemovedEvent } from '../events/cart-item-removed.event';
@@ -26,56 +27,56 @@ export class SessionManagerService {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  /**
-   * Get or create active session for user
-   */
-  async getOrCreateSession(userId: string): Promise<Session> {
-    // 1. Try cache
+  // =========================
+  // SESSION GET OR CREATE
+  // =========================
+  async getOrCreateSession(userId: string): Promise<SessionEntity> {
     const cached = await this.cacheRepo.get(userId);
     if (cached) return cached;
 
-    // 2. Try DB
     let session = await this.sessionRepo.findActiveByUser(userId);
 
-    // 3. Create if not exists
     if (!session) {
-      session = new Session({
+      session = new SessionEntity({
         userId,
-        status: 'ACTIVE',
         items: [],
       });
 
-      session = await this.sessionRepo.create(session);
+      const created = await this.sessionRepo.create(session);
+
+      if (!created) {
+        throw new Error('Session creation failed');
+      }
+
+      session = created;
     }
 
-    // 4. Cache it
-    await this.cacheRepo.set(userId, session);
+    await this.cacheRepo.set(session);
 
     return session;
   }
 
-  /**
-   * Add item to cart
-   */
-  async addToCart(userId: string, item: CartItem): Promise<void> {
+  // =========================
+  // ADD TO CART
+  // =========================
+  async addToCart(userId: string, item: CartItemEntity): Promise<void> {
     const session = await this.getOrCreateSession(userId);
 
-    // Emit event (actual logic handled in handler)
     this.eventEmitter.emit(
       'session.cart-item.added',
       new CartItemAddedEvent(
         session.id!,
         userId,
-        item as any, // VO later
-        session.state as any,
+        this.toVO(item),
+        session.state,
       ),
     );
   }
 
-  /**
-   * Remove item from cart
-   */
-  async removeFromCart(userId: string, cartItem: CartItem): Promise<void> {
+  // =========================
+  // REMOVE ITEM
+  // =========================
+  async removeFromCart(userId: string, item: CartItemEntity): Promise<void> {
     const session = await this.getOrCreateSession(userId);
 
     this.eventEmitter.emit(
@@ -83,17 +84,18 @@ export class SessionManagerService {
       new CartItemRemovedEvent(
         session.id!,
         userId,
-        cartItem,
+        this.toVO(item),
+        session.state,
       ),
     );
   }
 
-  /**
-   * Update item quantity
-   */
+  // =========================
+  // UPDATE QUANTITY
+  // =========================
   async updateQuantity(
     userId: string,
-    cartItem: CartItem,
+    item: CartItemEntity,
     newQuantity: number,
   ): Promise<void> {
     const session = await this.getOrCreateSession(userId);
@@ -103,20 +105,21 @@ export class SessionManagerService {
       new QuantityUpdatedEvent(
         session.id!,
         userId,
-        cartItem,
-        cartItem.quantity,
+        this.toVO(item),
+        item.quantity,
         newQuantity,
+        session.state, // ✅ FIXED
       ),
     );
   }
 
-  /**
-   * Checkout session
-   */
+  // =========================
+  // CHECKOUT
+  // =========================
   async checkout(userId: string): Promise<void> {
     const session = await this.getOrCreateSession(userId);
 
-    if (!session.items.length) {
+    if (!session.items || session.items.length === 0) {
       throw new Error('Cannot checkout empty cart');
     }
 
@@ -125,29 +128,39 @@ export class SessionManagerService {
       new SessionCheckedOutEvent(
         session.id!,
         userId,
-        session.items,
+        session.items.map((i) => this.toVO(i)),
         session.totalAmount,
       ),
     );
   }
 
-  /**
-   * Reset session (clear cart)
-   */
+  // =========================
+  // RESET SESSION
+  // =========================
   async resetSession(userId: string): Promise<void> {
     const session = await this.getOrCreateSession(userId);
 
-    // Delete all cart items
     await this.cartItemRepo.deleteBySession(session.id!);
 
-    // Reset session
     session.items = [];
-    session.totalAmount = 0;
-    session.touch();
+    session.touch?.();
 
     await this.sessionRepo.update(session.id!, session);
-    await this.cacheRepo.set(userId, session);
+    await this.cacheRepo.set(session);
 
     this.logger.log(`Session reset for user ${userId}`);
+  }
+
+  // =========================
+  // ENTITY → VO
+  // =========================
+  private toVO(item: CartItemEntity): CartItemVO {
+    return new CartItemVO({
+      productId: item.productId,
+      name: item.name,
+      quantity: item.quantity,
+      price: item.price,
+      options: (item as any).options ?? {},
+    });
   }
 }

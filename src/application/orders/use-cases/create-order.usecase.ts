@@ -1,12 +1,13 @@
 // src/application/orders/use-cases/create-order.usecase.ts
+
 import { Injectable, Inject } from '@nestjs/common';
-import { OrderRepository } from '@domains/orders/repositories/order.repository';
+import { OrderRepository } from '../../../domains/orders/repositories/order.repository';
 import { QueueNumberService } from '../../../domains/orders/services/queue-number.service';
 import { EventBus } from '../../../common/events/event-bus';
-import { OrderCreatedEvent } from '@domains/orders/events/order-created.event';
-import { CreateOrderDto, CreateOrderItemDto } from '@domains/orders/dto/create-order.dto';
-import { Order, OrderItem } from '@domains/orders/entities/order.entity';
-import { OrderStatus } from '@domains/orders/entities/order-status.enum';
+import { OrderCreatedEvent } from '../../../domains/orders/events/order-created.event';
+import { CreateOrderDto, CreateOrderItemDto } from '../../../domains/orders/dto/create-order.dto';
+import { Order, OrderItem } from '../../../domains/orders/entities/order.entity';
+import { OrderStatus } from '../../../domains/orders/entities/order-status.enum';
 
 @Injectable()
 export class CreateOrderUseCase {
@@ -20,12 +21,21 @@ export class CreateOrderUseCase {
     const queueNumber = await this.queueService.generate(businessId);
 
     let totalAmount = 0;
+
     const orderItems: OrderItem[] = dto.items.map((item: CreateOrderItemDto) => {
       const name = item.name ?? 'Unknown';
       const price = item.price ?? 0;
       const total = price * item.quantity;
+
       totalAmount += total;
-      return { productId: item.productId, name, price, quantity: item.quantity, total };
+
+      return {
+        productId: item.productId,
+        name,
+        price,
+        quantity: item.quantity,
+        total,
+      };
     });
 
     const order = new Order({
@@ -46,7 +56,10 @@ export class CreateOrderUseCase {
       ...savedDoc,
       businessId: savedDoc.businessId?.toString(),
       customerId: savedDoc.customerId?.toString(),
-      items: savedDoc.items?.map((i: OrderItem) => ({ ...i, productId: i.productId?.toString() })),
+      items: savedDoc.items?.map((i: OrderItem) => ({
+        ...i,
+        productId: i.productId?.toString(),
+      })),
     });
 
     this.eventBus.publish(new OrderCreatedEvent(domainOrder));
