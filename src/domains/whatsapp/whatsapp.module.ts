@@ -11,8 +11,8 @@ import { OrdersModule } from '../../interfaces/orders/orders.module';
 import { WhatsappGateway } from './whatsapp.gateway';
 
 // Use-cases
-import { AddToCartUseCase } from '../sessions/use-cases/add-to-cart';
-import { CheckoutSessionUseCase } from '../sessions/use-cases/checkout-session';
+import { AddToCartUseCase } from '../sessions/use-cases/add-to-cart.use-case';
+import { CheckoutSessionUseCase } from '../sessions/use-cases/checkout.use-case';
 
 // Handlers (rename if needed later)
 import { ProcessOrderUseCase } from './handlers/process-order';

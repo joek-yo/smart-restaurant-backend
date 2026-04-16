@@ -1,6 +1,6 @@
-// src/domains/sessions/tests/use-cases/update-quantity.usecase.spec.ts
+// src/domains/sessions/tests/use-cases/update-quantity.use-case.usecase.spec.ts
 
-import { UpdateQuantityUseCase } from '../../../use-cases/update-quantity.usecase';
+import { UpdateQuantityUseCase } from '../../../use-cases/update-quantity.use-case.usecase';
 import { InMemorySessionRepository } from '../../../repositories/session.repository';
 import { CartItemEntity } from '../../../entities/cart-item.entity';
 import { SessionEntity } from '../../../entities/session.entity';

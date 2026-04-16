@@ -1,6 +1,6 @@
-// src/domains/sessions/tests/use-cases/add-to-cart.usecase.spec.ts
+// src/domains/sessions/tests/use-cases/add-to-cart.use-case.usecase.spec.ts
 
-import { AddToCartUseCase } from '../../../use-cases/add-to-cart.usecase';
+import { AddToCartUseCase } from '../../../use-cases/add-to-cart.use-case.usecase';
 import { InMemorySessionRepository } from '../../../repositories/session.repository';
 import { InMemoryCartItemRepository } from '../../../repositories/cart-item.repository';
 import { CartItemEntity } from '../../../entities/cart-item.entity';

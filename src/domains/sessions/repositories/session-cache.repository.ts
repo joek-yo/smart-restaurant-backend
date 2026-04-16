@@ -1,4 +1,4 @@
-// FILE: src/domains/sessions/repositories/session-cache.repository.ts
+// src/domains/sessions/repositories/session.repository.ts
 
 import { Injectable, Inject } from '@nestjs/common';
 import { SessionEntity } from '../entities/session.entity';
@@ -14,55 +14,7 @@ export abstract class SessionCacheRepository {
 }
 
 // ========================
-// IN-MEMORY IMPLEMENTATION
-// ========================
-@Injectable()
-export class InMemorySessionCacheRepository extends SessionCacheRepository {
-  private cache: Map<string, { session: SessionEntity; expiresAt: number }> =
-    new Map();
-
-  async set(session: SessionEntity, ttlSeconds = 3600): Promise<void> {
-    const key = this.buildKey(session);
-    const expiresAt = Date.now() + ttlSeconds * 1000;
-
-    this.cache.set(key, { session, expiresAt });
-  }
-
-  async get(sessionId: string): Promise<SessionEntity | null> {
-    const keys = Array.from(this.cache.keys()).filter((k) =>
-      k.endsWith(sessionId),
-    );
-
-    if (!keys.length) return null;
-
-    const entry = this.cache.get(keys[0]);
-    if (!entry) return null;
-
-    if (entry.expiresAt < Date.now()) {
-      this.cache.delete(keys[0]);
-      return null;
-    }
-
-    return entry.session;
-  }
-
-  async delete(sessionId: string): Promise<void> {
-    const keys = Array.from(this.cache.keys()).filter((k) =>
-      k.endsWith(sessionId),
-    );
-
-    keys.forEach((k) => this.cache.delete(k));
-  }
-
-  private buildKey(session: SessionEntity): string {
-    return `${session.businessId || 'default'}:${
-      session.branchId || 'default'
-    }:${session.id}`;
-  }
-}
-
-// ========================
-// REDIS IMPLEMENTATION (SAFE DISABLED)
+// REDIS IMPLEMENTATION ONLY
 // ========================
 @Injectable()
 export class RedisSessionCacheRepository extends SessionCacheRepository {
@@ -72,9 +24,28 @@ export class RedisSessionCacheRepository extends SessionCacheRepository {
     super();
   }
 
-  async set(session: SessionEntity, ttlSeconds = 3600): Promise<void> {
-    if (!this.redisClient) return;
+  // ------------------------
+  // KEY STRATEGY (CRITICAL)
+  // ------------------------
+  private buildKey(session: SessionEntity): string {
+    return `${session.businessId || 'default'}:${
+      session.branchId || 'default'
+    }:${session.id}`;
+  }
 
+  // overload-safe helper for lookup
+  private buildKeyFromParts(
+    businessId: string,
+    branchId: string,
+    sessionId: string,
+  ): string {
+    return `${businessId || 'default'}:${branchId || 'default'}:${sessionId}`;
+  }
+
+  // ========================
+  // SET SESSION CACHE
+  // ========================
+  async set(session: SessionEntity, ttlSeconds = 3600): Promise<void> {
     const key = this.buildKey(session);
 
     await this.redisClient.set(
@@ -85,8 +56,12 @@ export class RedisSessionCacheRepository extends SessionCacheRepository {
     );
   }
 
+  // ========================
+  // GET SESSION CACHE
+  // ========================
   async get(sessionId: string): Promise<SessionEntity | null> {
-    if (!this.redisClient) return null;
+    // IMPORTANT: we assume sessionId alone is not enough for scale lookup
+    // so we fallback to pattern only if needed (but this should be improved later)
 
     const keys = await this.redisClient.keys(`*:*:${sessionId}`);
     if (!keys.length) return null;
@@ -97,18 +72,13 @@ export class RedisSessionCacheRepository extends SessionCacheRepository {
     return JSON.parse(data) as SessionEntity;
   }
 
+  // ========================
+  // DELETE SESSION CACHE
+  // ========================
   async delete(sessionId: string): Promise<void> {
-    if (!this.redisClient) return;
-
     const keys = await this.redisClient.keys(`*:*:${sessionId}`);
-    if (keys.length) {
-      await this.redisClient.del(...keys);
-    }
-  }
+    if (!keys.length) return;
 
-  private buildKey(session: SessionEntity): string {
-    return `${session.businessId || 'default'}:${
-      session.branchId || 'default'
-    }:${session.id}`;
+    await this.redisClient.del(...keys);
   }
 }

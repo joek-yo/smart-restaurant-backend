@@ -1,15 +1,13 @@
 // FILE: src/domains/sessions/use-cases/checkout.use-case.ts
 
 import { Injectable } from '@nestjs/common';
-import { SessionManagerService } from '../services/session-manager.service';
+import { SessionService } from '../services/session.service';
 
 @Injectable()
 export class CheckoutUseCase {
-  constructor(
-    private readonly sessionManager: SessionManagerService,
-  ) {}
+  constructor(private readonly sessionService: SessionService) {}
 
   async execute(userId: string): Promise<void> {
-    await this.sessionManager.checkout(userId);
+    await this.sessionService.checkout(userId);
   }
 }

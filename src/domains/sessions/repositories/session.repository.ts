@@ -2,43 +2,34 @@
 
 import { Injectable } from '@nestjs/common';
 import { SessionEntity } from '../entities/session.entity';
-import { SessionStatus } from '../constants/session-states';
 import { v4 as uuidv4 } from 'uuid';
 
-// Abstract contract (DI token)
+// ========================
+// ABSTRACT CONTRACT (CLEAN)
+// ========================
 export abstract class SessionRepository {
   abstract create(session: SessionEntity): Promise<SessionEntity>;
 
-  abstract update(
-    id: string,
-    partial: Partial<SessionEntity>,
-  ): Promise<SessionEntity>;
+  abstract update(session: SessionEntity): Promise<SessionEntity>;
 
-  abstract findById(
-    id: string,
-    businessId?: string,
-    branchId?: string,
-  ): Promise<SessionEntity | null>;
+  abstract findById(id: string): Promise<SessionEntity | null>;
 
-  abstract findActiveByUser(
-    userId: string,
-    businessId?: string,
-    branchId?: string,
-  ): Promise<SessionEntity | null>;
-
-  abstract findByStatus(
-    status: SessionStatus,
-    businessId?: string,
-    branchId?: string,
-  ): Promise<SessionEntity[]>;
+  // ✅ Added simple query filter for User ID
+  abstract findByUserId(userId: string): Promise<SessionEntity[]>;
 
   abstract delete(id: string): Promise<void>;
 }
 
+// ========================
+// IN-MEMORY IMPLEMENTATION
+// ========================
 @Injectable()
 export class InMemorySessionRepository extends SessionRepository {
   private sessions: Map<string, SessionEntity> = new Map();
 
+  // =========================
+  // CREATE
+  // =========================
   async create(session: SessionEntity): Promise<SessionEntity> {
     if (!session.id) session.id = uuidv4();
 
@@ -46,80 +37,55 @@ export class InMemorySessionRepository extends SessionRepository {
     session.updatedAt = new Date();
 
     this.sessions.set(session.id, session);
+
     return session;
   }
 
-  async update(
-    id: string,
-    partial: Partial<SessionEntity>,
-  ): Promise<SessionEntity> {
-    const existing = this.sessions.get(id);
-
-    if (!existing) {
-      throw new Error(`Session ${id} not found`);
+  // =========================
+  // UPDATE
+  // =========================
+  async update(session: SessionEntity): Promise<SessionEntity> {
+    if (!session.id) {
+      throw new Error('Session must have an id');
     }
 
-    const updated = Object.assign(
-      Object.create(Object.getPrototypeOf(existing)),
-      existing,
-      partial,
-      { updatedAt: new Date() },
-    ) as SessionEntity;
+    const existing = this.sessions.get(session.id);
 
-    this.sessions.set(id, updated);
+    if (!existing) {
+      throw new Error(`Session ${session.id} not found`);
+    }
+
+    const updated = new SessionEntity({
+      ...existing,
+      ...session,
+      updatedAt: new Date(),
+    });
+
+    this.sessions.set(session.id, updated);
 
     return updated;
   }
 
-  async findById(
-    id: string,
-    businessId?: string,
-    branchId?: string,
-  ): Promise<SessionEntity | null> {
-    const session = this.sessions.get(id);
-
-    if (!session) return null;
-
-    if (businessId && session.businessId !== businessId) return null;
-    if (branchId && session.branchId !== branchId) return null;
-
-    return session;
+  // =========================
+  // FIND BY ID
+  // =========================
+  async findById(id: string): Promise<SessionEntity | null> {
+    return this.sessions.get(id) || null;
   }
 
-  async findActiveByUser(
-    userId: string,
-    businessId?: string,
-    branchId?: string,
-  ): Promise<SessionEntity | null> {
-    for (const session of this.sessions.values()) {
-      if (
-        session.userId === userId &&
-        // ✅ FIX: unified via entity compatibility getter (no TS conflict)
-        (session as any).status !== SessionStatus.EXPIRED &&
-        (!businessId || session.businessId === businessId) &&
-        (!branchId || session.branchId === branchId)
-      ) {
-        return session;
-      }
-    }
-    return null;
+  // =========================
+  // FIND BY USER ID (FILTER)
+  // =========================
+  async findByUserId(userId: string): Promise<SessionEntity[]> {
+    // Returns all sessions associated with this user ID
+    return Array.from(this.sessions.values()).filter(
+      (session) => session.userId === userId,
+    );
   }
 
-  async findByStatus(
-    status: SessionStatus,
-    businessId?: string,
-    branchId?: string,
-  ): Promise<SessionEntity[]> {
-    return Array.from(this.sessions.values()).filter((s) => {
-      return (
-        // ✅ FIX: safe runtime access without TS clash
-        (s as any).status === status &&
-        (!businessId || s.businessId === businessId) &&
-        (!branchId || s.branchId === branchId)
-      );
-    });
-  }
-
+  // =========================
+  // DELETE
+  // =========================
   async delete(id: string): Promise<void> {
     this.sessions.delete(id);
   }

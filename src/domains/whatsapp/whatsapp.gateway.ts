@@ -1,4 +1,5 @@
-// src/modules/whatsapp/whatsapp.gateway.ts
+// FILE: src/modules/whatsapp/whatsapp.gateway.ts
+
 import {
   WebSocketGateway,
   WebSocketServer,
@@ -8,22 +9,12 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 
-import { SessionsService } from '../sessions/sessions.service';
-import { AddToCartUseCase } from '../sessions/use-cases/add-to-cart';
-import { CheckoutSessionUseCase } from '../sessions/use-cases/checkout-session';
+import { SessionService } from '../sessions/services/session.service';
 import { ProcessOrderUseCase } from './handlers/process-order';
 import { SendReplyUseCase } from './handlers/send-reply';
 
-// Snapshot of a product for adding to cart
 interface ProductSnapshot {
-  _id: string;       // required by TypeScript
-  name: string;
-  quantity: number;
-  price: number;     // ✅ now REQUIRED
-}
-
-// Cart item structure
-interface CartItem {
+  _id: string;
   name: string;
   quantity: number;
   price: number;
@@ -34,9 +25,7 @@ export class WhatsappGateway {
   @WebSocketServer() server!: Server;
 
   constructor(
-    private readonly sessionsService: SessionsService,
-    private readonly addToCartUseCase: AddToCartUseCase,
-    private readonly checkoutSessionUseCase: CheckoutSessionUseCase,
+    private readonly sessionService: SessionService,
     private readonly processOrderUseCase: ProcessOrderUseCase,
     private readonly sendReplyUseCase: SendReplyUseCase,
   ) {}
@@ -48,35 +37,37 @@ export class WhatsappGateway {
   ) {
     const { phone, message } = payload;
 
-    // Get session for this phone
-    let session = this.sessionsService.getSession(phone);
-
     // -----------------------------
-    // Handle checkout
+    // CHECKOUT
     // -----------------------------
     if (message.toLowerCase() === 'checkout') {
-      await this.checkoutSessionUseCase.execute(phone);
-      await this.sendReplyUseCase.execute(phone, '✅ Your order is being processed!');
+      // ✅ Updated to clean signature: (phone)
+      await this.sessionService.checkout(phone);
+
+      await this.sendReplyUseCase.execute(
+        phone,
+        '✅ Your order is being processed!',
+      );
       return;
     }
 
     // -----------------------------
-    // Handle add to cart
+    // ADD TO CART
     // -----------------------------
     if (message.startsWith('add ')) {
       const [_, quantityStr, ...productNameArr] = message.split(' ');
       const quantity = parseInt(quantityStr) || 1;
       const productName = productNameArr.join(' ');
 
-      // Temporary _id and price added to satisfy type
       const product: ProductSnapshot = {
         _id: 'temp-id',
         name: productName,
         quantity,
-        price: 0, // ✅ required fix
+        price: 0,
       };
 
-      await this.addToCartUseCase.execute(phone, product);
+      // ✅ Updated to clean signature: (phone, item)
+      await this.sessionService.addItem(phone, product as any);
 
       await this.sendReplyUseCase.execute(
         phone,
@@ -86,27 +77,38 @@ export class WhatsappGateway {
     }
 
     // -----------------------------
-    // Show cart
+    // SHOW CART
     // -----------------------------
     if (message.toLowerCase() === 'cart') {
-      const cart: CartItem[] = session?.cart || [];
-      if (cart.length === 0) {
+      // ✅ Updated to clean signature: (phone)
+      const session = await this.sessionService.getOrCreate(phone);
+
+      const items = session.items || [];
+
+      if (items.length === 0) {
         await this.sendReplyUseCase.execute(phone, '🛒 Your cart is empty.');
         return;
       }
 
-      const cartMessage = cart
-        .map((item) => `${item.quantity} x ${item.name} = KES ${item.quantity * item.price}`)
+      const cartMessage = items
+        .map((i) => `${i.quantity} x ${i.name} = KES ${i.quantity * i.price}`)
         .join('\n');
 
-      const total = cart.reduce((sum, item) => sum + item.quantity * item.price, 0);
-      await this.sendReplyUseCase.execute(phone, `🛒 Your cart:\n${cartMessage}\nTotal: KES ${total}`);
+      const total = session.totalAmount;
+
+      await this.sendReplyUseCase.execute(
+        phone,
+        `🛒 Your cart:\n${cartMessage}\nTotal: KES ${total}`,
+      );
       return;
     }
 
     // -----------------------------
-    // Default fallback
+    // DEFAULT
     // -----------------------------
-    await this.sendReplyUseCase.execute(phone, '❌ Sorry, I did not understand that.');
+    await this.sendReplyUseCase.execute(
+      phone,
+      '❌ Sorry, I did not understand that.',
+    );
   }
 }

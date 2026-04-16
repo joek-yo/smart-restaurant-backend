@@ -1,4 +1,4 @@
-// src/main.ts
+// FILE: src/main.ts
 
 // 1️⃣ Add this first to enable module-alias for compiled JS
 import 'module-alias/register';
@@ -14,12 +14,12 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ✅ Global validation with DTO support
+  // ✅ FINAL: strict validation (PHASE 7 READY)
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,       
-      transform: true,       
-      forbidNonWhitelisted: false,
+      whitelist: true,              // remove unknown fields
+      forbidNonWhitelisted: true,   // ❗ THROW error on unknown fields (important)
+      transform: true,              // auto convert types
     }),
   );
 

@@ -1,4 +1,4 @@
-// src/domains/sessions/entities/session.entity.ts
+// FILE: src/domains/sessions/entities/session.entity.ts
 
 import { BaseEntity } from '../../../common/base.entity';
 import { CartItemEntity } from './cart-item.entity';
@@ -8,7 +8,6 @@ import { DiscountVO } from '../value-objects/discount.vo';
 export class SessionEntity extends BaseEntity {
   id?: string;
 
-  /** Multi-tenant support */
   businessId!: string;
   branchId?: string;
   userId!: string;
@@ -21,74 +20,129 @@ export class SessionEntity extends BaseEntity {
   constructor(partial?: Partial<SessionEntity>) {
     super(partial);
 
-    if (partial) {
-      Object.assign(this, partial);
+    if (!partial) return;
 
-      if (partial.state) {
-        this.state = new SessionStateVO(partial.state.value);
-      }
+    this.id = partial.id;
+    this.businessId = partial.businessId!;
+    this.branchId = partial.branchId;
+    this.userId = partial.userId!;
 
-      if (partial.items) {
-        this.items = partial.items.map(
-          (i) => new CartItemEntity(i as any),
-        );
-      }
-    }
+    this.state = partial.state
+      ? new SessionStateVO(partial.state.value)
+      : new SessionStateVO();
+
+    this.items = partial.items
+      ? partial.items.map((i) => new CartItemEntity(i as any))
+      : [];
+
+    this.discount = partial.discount;
+    this.expiresAt = partial.expiresAt;
   }
 
   // =========================
-  // COMPATIBILITY FIX (REPOSITORY EXPECTS THIS)
+  // CART OPERATIONS
   // =========================
-  get status() {
-    return this.state?.value;
-  }
 
-  addItem(item: CartItemEntity) {
-    const existing = this.items.find(
-      (i) => i.productId === item.productId,
-    );
+  addItem(item: CartItemEntity): SessionEntity {
+    let found = false;
 
-    if (existing) {
-      existing.updateQuantity(existing.quantity + item.quantity);
-    } else {
-      this.items.push(item);
+    const items = this.items.map((i) => {
+      if (i.productId === item.productId) {
+        found = true;
+
+        return new CartItemEntity({
+          ...i,
+          quantity: i.quantity + item.quantity,
+        });
+      }
+
+      return i;
+    });
+
+    if (!found) {
+      items.push(item);
     }
 
-    this.state.set(SessionState.CART_UPDATED);
-    this.touch();
+    return this.clone({
+      items,
+      state: new SessionStateVO(SessionState.CART_UPDATED),
+    });
   }
 
-  removeItem(productId: string) {
-    this.items = this.items.filter(
+  removeItem(productId: string): SessionEntity {
+    const items = this.items.filter(
       (i) => i.productId !== productId,
     );
 
-    this.state.set(
-      this.items.length
-        ? SessionState.CART_UPDATED
-        : SessionState.BROWSING_MENU,
-    );
-
-    this.touch();
+    return this.clone({
+      items,
+      state: new SessionStateVO(
+        items.length
+          ? SessionState.CART_UPDATED
+          : SessionState.BROWSING_MENU,
+      ),
+    });
   }
 
-  updateQuantity(productId: string, quantity: number) {
-    const item = this.items.find(
+  updateQuantity(productId: string, quantity: number): SessionEntity {
+    const exists = this.items.find(
       (i) => i.productId === productId,
     );
 
-    if (!item) throw new Error('Item not found');
+    if (!exists) throw new Error('Item not found');
 
-    item.updateQuantity(quantity);
+    const items = this.items.map((i) => {
+      if (i.productId === productId) {
+        return new CartItemEntity({
+          ...i,
+          quantity,
+        });
+      }
 
-    this.state.set(SessionState.CART_UPDATED);
-    this.touch();
+      return i;
+    });
+
+    return this.clone({
+      items,
+      state: new SessionStateVO(SessionState.CART_UPDATED),
+    });
   }
 
-  applyDiscount(discount: DiscountVO) {
-    this.discount = discount;
-    this.touch();
+  // =========================
+  // SESSION ACTIONS
+  // =========================
+
+  applyDiscount(discount: DiscountVO): SessionEntity {
+    return this.clone({ discount });
   }
+
+  reset(): SessionEntity {
+    return this.clone({
+      items: [],
+      discount: undefined,
+      state: new SessionStateVO(SessionState.BROWSING_MENU),
+    });
+  }
+
+  checkout(): SessionEntity {
+    if (this.items.length === 0) {
+      throw new Error('Cart is empty');
+    }
+
+    return this.clone({
+      state: new SessionStateVO(SessionState.CHECKOUT),
+    });
+  }
+
+  expire(): SessionEntity {
+    return this.clone({
+      state: new SessionStateVO(SessionState.EXPIRED),
+    });
+  }
+
+  // =========================
+  // DERIVED VALUE
+  // =========================
 
   get totalAmount(): number {
     const subtotal = this.items.reduce(
@@ -101,17 +155,14 @@ export class SessionEntity extends BaseEntity {
       : subtotal;
   }
 
-  checkout() {
-    if (!this.items.length) {
-      throw new Error('Cart is empty');
-    }
+  // =========================
+  // INTERNAL CLONE
+  // =========================
 
-    this.state.set(SessionState.CHECKOUT);
-    this.touch();
-  }
-
-  expire() {
-    this.state.set(SessionState.EXPIRED);
-    this.touch();
+  private clone(partial: Partial<SessionEntity>): SessionEntity {
+    return new SessionEntity({
+      ...this,
+      ...partial,
+    });
   }
 }
