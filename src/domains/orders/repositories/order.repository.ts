@@ -1,25 +1,28 @@
-// 📁 File: src/domains/orders/repositories/order.repository.ts
+// src/domains/orders/repositories/order.repository.ts
 
 import { Order } from '../entities/order.entity';
 
 export interface OrderRepository {
-  /**
-   * Persists a new order to the database.
-   */
+  // =========================
+  // CORE PERSISTENCE
+  // =========================
+
   create(order: Order): Promise<Order>;
 
-  /**
-   * Retrieves a single order by its unique ID.
-   */
   findById(id: string): Promise<Order | null>;
 
   /**
-   * Updates an existing order by ID with partial data.
+   * Performs a partial update on an Order.
    */
-  update(id: string, partial: Partial<Order>): Promise<Order>;
+  update(id: string, data: Partial<Order>): Promise<Order>;
 
-  /**
-   * Optional: Retrieves all orders belonging to a specific tenant/business.
-   */
-  findByTenantId?(tenantId: string): Promise<Order[]>;
+  // Kept for administrative cleanup/tests
+  delete(id: string): Promise<void>;
+
+  // =========================
+  // QUERY METHODS (STILL MVP RELEVANT)
+  // =========================
+
+  // Essential for multi-tenant isolation (seeing "my business" orders)
+  findByBusinessId(businessId: string): Promise<Order[]>;
 }

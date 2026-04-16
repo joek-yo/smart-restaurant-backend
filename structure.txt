@@ -1,0 +1,368 @@
+.
+├── eslint.config.mjs
+├── nest-cli.json
+├── -p
+├── package.json
+├── package-lock.json
+├── postman
+│   ├── collections
+│   │   ├── sessions-api-ready.json
+│   │   ├── sessions-cli-test.json
+│   │   └── sessions-cli-test.json.save
+│   ├── environments
+│   │   └── dev.postman_environment.json
+│   ├── SmartRestaurant.postman_collection.json
+│   └── SmartRestaurant.postman_environment.json
+├── README.md
+├── reports
+│   └── api-test-report.json
+├── scripts
+│   ├── start-test-server.sh
+│   └── stop-test-server.sh
+├── src
+│   ├── app.controller.spec.ts
+│   ├── app.controller.ts
+│   ├── application
+│   │   ├── menu
+│   │   │   └── use-cases
+│   │   │       ├── create-menu-item.usecase.ts
+│   │   │       ├── dto
+│   │   │       │   ├── create-menu-item.dto.ts
+│   │   │       │   ├── menu-option.dto.ts
+│   │   │       │   └── update-menu-item.dto.ts
+│   │   │       ├── get-menu-by-category.usecase.ts
+│   │   │       └── update-menu-item.usecase.ts
+│   │   ├── notifications
+│   │   │   ├── dto
+│   │   │   │   └── create-notification.dto.ts
+│   │   │   └── use-cases
+│   │   │       └── notify.usecase.ts
+│   │   └── orders
+│   │       └── use-cases
+│   │           ├── create-order.usecase.ts
+│   │           └── update-order-status.usecase.ts
+│   ├── app.module.ts
+│   ├── app.service.ts
+│   ├── common
+│   │   ├── base.entity.ts
+│   │   ├── events
+│   │   │   ├── event-bus.module.ts
+│   │   │   └── event-bus.ts
+│   │   ├── pipes
+│   │   │   └── snake-to-camel.pipe.ts
+│   │   └── redis
+│   │       └── redis.provider.ts
+│   ├── database
+│   │   └── database.module.ts
+│   ├── domains
+│   │   ├── counters
+│   │   │   ├── counters.module.ts
+│   │   │   └── schemas
+│   │   │       └── counter.schema.ts
+│   │   ├── menu
+│   │   │   ├── dto
+│   │   │   │   ├── create-category.dto.ts
+│   │   │   │   ├── create-product.dto.ts
+│   │   │   │   ├── update-category.dto.ts
+│   │   │   │   └── update-product.dto.ts
+│   │   │   ├── entities
+│   │   │   │   ├── category.entity.ts
+│   │   │   │   ├── category-status.enum.ts
+│   │   │   │   ├── menu-item.entity.ts
+│   │   │   │   ├── menu-item-status.enum.ts
+│   │   │   │   └── menu-option.entity.ts
+│   │   │   ├── enums
+│   │   │   │   ├── category-status.enum.ts
+│   │   │   │   └── menu-item-status.enum.ts
+│   │   │   ├── events
+│   │   │   │   ├── category-updated.event.ts
+│   │   │   │   ├── menu-item-created.event.ts
+│   │   │   │   └── menu-item-updated.event.ts
+│   │   │   ├── handlers
+│   │   │   │   ├── menu-item-created.handler.ts
+│   │   │   │   └── menu-item-updated.handler.ts
+│   │   │   ├── index.ts
+│   │   │   ├── menu.controller.ts
+│   │   │   ├── menu.module.ts
+│   │   │   ├── menu.service.ts
+│   │   │   ├── product.controller.ts
+│   │   │   ├── repositories
+│   │   │   │   ├── category.repository.ts
+│   │   │   │   └── menu-item.repository.ts
+│   │   │   └── schemas
+│   │   │       ├── category.schema.ts
+│   │   │       ├── product.schema.ts
+│   │   │       └── restaurant-settings.schema.ts
+│   │   ├── notifications
+│   │   │   ├── entities
+│   │   │   │   └── notification.entity.ts
+│   │   │   ├── enums
+│   │   │   │   ├── notification-channel.enum.ts
+│   │   │   │   ├── notification-status.enum.ts
+│   │   │   │   └── notification-type.enum.ts
+│   │   │   ├── events
+│   │   │   │   └── notification-created.event.ts
+│   │   │   ├── handlers
+│   │   │   │   ├── email
+│   │   │   │   │   └── send-email.handler.ts
+│   │   │   │   ├── push
+│   │   │   │   │   └── send-push.handler.ts
+│   │   │   │   ├── sms
+│   │   │   │   │   └── send-sms.handler.ts
+│   │   │   │   └── whatsapp
+│   │   │   │       ├── send-waba.handler.ts
+│   │   │   │       └── send-web.handler.ts
+│   │   │   ├── listeners
+│   │   │   │   └── notification.listener.ts
+│   │   │   ├── repositories
+│   │   │   │   └── notification.repository.ts
+│   │   │   ├── services
+│   │   │   │   ├── notification-dispatcher.service.ts
+│   │   │   │   ├── notification-factory.service.ts
+│   │   │   │   ├── notification-logger.service.ts
+│   │   │   │   ├── notification-queue.service.ts
+│   │   │   │   ├── notification-retry.service.ts
+│   │   │   │   └── notification-router.service.ts
+│   │   │   └── value-objects
+│   │   │       └── message-payload.vo.ts
+│   │   ├── orders
+│   │   │   ├── consumers
+│   │   │   │   ├── order-created.consumer.ts
+│   │   │   │   └── order-status-updated.consumer.ts
+│   │   │   ├── dto
+│   │   │   │   ├── create-order.dto.ts
+│   │   │   │   └── update-order-status.dto.ts
+│   │   │   ├── entities
+│   │   │   │   ├── order.entity.ts
+│   │   │   │   └── order-status.enum.ts
+│   │   │   ├── events
+│   │   │   │   ├── order-created.event.ts
+│   │   │   │   └── order-status-updated.event.ts
+│   │   │   ├── handlers
+│   │   │   │   ├── order-created.handler.ts
+│   │   │   │   └── order-status-updated.handler.ts
+│   │   │   ├── index.ts
+│   │   │   ├── repositories
+│   │   │   │   └── order.repository.ts
+│   │   │   ├── schemas
+│   │   │   │   ├── counter.schema.ts
+│   │   │   │   └── order.schema.ts
+│   │   │   ├── services
+│   │   │   │   ├── order.service.ts
+│   │   │   │   ├── queue-number.module.ts
+│   │   │   │   └── queue-number.service.ts
+│   │   │   └── use-cases
+│   │   ├── restaurants
+│   │   │   ├── dto
+│   │   │   │   ├── create-restaurant.dto.ts
+│   │   │   │   └── update-restaurant.dto.ts
+│   │   │   ├── index.ts
+│   │   │   ├── restaurants.controller.ts
+│   │   │   ├── restaurants.module.ts
+│   │   │   ├── restaurants.service.ts
+│   │   │   ├── schemas
+│   │   │   │   ├── restaurant.schema.ts
+│   │   │   │   └── restaurant-settings.schema.ts
+│   │   │   └── use-cases
+│   │   │       ├── create-restaurant.ts
+│   │   │       ├── get-settings.ts
+│   │   │       ├── update-restaurant.ts
+│   │   │       └── update-settings.ts
+│   │   ├── sessions
+│   │   │   ├── adapters
+│   │   │   │   ├── ai-upsell.adapter.ts
+│   │   │   │   ├── analytics.adapter.ts
+│   │   │   │   ├── payment-session.adapter.ts
+│   │   │   │   └── whatsapp-session.adapter.ts
+│   │   │   ├── cart.module.ts
+│   │   │   ├── constants
+│   │   │   │   ├── cart-limits.ts
+│   │   │   │   ├── event-types.ts
+│   │   │   │   └── session-states.ts
+│   │   │   ├── dto
+│   │   │   │   ├── add-to-cart.dto.ts
+│   │   │   │   ├── checkout-session.dto.ts
+│   │   │   │   ├── remove-from-cart.dto.ts
+│   │   │   │   ├── reset-session.dto.ts
+│   │   │   │   ├── session-state.dto.ts
+│   │   │   │   └── update-quantity.dto.ts
+│   │   │   ├── entities
+│   │   │   │   ├── cart-item.entity.ts
+│   │   │   │   └── session.entity.ts
+│   │   │   ├── events
+│   │   │   │   ├── abandoned-cart-triggered.event.ts
+│   │   │   │   ├── cart-item-added.event.ts
+│   │   │   │   ├── cart-item-removed.event.ts
+│   │   │   │   ├── quantity-updated.event.ts
+│   │   │   │   ├── session-checked-out.event.ts
+│   │   │   │   └── session-expired.event.ts
+│   │   │   ├── handlers
+│   │   │   │   ├── abandoned-cart.handler.ts
+│   │   │   │   ├── cart-item-added.handler.ts
+│   │   │   │   ├── cart-item-removed.handler.ts
+│   │   │   │   ├── quantity-updated.handler.ts
+│   │   │   │   ├── session-checked-out.handler.ts
+│   │   │   │   ├── session-events.handler.ts
+│   │   │   │   └── session-expired.handler.ts
+│   │   │   ├── index.ts
+│   │   │   ├── interfaces
+│   │   │   │   ├── session-event.interface.ts
+│   │   │   │   └── session-repository.interface.ts
+│   │   │   ├── migrations
+│   │   │   │   └── 001_create_sessions_table.sql
+│   │   │   ├── policies
+│   │   │   │   ├── cart-limits.policy.ts
+│   │   │   │   ├── retry-policy.ts
+│   │   │   │   ├── session-expiry.policy.ts
+│   │   │   │   └── validation-policy.ts
+│   │   │   ├── queues
+│   │   │   │   ├── abandoned-cart-queue.ts
+│   │   │   │   ├── retry-queue.ts
+│   │   │   │   └── session-queue.processor.ts
+│   │   │   ├── repositories
+│   │   │   │   ├── cart-item.repository.ts
+│   │   │   │   ├── session-cache.redis.repository.ts
+│   │   │   │   ├── session-cache.repository.ts
+│   │   │   │   ├── session-index.repository.ts
+│   │   │   │   └── session.repository.ts
+│   │   │   ├── services
+│   │   │   │   ├── cart-recovery.service.ts
+│   │   │   │   ├── session-logger.service.ts
+│   │   │   │   ├── session.service.ts
+│   │   │   │   ├── upsell-engine.service.ts
+│   │   │   │   └── validation.service.ts
+│   │   │   ├── sessions.controller.ts
+│   │   │   ├── sessions.module.ts
+│   │   │   ├── tests
+│   │   │   │   ├── entities
+│   │   │   │   │   ├── cart-item.entity.spec.ts
+│   │   │   │   │   └── session.entity.spec.ts
+│   │   │   │   ├── handlers
+│   │   │   │   │   ├── abandoned-cart.handler.spec.ts
+│   │   │   │   │   ├── cart-item-added.handler.spec.ts
+│   │   │   │   │   ├── cart-item-removed.handler.spec.ts
+│   │   │   │   │   ├── quantity-updated.handler.spec.ts
+│   │   │   │   │   ├── session-checked-out.handler.spec.ts
+│   │   │   │   │   └── session-expired.handler.spec.ts
+│   │   │   │   ├── services
+│   │   │   │   │   ├── cart-recovery.service.spec.ts
+│   │   │   │   │   ├── session-logger.service.spec.ts
+│   │   │   │   │   ├── upsell-engine.service.spec.ts
+│   │   │   │   │   └── validation.service.spec.ts
+│   │   │   │   └── use-cases
+│   │   │   │       ├── add-to-cart.usecase.spec.ts
+│   │   │   │       ├── checkout-session.usecase.spec.ts
+│   │   │   │       ├── remove-from-cart.usecase.spec.ts
+│   │   │   │       ├── reset-session.usecase.spec.ts
+│   │   │   │       ├── restore-session.usecase.spec.ts
+│   │   │   │       └── update-quantity.usecase.spec.ts
+│   │   │   ├── types
+│   │   │   │   ├── cart-item.types.ts
+│   │   │   │   └── upsell.types.ts
+│   │   │   ├── use-cases
+│   │   │   │   ├── add-to-cart.use-case.ts
+│   │   │   │   ├── checkout.use-case.ts
+│   │   │   │   ├── remove-from-cart.use-case.ts
+│   │   │   │   └── update-quantity.use-case.ts
+│   │   │   ├── utils
+│   │   │   │   ├── discount-calculation.util.ts
+│   │   │   │   ├── price-calculation.util.ts
+│   │   │   │   ├── session-expiry.util.ts
+│   │   │   │   └── validation.util.ts
+│   │   │   └── value-objects
+│   │   │       ├── cart-item.vo.ts
+│   │   │       ├── discount.vo.ts
+│   │   │       └── session-state.vo.ts
+│   │   └── whatsapp
+│   │       ├── handlers
+│   │       │   ├── handle-incoming-message.ts
+│   │       │   ├── process-order.ts
+│   │       │   └── send-reply.ts
+│   │       ├── index.ts
+│   │       ├── whatsapp.gateway.ts
+│   │       └── whatsapp.module.ts
+│   ├── gateways
+│   ├── infrastructure
+│   │   ├── database
+│   │   │   ├── database.module.ts
+│   │   │   ├── index.ts
+│   │   │   └── mongoose
+│   │   │       ├── category.schema.ts
+│   │   │       ├── menu-item.schema.ts
+│   │   │       ├── order.schema.ts
+│   │   │       └── repositories
+│   │   │           ├── menu-item.repository.impl.ts
+│   │   │           └── order.repository.impl.ts
+│   │   ├── messaging
+│   │   │   └── events
+│   │   │       └── customer.events.ts
+│   │   └── notifications
+│   │       ├── config
+│   │       │   └── notification.config.ts
+│   │       ├── database
+│   │       │   └── mongoose
+│   │       │       ├── notification.schema.ts
+│   │       │       └── repositories
+│   │       │           └── notification.repository.impl.ts
+│   │       ├── providers
+│   │       │   ├── email
+│   │       │   │   └── email.provider.ts
+│   │       │   ├── email.provider.ts
+│   │       │   ├── push
+│   │       │   │   └── push.provider.ts
+│   │       │   ├── push.provider.ts
+│   │       │   ├── sms
+│   │       │   │   └── sms.provider.ts
+│   │       │   ├── sms.provider.ts
+│   │       │   └── whatsapp
+│   │       │       ├── waba.provider.ts
+│   │       │       └── web.provider.ts
+│   │       └── queue
+│   │           ├── bull
+│   │           │   ├── notification.module.ts
+│   │           │   ├── notification.processor.ts
+│   │           │   └── notification.queue.ts
+│   │           └── notification-queue.interface.ts
+│   ├── interfaces
+│   │   ├── menu
+│   │   │   ├── menu.controller.ts
+│   │   │   └── menu.gateway.ts
+│   │   ├── notifications
+│   │   │   ├── notifications.controller.ts
+│   │   │   ├── notifications.gateway.ts
+│   │   │   └── notifications.module.ts
+│   │   └── orders
+│   │       ├── orders.controller.ts
+│   │       ├── orders.gateway.ts
+│   │       └── orders.module.ts
+│   ├── main.ts
+│   ├── modules
+│   │   └── restaurants
+│   │       ├── dto
+│   │       │   ├── create-restaurant.dto.ts
+│   │       │   └── update-restaurant.dto.ts
+│   │       ├── restaurants.controller.ts
+│   │       ├── restaurants.module.ts
+│   │       ├── restaurants.service.ts
+│   │       └── schemas
+│   │           ├── restaurant.schema.ts
+│   │           └── restaurant-settings.schema.ts
+│   ├── shared
+│   │   ├── constants
+│   │   │   └── notification.constants.ts
+│   │   ├── types
+│   │   │   └── notification.types.ts
+│   │   └── utils
+│   │       └── format-message.util.ts
+│   └── types
+│       └── change-case-object.d.ts
+├── structure.txt
+├── test
+│   ├── app.e2e-spec.ts
+│   └── jest-e2e.json
+├── tsconfig.build.json
+├── tsconfig.build.tsbuildinfo
+├── tsconfig.json
+└── tsconfig.tsbuildinfo
+
+117 directories, 249 files

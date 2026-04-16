@@ -1,5 +1,7 @@
 // FILE: src/domains/sessions/repositories/session.repository.ts
 
+// FILE: src/domains/sessions/repositories/session.repository.ts
+
 import { Injectable } from '@nestjs/common';
 import { SessionEntity } from '../entities/session.entity';
 import { v4 as uuidv4 } from 'uuid';

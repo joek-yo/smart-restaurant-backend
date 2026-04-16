@@ -1,0 +1,107 @@
+{
+  "info": {
+    "name": "Sessions CLI Tests (Stateful)",
+    "_postman_id": "sessions-cli-tests-002",
+    "description": "Stateful CLI testing for Sessions module",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "USER_ID",
+      "value": "user001"
+    }
+  ],
+
+  "item": [
+
+    {
+      "name": "1 Add To Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/cart",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "cart"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 2,\n  \"price\": 250\n}"
+        }
+      }
+    },
+
+    {
+      "name": "2 Get Session",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{BASE_URL}}/sessions?userId={{USER_ID}}",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "{{USER_ID}}"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "name": "3 Update Quantity",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/cart/quantity",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "cart", "quantity"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 3\n}"
+        }
+      }
+    },
+
+    {
+      "name": "4 Checkout Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/checkout",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "checkout"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user001\"\n}"
+        }
+      }
+    }
+
+  ]
+}

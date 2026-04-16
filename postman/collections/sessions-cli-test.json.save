@@ -1,0 +1,129 @@
+{
+  "info": {
+    "name": "Sessions CLI Tests",
+    "_postman_id": "sessions-cli-tests-001",
+    "description": "CLI testing for Sessions module",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "USER_ID",
+      "value": "user001"
+    }
+  ],
+
+  "item": [
+
+    {
+      "name": "Get Session",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{BASE_URL}}/sessions?userId={{USER_ID}}",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "{{USER_ID}}"
+            }
+          ]
+        }
+      }
+    },
+
+    {
+      "name": "Add To Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/cart",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "cart"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 2,\n  \"price\": 250\n}"
+        }
+      }
+    },
+
+    {
+      "name": "Update Quantity",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/cart/quantity",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "cart", "quantity"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 3\n}"
+        }
+      }
+    },
+
+    {
+      "name": "Remove From Cart",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/cart/remove",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "cart", "remove"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\"\n}"
+        }
+      }
+    },
+
+    {
+      "name": "Checkout Session",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/checkout",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "checkout"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": \"user001\"\n}"
+        }
+      }
+    }
+
+  ]
+}

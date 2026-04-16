@@ -1,5 +1,7 @@
 // FILE: src/domains/sessions/sessions.controller.ts
 
+// FILE: src/domains/sessions/sessions.controller.ts
+
 import { Controller, Get, Post, Body } from '@nestjs/common';
 
 import { AddToCartUseCase } from './use-cases/add-to-cart.use-case';

@@ -39,110 +39,80 @@ export class SessionEntity extends BaseEntity {
     this.expiresAt = partial.expiresAt;
   }
 
-  // =========================
-  // CART OPERATIONS
-  // =========================
+  // ==================================================
+  // CORE RULE: MUTATION IS ALLOWED INSIDE ENTITY
+  // (We STOP cloning to avoid identity corruption)
+  // ==================================================
 
-  addItem(item: CartItemEntity): SessionEntity {
-    let found = false;
+  addItem(item: CartItemEntity): void {
+    const existing = this.items.find(
+      (i) => i.productId === item.productId,
+    );
 
-    const items = this.items.map((i) => {
-      if (i.productId === item.productId) {
-        found = true;
-
-        return new CartItemEntity({
-          ...i,
-          quantity: i.quantity + item.quantity,
-        });
-      }
-
-      return i;
-    });
-
-    if (!found) {
-      items.push(item);
+    if (existing) {
+      existing.quantity += item.quantity;
+    } else {
+      this.items.push(new CartItemEntity(item));
     }
 
-    return this.clone({
-      items,
-      state: new SessionStateVO(SessionState.CART_UPDATED),
-    });
+    this.state = new SessionStateVO(SessionState.CART_UPDATED);
   }
 
-  removeItem(productId: string): SessionEntity {
-    const items = this.items.filter(
+  removeItem(productId: string): void {
+    this.items = this.items.filter(
       (i) => i.productId !== productId,
     );
 
-    return this.clone({
-      items,
-      state: new SessionStateVO(
-        items.length
-          ? SessionState.CART_UPDATED
-          : SessionState.BROWSING_MENU,
-      ),
-    });
+    this.state = new SessionStateVO(
+      this.items.length
+        ? SessionState.CART_UPDATED
+        : SessionState.BROWSING_MENU,
+    );
   }
 
-  updateQuantity(productId: string, quantity: number): SessionEntity {
-    const exists = this.items.find(
+  updateQuantity(productId: string, quantity: number): void {
+    const item = this.items.find(
       (i) => i.productId === productId,
     );
 
-    if (!exists) throw new Error('Item not found');
+    if (!item) {
+      throw new Error(`Item not found: ${productId}`);
+    }
 
-    const items = this.items.map((i) => {
-      if (i.productId === productId) {
-        return new CartItemEntity({
-          ...i,
-          quantity,
-        });
-      }
+    item.quantity = quantity;
 
-      return i;
-    });
-
-    return this.clone({
-      items,
-      state: new SessionStateVO(SessionState.CART_UPDATED),
-    });
+    this.state = new SessionStateVO(SessionState.CART_UPDATED);
   }
 
-  // =========================
+  // ==================================================
   // SESSION ACTIONS
-  // =========================
+  // ==================================================
 
-  applyDiscount(discount: DiscountVO): SessionEntity {
-    return this.clone({ discount });
+  applyDiscount(discount: DiscountVO): void {
+    this.discount = discount;
   }
 
-  reset(): SessionEntity {
-    return this.clone({
-      items: [],
-      discount: undefined,
-      state: new SessionStateVO(SessionState.BROWSING_MENU),
-    });
+  reset(): void {
+    this.items = [];
+    this.discount = undefined;
+    this.state = new SessionStateVO(SessionState.BROWSING_MENU);
   }
 
-  checkout(): SessionEntity {
+  checkout(): void {
     if (this.items.length === 0) {
       throw new Error('Cart is empty');
     }
 
-    return this.clone({
-      state: new SessionStateVO(SessionState.CHECKOUT),
-    });
+    this.state = new SessionStateVO(SessionState.CHECKOUT);
   }
 
-  expire(): SessionEntity {
-    return this.clone({
-      state: new SessionStateVO(SessionState.EXPIRED),
-    });
+  expire(): void {
+    this.state = new SessionStateVO(SessionState.EXPIRED);
   }
 
-  // =========================
+  // ==================================================
   // DERIVED VALUE
-  // =========================
+  // ==================================================
 
   get totalAmount(): number {
     const subtotal = this.items.reduce(
@@ -155,14 +125,19 @@ export class SessionEntity extends BaseEntity {
       : subtotal;
   }
 
-  // =========================
-  // INTERNAL CLONE
-  // =========================
-
-  private clone(partial: Partial<SessionEntity>): SessionEntity {
+  // ==================================================
+  // SNAPSHOT (IMPORTANT FOR REPOSITORY)
+  // ==================================================
+  toSnapshot(): SessionEntity {
     return new SessionEntity({
-      ...this,
-      ...partial,
+      id: this.id,
+      businessId: this.businessId,
+      branchId: this.branchId,
+      userId: this.userId,
+      state: this.state,
+      items: this.items,
+      discount: this.discount,
+      expiresAt: this.expiresAt,
     });
   }
 }

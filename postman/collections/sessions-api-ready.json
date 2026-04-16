@@ -1,13 +1,26 @@
 {
   "info": {
-    "name": "Sessions API Collection",
-    "_postman_id": "sessions-api-collection-001",
-    "description": "Automated tests for Sessions module (multi-business, multi-branch)",
+    "name": "Sessions CLI Tests (Stateful)",
+    "_postman_id": "sessions-cli-tests-002",
+    "description": "Stateful CLI testing for Sessions module",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "item": [
+
+  "variable": [
     {
-      "name": "Add to Cart",
+      "key": "BASE_URL",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "USER_ID",
+      "value": "user001"
+    }
+  ],
+
+  "item": [
+
+    {
+      "name": "1️⃣ Add To Cart (Creates Session)",
       "request": {
         "method": "POST",
         "header": [
@@ -17,89 +30,78 @@
           }
         ],
         "url": {
-          "raw": "{{BASE_URL}}/sessions/add",
+          "raw": "{{BASE_URL}}/sessions/cart",
           "host": ["{{BASE_URL}}"],
-          "path": ["sessions","add"]
+          "path": ["sessions", "cart"]
         },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 2\n}"
+          "raw": "{\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 2,\n  \"price\": 250\n}"
         }
-      },
-      "response": []
+      }
     },
+
     {
-      "name": "Get Session by Phone",
+      "name": "2️⃣ Get Session (Verify Cart)",
       "request": {
         "method": "GET",
-        "header": [],
         "url": {
-          "raw": "{{BASE_URL}}/sessions/{{PHONE}}",
+          "raw": "{{BASE_URL}}/sessions?userId={{USER_ID}}",
           "host": ["{{BASE_URL}}"],
-          "path": ["sessions","{{PHONE}}"]
+          "path": ["sessions"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "{{USER_ID}}"
+            }
+          ]
         }
-      },
-      "response": []
+      }
     },
+
     {
-      "name": "Update Quantity",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "url": { "raw": "{{BASE_URL}}/sessions/quantity", "host": ["{{BASE_URL}}"], "path": ["sessions","quantity"] },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 3\n}"
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Remove from Cart",
-      "request": {
-        "method": "DELETE",
-        "header": [
-          { "key": "Content-Type", "value": "application/json" }
-        ],
-        "url": { "raw": "{{BASE_URL}}/sessions/remove", "host": ["{{BASE_URL}}"], "path": ["sessions","remove"] },
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\"\n}"
-        }
-      },
-      "response": []
-    },
-    {
-      "name": "Checkout Session",
+      "name": "3️⃣ Update Quantity (Now Exists)",
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Content-Type", "value": "application/json" }
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        "url": { "raw": "{{BASE_URL}}/sessions/checkout", "host": ["{{BASE_URL}}"], "path": ["sessions","checkout"] },
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/cart/quantity",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "cart", "quantity"]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\",\n  \"paymentMethod\": \"card\"\n}"
+          "raw": "{\n  \"userId\": \"user001\",\n  \"productId\": \"prod001\",\n  \"quantity\": 3\n}"
         }
-      },
-      "response": []
+      }
     },
+
     {
-      "name": "Reset Session",
+      "name": "4️⃣ Checkout Session",
       "request": {
         "method": "POST",
         "header": [
-          { "key": "Content-Type", "value": "application/json" }
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
         ],
-        "url": { "raw": "{{BASE_URL}}/sessions/reset", "host": ["{{BASE_URL}}"], "path": ["sessions","reset"] },
+        "url": {
+          "raw": "{{BASE_URL}}/sessions/checkout",
+          "host": ["{{BASE_URL}}"],
+          "path": ["sessions", "checkout"]
+        },
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"businessId\": \"biz123\",\n  \"branchId\": \"branch001\",\n  \"userId\": \"user001\"\n}"
+          "raw": "{\n  \"userId\": \"user001\"\n}"
         }
-      },
-      "response": []
+      }
     }
+
   ]
 }

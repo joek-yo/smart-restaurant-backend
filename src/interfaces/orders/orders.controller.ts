@@ -1,12 +1,10 @@
 // src/interfaces/orders/orders.controller.ts
 
-import { Body, Controller, Patch, Post, Param, Inject, NotFoundException, forwardRef } from '@nestjs/common';
+import { Body, Controller, Patch, Post, Param, Inject, forwardRef } from '@nestjs/common';
 import { CreateOrderDto } from '../../domains/orders/dto/create-order.dto';
 import { UpdateOrderStatusDto } from '../../domains/orders/dto/update-order-status.dto';
-import { OrderRepository } from '../../domains/orders/repositories/order.repository';
-
-// Use relative path for precision
 import { CreateOrderUseCase } from '../../application/orders/use-cases/create-order.usecase';
+import { UpdateOrderStatusUseCase } from '../../application/orders/use-cases/update-order-status.usecase';
 
 @Controller('orders')
 export class OrdersController {
@@ -14,8 +12,8 @@ export class OrdersController {
     @Inject(forwardRef(() => CreateOrderUseCase))
     private readonly createOrderUseCase: CreateOrderUseCase,
     
-    @Inject('OrderRepository') 
-    private readonly orderRepo: OrderRepository,
+    // Inject the Use Case instead of calling the Repo directly
+    private readonly updateOrderStatusUseCase: UpdateOrderStatusUseCase,
   ) {}
 
   /** POST /orders — create new order */
@@ -31,13 +29,16 @@ export class OrdersController {
     @Param('id') orderId: string,
     @Body() dto: UpdateOrderStatusDto,
   ) {
-    const order = await this.orderRepo.findById(orderId);
-    if (!order) throw new NotFoundException('Order not found');
+    // 🚀 CLEAN ARCHITECTURE: Delegate finding, updating, and event publishing
+    // The Use Case now handles the repo.update(orderId, order) call internally.
+    const order = await this.updateOrderStatusUseCase.execute(
+      orderId,
+      dto.status,
+    );
 
-    const previousStatus = order.status;
-    order.updateStatus(dto.status);
-    await this.orderRepo.update(orderId, order);
-
-    return { orderId, previousStatus, newStatus: dto.status };
+    return {
+      orderId: order.id,
+      newStatus: order.status,
+    };
   }
 }

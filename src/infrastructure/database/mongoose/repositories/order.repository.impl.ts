@@ -45,36 +45,61 @@ export class OrderRepositoryImpl implements OrderRepository {
   }
 
   async findById(id: string): Promise<Order | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
     const doc = await this.orderModel.findById(id).exec();
     return doc ? this.toDomain(doc) : null;
   }
 
-  // ✅ ADD THIS METHOD
   async update(id: string, partial: Partial<Order>): Promise<Order> {
+    const updateData: any = { ...partial };
+
+    // Clean up ObjectIds for partial updates
+    if (partial.businessId) updateData.businessId = new Types.ObjectId(partial.businessId);
+    if (partial.branchId) updateData.branchId = new Types.ObjectId(partial.branchId);
+    if (partial.customerId) updateData.customerId = new Types.ObjectId(partial.customerId);
+    if (partial.items) {
+      updateData.items = partial.items.map(i => ({
+        ...i,
+        productId: new Types.ObjectId(i.productId),
+      }));
+    }
+
     const updated = await this.orderModel.findByIdAndUpdate(
       id,
-      {
-        ...partial,
-        businessId: partial.businessId
-          ? new Types.ObjectId(partial.businessId)
-          : undefined,
-        branchId: partial.branchId
-          ? new Types.ObjectId(partial.branchId)
-          : undefined,
-        customerId: partial.customerId
-          ? new Types.ObjectId(partial.customerId)
-          : undefined,
-        items: partial.items?.map(i => ({
-          ...i,
-          productId: new Types.ObjectId(i.productId),
-        })),
-      },
+      { $set: updateData }, // Use $set for surgical partial updates
       { new: true },
-    );
+    ).exec();
 
-    if (!updated) throw new Error('Order not found');
+    if (!updated) throw new Error(`Order ${id} not found for update`);
 
     return this.toDomain(updated);
+  }
+
+  // ✅ NEW: Satisfies interface contract
+  async delete(id: string): Promise<void> {
+    await this.orderModel.findByIdAndDelete(id).exec();
+  }
+
+  // ✅ NEW: Satisfies interface contract
+  async findByBusinessId(businessId: string): Promise<Order[]> {
+    const docs = await this.orderModel.find({ 
+      businessId: new Types.ObjectId(businessId) 
+    }).exec();
+    return docs.map(doc => this.toDomain(doc));
+  }
+
+  // ✅ NEW: Satisfies interface contract
+  async findByUserId(userId: string): Promise<Order[]> {
+    const docs = await this.orderModel.find({ 
+      customerId: new Types.ObjectId(userId) 
+    }).exec();
+    return docs.map(doc => this.toDomain(doc));
+  }
+
+  // ✅ NEW: Satisfies optional status query
+  async findByStatus(status: string): Promise<Order[]> {
+    const docs = await this.orderModel.find({ status }).exec();
+    return docs.map(doc => this.toDomain(doc));
   }
 
   private toDomain(doc: any): Order {
@@ -85,7 +110,7 @@ export class OrderRepositoryImpl implements OrderRepository {
       customerId: doc.customerId?.toString(),
       customerName: doc.customerName,
       customerPhone: doc.customerPhone,
-      items: doc.items.map((i: any) => ({
+      items: (doc.items || []).map((i: any) => ({
         productId: i.productId.toString(),
         name: i.name,
         price: i.price,
