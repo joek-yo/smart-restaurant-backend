@@ -2,16 +2,16 @@
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types, Document } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 import { OrderRepository } from '../../../../domains/orders/repositories/order.repository';
 import { Order } from '../../../../domains/orders/entities/order.entity';
-import { Order as OrderSchema, OrderDocument as RawOrderDocument } from '../../../../domains/orders/schemas/order.schema';
+import {
+  Order as OrderSchema,
+  OrderDocument as RawOrderDocument,
+} from '../../../../domains/orders/schemas/order.schema';
 
-export type OrderDocument = RawOrderDocument & Document & {
-  createdAt: Date;
-  updatedAt: Date;
-};
+type OrderDocument = RawOrderDocument;
 
 @Injectable()
 export class OrderRepositoryImpl implements OrderRepository {
@@ -20,6 +20,9 @@ export class OrderRepositoryImpl implements OrderRepository {
     private readonly orderModel: Model<OrderDocument>,
   ) {}
 
+  // =========================
+  // CREATE
+  // =========================
   async create(order: Order): Promise<Order> {
     const created = await this.orderModel.create({
       businessId: new Types.ObjectId(order.businessId),
@@ -44,64 +47,97 @@ export class OrderRepositoryImpl implements OrderRepository {
     return this.toDomain(created);
   }
 
+  // =========================
+  // READ
+  // =========================
   async findById(id: string): Promise<Order | null> {
     if (!Types.ObjectId.isValid(id)) return null;
+
     const doc = await this.orderModel.findById(id).exec();
     return doc ? this.toDomain(doc) : null;
   }
 
-  async update(id: string, partial: Partial<Order>): Promise<Order> {
-    const updateData: any = { ...partial };
+  async findByBusinessId(businessId: string): Promise<Order[]> {
+    const docs = await this.orderModel
+      .find({
+        businessId: new Types.ObjectId(businessId),
+      })
+      .exec();
 
-    // Clean up ObjectIds for partial updates
-    if (partial.businessId) updateData.businessId = new Types.ObjectId(partial.businessId);
-    if (partial.branchId) updateData.branchId = new Types.ObjectId(partial.branchId);
-    if (partial.customerId) updateData.customerId = new Types.ObjectId(partial.customerId);
+    return docs.map(doc => this.toDomain(doc));
+  }
+
+  // =========================
+  // UPDATE
+  // =========================
+  async update(id: string, partial: Partial<Order>): Promise<Order> {
+    if (!Types.ObjectId.isValid(id)) {
+      throw new Error(`Invalid order ID: ${id}`);
+    }
+
+    const updateData: Record<string, any> = {};
+
+    if (partial.businessId)
+      updateData.businessId = new Types.ObjectId(partial.businessId);
+
+    if (partial.branchId)
+      updateData.branchId = new Types.ObjectId(partial.branchId);
+
+    if (partial.customerId)
+      updateData.customerId = new Types.ObjectId(partial.customerId);
+
+    if (partial.customerName)
+      updateData.customerName = partial.customerName;
+
+    if (partial.customerPhone)
+      updateData.customerPhone = partial.customerPhone;
+
+    if (partial.notes)
+      updateData.notes = partial.notes;
+
+    if (partial.source)
+      updateData.source = partial.source;
+
+    if (partial.status)
+      updateData.status = partial.status;
+
     if (partial.items) {
       updateData.items = partial.items.map(i => ({
-        ...i,
         productId: new Types.ObjectId(i.productId),
+        name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+        total: i.total,
       }));
     }
 
-    const updated = await this.orderModel.findByIdAndUpdate(
-      id,
-      { $set: updateData }, // Use $set for surgical partial updates
-      { new: true },
-    ).exec();
+    const updated = await this.orderModel
+      .findByIdAndUpdate(
+        id,
+        { $set: updateData },
+        {
+          returnDocument: 'after', // ✅ replaces deprecated { new: true }
+        },
+      )
+      .exec();
 
-    if (!updated) throw new Error(`Order ${id} not found for update`);
+    if (!updated) {
+      throw new Error(`Order ${id} not found for update`);
+    }
 
     return this.toDomain(updated);
   }
 
-  // ✅ NEW: Satisfies interface contract
+  // =========================
+  // DELETE
+  // =========================
   async delete(id: string): Promise<void> {
     await this.orderModel.findByIdAndDelete(id).exec();
   }
 
-  // ✅ NEW: Satisfies interface contract
-  async findByBusinessId(businessId: string): Promise<Order[]> {
-    const docs = await this.orderModel.find({ 
-      businessId: new Types.ObjectId(businessId) 
-    }).exec();
-    return docs.map(doc => this.toDomain(doc));
-  }
-
-  // ✅ NEW: Satisfies interface contract
-  async findByUserId(userId: string): Promise<Order[]> {
-    const docs = await this.orderModel.find({ 
-      customerId: new Types.ObjectId(userId) 
-    }).exec();
-    return docs.map(doc => this.toDomain(doc));
-  }
-
-  // ✅ NEW: Satisfies optional status query
-  async findByStatus(status: string): Promise<Order[]> {
-    const docs = await this.orderModel.find({ status }).exec();
-    return docs.map(doc => this.toDomain(doc));
-  }
-
+  // =========================
+  // DOMAIN MAPPING
+  // =========================
   private toDomain(doc: any): Order {
     return new Order({
       id: doc._id.toString(),

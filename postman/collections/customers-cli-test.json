@@ -1,0 +1,74 @@
+{
+  "info": {
+    "name": "Customer CLI Tests (Stateful)",
+    "_postman_id": "customer-engine-test",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1 Create Customer",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "http://localhost:5000/customers",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessId\": \"biz_001\",\n  \"phone\": \"+254712345678\",\n  \"name\": \"John Doe\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2 Get By Phone",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:5000/customers/phone/+254712345678?businessId=biz_001"
+      }
+    },
+    {
+      "name": "3 Duplicate Create (Should NOT duplicate)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "http://localhost:5000/customers",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"businessId\": \"biz_001\",\n  \"phone\": \"+254712345678\",\n  \"name\": \"John Doe\"\n}"
+        }
+      }
+    },
+    {
+      "name": "4 Get Customer By ID",
+      "request": {
+        "method": "GET",
+        "url": "http://localhost:5000/customers/{{customerId}}"
+      }
+    },
+    {
+      "name": "5 Update Customer",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "http://localhost:5000/customers/{{customerId}}",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Name\",\n  \"tags\": [\"vip\"]\n}"
+        }
+      }
+    }
+  ]
+}

@@ -3,26 +3,28 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { AbandonedCartTriggeredEvent } from '../events/abandoned-cart-triggered.event';
-import { NotificationRepository } from '../../notifications/repositories/notification.repository';
-import { Notification, NotificationStatusEnum } from '../../notifications/entities/notification.entity';
 import { AnalyticsAdapter } from '../adapters/analytics.adapter';
+import { EventBus } from '../../../common/events/event-bus';
+import { NotificationCreatedEvent } from '../../notifications/events/notification-created.event';
+import { Notification } from '../../notifications/entities/notification.entity';
+import { NotificationStatusEnum } from '../../notifications/enums/notification-status.enum';
 
 @Injectable()
 export class AbandonedCartHandler {
   private readonly logger = new Logger(AbandonedCartHandler.name);
 
   constructor(
-    private readonly notificationRepo: NotificationRepository,
     private readonly analyticsAdapter: AnalyticsAdapter,
+    private readonly eventBus: EventBus,
   ) {}
 
   @OnEvent('session.abandoned', { async: true })
   async handle(event: AbandonedCartTriggeredEvent) {
     try {
-      // 1️⃣ Send abandoned cart notification
+      // 1️⃣ Create notification (NO repository access)
       const notification = new Notification({
         type: 'ABANDONED_CART',
-        channel: 'EMAIL', // could be dynamic or user preference
+        channel: 'EMAIL',
         recipient: event.userId,
         payload: {
           sessionId: event.sessionId,
@@ -31,9 +33,10 @@ export class AbandonedCartHandler {
         status: NotificationStatusEnum.PENDING,
       });
 
-      await this.notificationRepo.save(notification);
+      // 2️⃣ Publish event instead of saving directly
+      this.eventBus.publish(new NotificationCreatedEvent(notification));
 
-      // 2️⃣ Track analytics event
+      // 3️⃣ Analytics stays here (allowed)
       await this.analyticsAdapter.track('abandoned_cart', {
         sessionId: event.sessionId,
         userId: event.userId,
@@ -41,7 +44,7 @@ export class AbandonedCartHandler {
         timestamp: event.timestamp,
       });
 
-      this.logger.log(`Abandoned cart triggered for session ${event.sessionId}`);
+      this.logger.log(`Abandoned cart event emitted for session ${event.sessionId}`);
     } catch (err) {
       this.logger.error(
         `Failed to handle AbandonedCartTriggeredEvent for session ${event.sessionId}`,

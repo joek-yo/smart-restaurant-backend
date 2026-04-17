@@ -1,4 +1,5 @@
 // src/domains/orders/entities/order.entity.ts
+
 import { BaseEntity } from '../../../common/base.entity';
 import { OrderStatus } from './order-status.enum';
 
@@ -11,6 +12,7 @@ export interface OrderItem {
 }
 
 export class Order extends BaseEntity {
+
   /** DB-assigned ID (optional) */
   id?: string;
 
@@ -28,35 +30,97 @@ export class Order extends BaseEntity {
   /** Order details */
   items: OrderItem[] = [];
   totalAmount: number = 0;
+
+  /** Default status */
   status: OrderStatus = OrderStatus.PENDING;
+
   queueNumber: number = 0;
 
   constructor(partial?: Partial<Order>) {
     super(partial);
-    if (partial) Object.assign(this, partial);
 
-    // Automatically calculate total on creation
+    if (partial) {
+      Object.assign(this, partial);
+    }
+
+    // Auto-calc totals
     this.calculateTotal();
   }
 
-  /** Calculates the total amount of the order */
+  /** Calculate total */
   calculateTotal(): void {
-    this.totalAmount = this.items?.reduce(
-      (sum, item) => sum + item.total,
-      0,
-    );
+
+    this.totalAmount =
+      this.items?.reduce(
+        (sum, item) => sum + item.total,
+        0,
+      );
+
   }
 
-  /** Updates the order status */
+  /** Safe status transitions */
   updateStatus(newStatus: OrderStatus) {
+
+    const validTransitions: Record<
+      OrderStatus,
+      OrderStatus[]
+    > = {
+
+      [OrderStatus.PENDING]: [
+        OrderStatus.ACCEPTED,
+        OrderStatus.CANCELLED,
+      ],
+
+      [OrderStatus.ACCEPTED]: [
+        OrderStatus.PREPARING,
+        OrderStatus.CANCELLED,
+      ],
+
+      [OrderStatus.PREPARING]: [
+        OrderStatus.READY,
+        OrderStatus.CANCELLED,
+      ],
+
+      [OrderStatus.READY]: [
+        OrderStatus.COMPLETED,
+      ],
+
+      [OrderStatus.COMPLETED]: [],
+
+      [OrderStatus.CANCELLED]: [],
+    };
+
+    const allowed =
+      validTransitions[this.status] || [];
+
+    if (!allowed.includes(newStatus)) {
+
+      throw new Error(
+        `Invalid status transition from ${this.status} to ${newStatus}`,
+      );
+
+    }
+
     this.status = newStatus;
-    this.touch(); // update updatedAt timestamp
+
+    this.touch();
   }
 
-  /** Adds a new item and recalculates total */
+  /** Prevent item edits after acceptance */
   addItem(item: OrderItem) {
+
+    if (this.status !== OrderStatus.PENDING) {
+
+      throw new Error(
+        'Cannot modify items after order acceptance',
+      );
+
+    }
+
     this.items.push(item);
+
     this.calculateTotal();
+
     this.touch();
   }
 }

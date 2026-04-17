@@ -1,11 +1,10 @@
-// src/domains/orders/services/queue-number.service.ts
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CounterDocument } from '../../counters/schemas/counter.schema';
 
 @Injectable()
-export class QueueNumberService {   // ✅ must be exported
+export class QueueNumberService {
   constructor(
     @InjectModel('Counter')
     private readonly counterModel: Model<CounterDocument>,
@@ -21,9 +20,16 @@ export class QueueNumberService {   // ✅ must be exported
       { name: counterKey, lastResetDate: { $gte: today } },
       {
         $inc: { seq: 1 },
-        $setOnInsert: { name: counterKey, lastResetDate: new Date() },
+        $setOnInsert: {
+          name: counterKey,
+          lastResetDate: new Date(),
+        },
       },
-      { new: true, upsert: true, setDefaultsOnInsert: true },
+      {
+        returnDocument: 'after', // ✅ replaces deprecated "new: true"
+        upsert: true,
+        setDefaultsOnInsert: true,
+      },
     );
 
     return counter.seq;
@@ -31,9 +37,15 @@ export class QueueNumberService {   // ✅ must be exported
 
   async resetCounter(businessId: string, branchId?: string): Promise<void> {
     const counterKey = branchId ? `${businessId}_${branchId}` : businessId;
+
     await this.counterModel.updateOne(
       { name: counterKey },
-      { $set: { seq: 0, lastResetDate: new Date() } },
+      {
+        $set: {
+          seq: 0,
+          lastResetDate: new Date(),
+        },
+      },
     );
   }
 }

@@ -1,4 +1,4 @@
-// 📁 src/domains/menu/menu.service.ts
+// 📁 File: src/domains/menu/menu.service.ts
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -18,26 +18,31 @@ import { UpdateProductDto } from './dto/update-product.dto';
 
 import { EventBus } from '../../common/events/event-bus';
 
+// 🟢 DOMAIN EVENTS
+import { CategoryCreatedEvent } from './events/category-created.event';
+import { CategoryUpdatedEvent } from './events/category-updated.event';
+import { CategoryDeletedEvent } from './events/category-deleted.event';
+import { ProductCreatedEvent } from './events/product-created.event';
+import { ProductUpdatedEvent } from './events/product-updated.event';
+import { ProductDeletedEvent } from './events/product-deleted.event';
+import { RestaurantSettingsUpdatedEvent } from './events/restaurant-settings-updated.event';
+
 @Injectable()
 export class MenuService {
   constructor(
     @InjectModel(Category.name)
     private readonly categoryModel: Model<CategoryDocument>,
-
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>,
-
     @InjectModel(RestaurantSettings.name)
     private readonly settingsModel: Model<RestaurantSettingsDocument>,
-
     private readonly eventBus: EventBus,
   ) {}
 
-  // 🔥 helper (central fix)
   private toBusinessFilter(businessId: string) {
     return Types.ObjectId.isValid(businessId)
       ? { businessId: new Types.ObjectId(businessId) }
-      : { businessId }; // fallback for "biz001"
+      : { businessId };
   }
 
   /* =====================================================
@@ -52,7 +57,10 @@ export class MenuService {
         : businessId,
     });
 
-    this.eventBus.emit('category.created', { businessId, category });
+    this.eventBus.publish(
+      new CategoryCreatedEvent(category.toObject(), businessId),
+    );
+
     return category;
   }
 
@@ -65,23 +73,27 @@ export class MenuService {
 
   async updateCategory(id: string, dto: UpdateCategoryDto) {
     const category = await this.categoryModel
-      .findByIdAndUpdate(id, { $set: dto }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { $set: dto },
+        { returnDocument: 'after' }, // ✅ FIX
+      )
       .exec();
 
-    if (category) {
-      this.eventBus.emit('category.updated', { id, dto });
-    }
+    if (!category) return null;
+
+    this.eventBus.publish(
+      new CategoryUpdatedEvent(category.toObject()),
+    );
 
     return category;
   }
 
   async deleteCategory(id: string) {
     const category = await this.categoryModel.findByIdAndDelete(id).exec();
+    if (!category) return null;
 
-    if (category) {
-      this.eventBus.emit('category.deleted', { id });
-    }
-
+    this.eventBus.publish(new CategoryDeletedEvent(id));
     return category;
   }
 
@@ -102,20 +114,15 @@ export class MenuService {
       isOutOfStock: stock === 0,
     });
 
-    this.eventBus.emit('product.created', { businessId, product });
+    this.eventBus.publish(
+      new ProductCreatedEvent(product.toObject(), businessId),
+    );
+
     return product;
   }
 
-  // ✅ FIXED METHOD
   async getProducts(businessId: string) {
-    try {
-      return await this.productModel
-        .find(this.toBusinessFilter(businessId))
-        .exec();
-    } catch (error) {
-      console.error('getProducts error:', error);
-      return [];
-    }
+    return this.productModel.find(this.toBusinessFilter(businessId)).exec();
   }
 
   async getProductsByCategory(categoryId: string) {
@@ -125,57 +132,53 @@ export class MenuService {
   }
 
   async updateProduct(id: string, dto: UpdateProductDto) {
-    const updates: Partial<ProductDocument> = {};
+    const updates: Partial<ProductDocument> = { ...dto } as any;
 
-    if (dto.name !== undefined) updates.name = dto.name;
-    if (dto.price !== undefined) updates.price = dto.price;
-    if (dto.description !== undefined) updates.description = dto.description;
-    if (dto.image !== undefined) updates.image = dto.image;
-    if (dto.isAvailable !== undefined) updates.isAvailable = dto.isAvailable;
-
-    if (dto.categoryId !== undefined)
-      updates.categoryId = new Types.ObjectId(dto.categoryId);
+    if (dto.categoryId) {
+      updates.categoryId = new Types.ObjectId(dto.categoryId) as any;
+    }
 
     if (dto.stock !== undefined) {
-      updates.stock = dto.stock;
       updates.isOutOfStock = dto.stock === 0;
     }
 
     const product = await this.productModel
-      .findByIdAndUpdate(id, { $set: updates }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { $set: updates },
+        { returnDocument: 'after' }, // ✅ FIX
+      )
       .exec();
 
-    if (product) {
-      this.eventBus.emit('product.updated', { id, dto: updates });
-    }
+    if (!product) return null;
+
+    this.eventBus.publish(
+      new ProductUpdatedEvent(product.toObject(), id),
+    );
 
     return product;
   }
 
   async deleteProduct(id: string) {
     const product = await this.productModel.findByIdAndDelete(id).exec();
+    if (!product) return null;
 
-    if (product) {
-      this.eventBus.emit('product.deleted', { id });
-    }
-
+    this.eventBus.publish(new ProductDeletedEvent(id));
     return product;
   }
 
   /* =====================================================
-     RESTAURANT SETTINGS METHODS
+     SETTINGS METHODS
   ===================================================== */
 
-  async getRestaurantSettings(
-    businessId: string,
-  ): Promise<RestaurantSettingsDocument | null> {
+  async getRestaurantSettings(businessId: string) {
     return this.settingsModel.findOne(this.toBusinessFilter(businessId));
   }
 
   async upsertRestaurantSettings(
     businessId: string,
     data: Partial<RestaurantSettings>,
-  ): Promise<RestaurantSettingsDocument> {
+  ) {
     const settings = await this.settingsModel.findOneAndUpdate(
       this.toBusinessFilter(businessId),
       {
@@ -186,13 +189,17 @@ export class MenuService {
             : businessId,
         },
       },
-      { new: true, upsert: true },
+      {
+        returnDocument: 'after', // ✅ FIX
+        upsert: true,
+      },
     );
 
-    this.eventBus.emit('restaurant.settings.updated', {
-      businessId,
-      settings,
-    });
+    if (!settings) return null;
+
+    this.eventBus.publish(
+      new RestaurantSettingsUpdatedEvent(settings.toObject(), businessId),
+    );
 
     return settings;
   }

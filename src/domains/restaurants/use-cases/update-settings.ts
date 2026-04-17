@@ -28,7 +28,11 @@ export class UpdateSettingsUseCase {
           businessId: new Types.ObjectId(businessId),
         },
       },
-      { new: true, upsert: true },
+      {
+        returnDocument: 'after', // ✅ replaces deprecated { new: true }
+        upsert: true,
+      },
     );
   }
+}
 }

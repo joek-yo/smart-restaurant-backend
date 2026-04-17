@@ -11,8 +11,7 @@ export class OrdersController {
   constructor(
     @Inject(forwardRef(() => CreateOrderUseCase))
     private readonly createOrderUseCase: CreateOrderUseCase,
-    
-    // Inject the Use Case instead of calling the Repo directly
+
     private readonly updateOrderStatusUseCase: UpdateOrderStatusUseCase,
   ) {}
 
@@ -29,16 +28,10 @@ export class OrdersController {
     @Param('id') orderId: string,
     @Body() dto: UpdateOrderStatusDto,
   ) {
-    // 🚀 CLEAN ARCHITECTURE: Delegate finding, updating, and event publishing
-    // The Use Case now handles the repo.update(orderId, order) call internally.
-    const order = await this.updateOrderStatusUseCase.execute(
+    // Controller delegates everything to the use-case
+    return this.updateOrderStatusUseCase.execute(
       orderId,
       dto.status,
     );
-
-    return {
-      orderId: order.id,
-      newStatus: order.status,
-    };
   }
 }

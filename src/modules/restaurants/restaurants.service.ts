@@ -9,7 +9,7 @@ import { UpdateRestaurantDto } from './dto/update-restaurant.dto';
 export class RestaurantsService {
   constructor(
     @InjectModel(Restaurant.name)
-    private restaurantModel: Model<RestaurantDocument>,
+    private readonly restaurantModel: Model<RestaurantDocument>,
   ) {}
 
   async create(createRestaurantDto: CreateRestaurantDto): Promise<Restaurant> {
@@ -36,7 +36,13 @@ export class RestaurantsService {
     updateRestaurantDto: UpdateRestaurantDto,
   ): Promise<Restaurant> {
     const restaurant = await this.restaurantModel
-      .findByIdAndUpdate(id, updateRestaurantDto, { new: true })
+      .findByIdAndUpdate(
+        id,
+        updateRestaurantDto,
+        {
+          returnDocument: 'after', // ✅ replaces deprecated { new: true }
+        },
+      )
       .exec();
 
     if (!restaurant) {

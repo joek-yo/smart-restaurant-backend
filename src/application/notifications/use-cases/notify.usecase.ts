@@ -5,6 +5,7 @@ import { NotificationFactoryService } from '../../../domains/notifications/servi
 import { NotificationQueueService } from '../../../domains/notifications/services/notification-queue.service';
 import { MessagePayloadVO } from '../../../domains/notifications/value-objects/message-payload.vo';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
+import { EventBus } from '../../../common/events/event-bus';
 
 @Injectable()
 export class NotifyUseCase {
@@ -13,18 +14,20 @@ export class NotifyUseCase {
   constructor(
     private readonly factory: NotificationFactoryService,
     private readonly queue: NotificationQueueService,
+    private readonly eventBus: EventBus,
   ) {}
 
   /**
-   * Map CreateNotificationDto → internal structure
+   * ⚠️ PASS 2 CHANGE:
+   * This no longer processes notifications directly.
+   *
+   * It ONLY emits an event.
    */
   async execute(dto: CreateNotificationDto): Promise<void> {
-    // TODO: replace with real businessId logic
+    this.logger.log(`Emitting notification.created event`);
+
     const businessId = 'example-business-id';
 
-    this.logger.log(`Mapping DTO for recipient ${dto.recipient}`);
-
-    // 1️⃣ Build internal payload VO
     const payloadVO = MessagePayloadVO.create({
       message: dto.message ?? '',
       title: dto.title,
@@ -32,7 +35,6 @@ export class NotifyUseCase {
       templateParams: dto.templateParams,
     });
 
-    // 2️⃣ Create notification entity via factory
     const notification = this.factory.create({
       businessId,
       recipient: dto.recipient,
@@ -41,11 +43,12 @@ export class NotifyUseCase {
       payload: payloadVO,
     });
 
-    // 3️⃣ Push to queue for async processing
-    await this.queue.enqueue(notification);
+    // 🚀 PASS 2 CORE CHANGE: EVENT ONLY
+    await this.eventBus.publish({
+      name: 'notification.created',
+      data: notification,
+    } as any);
 
-    this.logger.log(
-      `Notification queued for ${notification.recipient} [${notification.channel}]`,
-    );
+    this.logger.log(`notification.created event emitted`);
   }
 }

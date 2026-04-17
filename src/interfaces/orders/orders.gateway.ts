@@ -8,11 +8,9 @@ import {
 } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 
-// ❌ remove @common alias
-import { EventBus } from '../../common/events/event-bus';
-
-// ❌ remove @domains alias
+// 🟢 DOMAIN EVENTS
 import { OrderCreatedEvent } from '../../domains/orders/events/order-created.event';
 import { OrderStatusUpdatedEvent } from '../../domains/orders/events/order-status-updated.event';
 
@@ -22,26 +20,45 @@ export class OrdersGateway implements OnGatewayInit {
   @WebSocketServer()
   server!: Server;
 
-  constructor(private readonly eventBus: EventBus) {}
-
   afterInit() {
-    // ✅ Subscribe to events
-    this.eventBus.on('OrderCreatedEvent', (event: OrderCreatedEvent) => {
-      this.server.emit('order.created', event.order);
-    });
+    // Gateway initialized safely
+  }
 
-    this.eventBus.on('OrderStatusUpdatedEvent', (event: OrderStatusUpdatedEvent) => {
-      this.server.emit('order.status.updated', {
-        orderId: event.order.id,
-        previousStatus: event.previousStatus,
-        newStatus: event.newStatus,
-      });
+  /* =====================================================
+     DOMAIN EVENT SUBSCRIPTIONS
+  ===================================================== */
+
+  @OnEvent(OrderCreatedEvent.name, { async: true })
+  handleOrderCreated(event: OrderCreatedEvent) {
+    if (!event?.order) return;
+
+    this.server.emit('order.created', {
+      order: event.order,
+      timestamp: new Date().toISOString(),
     });
   }
 
-  /** Example: handle incoming WS message */
+  @OnEvent(OrderStatusUpdatedEvent.name, { async: true })
+  handleOrderStatusUpdated(event: OrderStatusUpdatedEvent) {
+    if (!event) return;
+
+    this.server.emit('order.status.updated', {
+      orderId: event.order.id,
+      previousStatus: event.previousStatus,
+      newStatus: event.newStatus,
+      timestamp: new Date().toISOString(),
+    });
+  }
+
+  /* =====================================================
+     WEBSOCKET INBOUND EVENTS
+  ===================================================== */
+
   @SubscribeMessage('ping')
   handlePing(client: any, payload: any) {
-    client.emit('pong', payload);
+    client.emit('pong', {
+      ...payload,
+      serverTime: Date.now(),
+    });
   }
 }

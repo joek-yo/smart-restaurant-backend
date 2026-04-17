@@ -5,25 +5,34 @@ import { ConfigModule } from '@nestjs/config';
 
 import { DatabaseModule } from './database/database.module';
 
+// 🔥 ADD THIS
+import { MongooseRepositoriesModule } from './infrastructure/database/mongoose/mongoose.repositories.module';
+
 // Modules
 import { RestaurantsModule } from './modules/restaurants/restaurants.module';
 
-// ✅ POINT TO DOMAINS, NOT MODULES
-import { SessionsModule } from './domains/sessions/sessions.module'; 
-
-// ✅ High-end domain modules
+// Domains
+import { SessionsModule } from './domains/sessions/sessions.module';
 import { MenuModule } from './domains/menu/menu.module';
-import { OrdersModule } from './interfaces/orders/orders.module'; 
+import { CustomersModule } from './domains/customers/customers.module';
+
+// Interfaces
+import { OrdersModule } from './interfaces/orders/orders.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     DatabaseModule,
 
+    // 🔥 THIS CONNECTS DOMAIN → INFRASTRUCTURE
+    MongooseRepositoriesModule,
+
     RestaurantsModule,
     MenuModule,
     OrdersModule,
-    SessionsModule, // This now points to the new domain!
+    SessionsModule,
+
+    CustomersModule,
   ],
 })
 export class AppModule {}

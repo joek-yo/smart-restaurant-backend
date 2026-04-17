@@ -2,9 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionRepository } from '../repositories/session.repository';
-import { NotificationRepository } from '../repositories/notification.repository';
 import { SessionEntity } from '../entities/session.entity';
-import { NotificationStatusEnum } from '../enums/notification-status.enum';
 
 @Injectable()
 export class RetryQueue {
@@ -12,12 +10,8 @@ export class RetryQueue {
 
   constructor(
     private readonly sessionRepo: SessionRepository,
-    private readonly notificationRepo: NotificationRepository,
   ) {}
 
-  /**
-   * Retry failed sessions or notifications
-   */
   async processRetry(sessionId?: string): Promise<void> {
     if (sessionId) {
       const session = await this.sessionRepo.findById(sessionId);
@@ -27,8 +21,8 @@ export class RetryQueue {
       return;
     }
 
-    // Retry all sessions in EXPIRED or FAILED state
-    const sessions = await this.sessionRepo.findByStatus('FAILED'); // Use your SessionStatus enum here
+    const sessions = await this.sessionRepo.findByStatus('FAILED');
+
     for (const session of sessions) {
       await this.retrySession(session);
     }
@@ -38,23 +32,16 @@ export class RetryQueue {
     this.logger.log(`Retrying session ${session.id}`);
 
     try {
-      // Example: Re-attempt sending abandoned cart notifications
-      const notifications = await this.notificationRepo.findByStatus(NotificationStatusEnum.FAILED);
-      for (const notif of notifications) {
-        if (notif.canRetry()) {
-          try {
-            // Add your notification sending logic here
-            // e.g., WhatsAppAdapter.send(notif)
-            notif.markSent();
-            await this.notificationRepo.updateStatus(notif.id, NotificationStatusEnum.SENT);
-          } catch (error: any) {
-            notif.markFailed(error.message);
-            await this.notificationRepo.incrementRetries(notif.id);
-          }
-        }
-      }
+      // ONLY session retry logic here
+      // (no notification logic at all anymore)
+
+      session.markRetry(); // if exists in your domain
+      await this.sessionRepo.update(session.id, session);
+
     } catch (error: any) {
-      this.logger.error(`Failed to retry session ${session.id}: ${error.message}`);
+      this.logger.error(
+        `Failed to retry session ${session.id}: ${error.message}`,
+      );
     }
   }
 }

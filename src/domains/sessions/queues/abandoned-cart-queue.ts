@@ -2,31 +2,43 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { SessionEntity } from '../entities/session.entity';
-import { NotificationRepository } from '../repositories/notification.repository';
-import { Notification, NotificationTypeEnum, NotificationChannelEnum } from '../entities/notification.entity';
+import { EventBus } from '../../../common/events/event-bus';
+import { NotificationCreatedEvent } from '../../notifications/events/notification-created.event';
+import { Notification } from '../../notifications/entities/notification.entity';
+import { NotificationStatusEnum } from '../../notifications/enums/notification-status.enum';
 
 @Injectable()
 export class AbandonedCartQueue {
   private readonly logger = new Logger(AbandonedCartQueue.name);
 
-  constructor(private readonly notificationRepo: NotificationRepository) {}
+  constructor(
+    private readonly eventBus: EventBus,
+  ) {}
 
   /**
    * Add a session to the abandoned cart workflow
    */
   async addAbandonedCart(session: SessionEntity): Promise<void> {
-    if (!session.items.length) return; // Nothing to notify
+    if (!session.items.length) return;
 
-    this.logger.log(`Triggering abandoned cart notification for session ${session.id}`);
+    this.logger.log(`Triggering abandoned cart workflow for session ${session.id}`);
 
-    // Example: Create notification for user
-    const notification: Notification = new Notification({
-      type: NotificationTypeEnum.ABANDONED_CART,
-      channel: NotificationChannelEnum.EMAIL, // Can be SMS, WhatsApp, etc.
-      recipient: session.userId, // Assuming userId maps to email/phone externally
-      payload: { sessionId: session.id, items: session.items.map(i => ({ productId: i.productId, quantity: i.quantity })) },
+    // Create notification (no persistence)
+    const notification = new Notification({
+      type: 'ABANDONED_CART',
+      channel: 'EMAIL',
+      recipient: session.userId,
+      payload: {
+        sessionId: session.id,
+        items: session.items.map(i => ({
+          productId: i.productId,
+          quantity: i.quantity,
+        })),
+      },
+      status: NotificationStatusEnum.PENDING,
     });
 
-    await this.notificationRepo.save(notification);
+    // Emit event ONLY
+    this.eventBus.publish(new NotificationCreatedEvent(notification));
   }
 }

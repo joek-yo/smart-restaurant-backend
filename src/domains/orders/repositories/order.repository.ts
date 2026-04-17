@@ -12,17 +12,19 @@ export interface OrderRepository {
   findById(id: string): Promise<Order | null>;
 
   /**
-   * Performs a partial update on an Order.
+   * Standardized partial update contract.
+   * NOTE: Only partial fields should be passed, NOT full entity replacement logic.
    */
-  update(id: string, data: Partial<Order>): Promise<Order>;
+  update(id: string, partial: Partial<Order>): Promise<Order>;
 
-  // Kept for administrative cleanup/tests
   delete(id: string): Promise<void>;
 
   // =========================
-  // QUERY METHODS (STILL MVP RELEVANT)
+  // QUERY METHODS
   // =========================
 
-  // Essential for multi-tenant isolation (seeing "my business" orders)
+  /**
+   * Get all orders for a business (multi-tenant isolation)
+   */
   findByBusinessId(businessId: string): Promise<Order[]>;
 }

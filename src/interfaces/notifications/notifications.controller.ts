@@ -1,20 +1,26 @@
 // src/interfaces/notifications/notifications.controller.ts
 
 import { Controller, Post, Body } from '@nestjs/common';
-import { NotifyUseCase } from '../../application/notifications/use-cases/notify.usecase';
-import { CreateNotificationDto } from '../../application/notifications/dto/create-notification.dto'; // fixed path
+import { CreateNotificationDto } from '../../application/notifications/dto/create-notification.dto';
 
+/**
+ * ⚠️ PASS 2 ARCHITECTURE CHANGE:
+ * This controller is now INTERNAL DEBUG ONLY.
+ * It does NOT execute business logic.
+ *
+ * Real notifications must come from EVENTS.
+ */
 @Controller('notifications')
 export class NotificationsController {
-  constructor(private readonly notifyUseCase: NotifyUseCase) {}
+  constructor() {}
 
-  // Manual trigger for testing
+  // 🧪 Debug endpoint only (no use-case call)
   @Post('send')
   async sendNotification(@Body() dto: CreateNotificationDto) {
-    const result = await this.notifyUseCase.execute(dto);
     return {
-      status: 'ok',
-      result,
+      status: 'disabled_in_event_mode',
+      message: 'Use event system: notification.created',
+      received: dto,
     };
   }
 }

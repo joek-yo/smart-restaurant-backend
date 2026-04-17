@@ -1,7 +1,7 @@
-// src/domains/menu/events/category-updated.event.ts
-
-import { Category } from '../entities/category.entity';
+// 📁 src/domains/menu/events/category-updated.event.ts
 
 export class CategoryUpdatedEvent {
-  constructor(public readonly category: Category) {}
+  constructor(
+    public readonly category: any, // simplified payload (DTO-safe)
+  ) {}
 }
