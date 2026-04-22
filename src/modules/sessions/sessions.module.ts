@@ -1,9 +1,9 @@
-// src/modules/restaurants/restaurants.module.ts
+// src/modules/sessions/sessions.module.ts
 
 import { Module } from '@nestjs/common';
 
 /**
- * RestaurantsModule
+ * SessionsModule
  * Phase 2: empty shell (no dependencies yet)
  */
 @Module({
@@ -12,4 +12,4 @@ import { Module } from '@nestjs/common';
   providers: [],
   exports: [],
 })
-export class RestaurantsModule {}
+export class SessionsModule {}

@@ -1,22 +1,27 @@
-// src/interfaces/orders/orders.controller.ts
+// src/modules/orders/infrastructure/controllers/orders.controller.ts
+
 import { Body, Controller, Patch, Post, Param, Inject, NotFoundException } from '@nestjs/common';
-import { CreateOrderDto } from '@domains/orders/dto/create-order.dto';
-import { UpdateOrderStatusDto } from '@domains/orders/dto/update-order-status.dto';
-import { CreateOrderUseCase } from '@application/orders/use-cases/create-order.usecase';
-import { OrderRepository } from '@domains/orders/repositories/order.repository';
+
+// ✅ Updated to new @modules aliases
+import { CreateOrderDto } from '@modules/orders/application/dto/create-order.dto';
+import { UpdateOrderStatusDto } from '@modules/orders/application/dto/update-order-status.dto';
+import { CreateOrderUseCase } from '@modules/orders/application/use-cases/create-order.usecase';
+import { OrderRepository } from '@modules/orders/domain/repositories/order.repository';
 
 @Controller('orders')
 export class OrdersController {
   constructor(
     private readonly createOrderUseCase: CreateOrderUseCase,
-    @Inject('OrderRepository') private readonly orderRepo: OrderRepository,
+    @Inject('OrderRepository') 
+    private readonly orderRepo: OrderRepository,
   ) {}
 
   /** POST /orders — create new order */
   @Post()
   async create(@Body() dto: CreateOrderDto) {
-    const businessId = 'default'; // replace with session/auth if needed
-    return this.createOrderUseCase.execute(businessId, dto);
+    // Note: Ensure your CreateOrderUseCase.execute matches the signature (dto) 
+    // or (businessId, dto) based on your implementation
+    return this.createOrderUseCase.execute(dto);
   }
 
   /** PATCH /orders/:id/status — update order status */
@@ -29,9 +34,17 @@ export class OrdersController {
     if (!order) throw new NotFoundException('Order not found');
 
     const previousStatus = order.status;
+    
+    // Domain logic remains on the entity
     order.updateStatus(dto.status);
-    await this.orderRepo.update(orderId, order);
+    
+    // Persist via updated repo
+    await this.orderRepo.update(orderId, { status: dto.status });
 
-    return { orderId, previousStatus, newStatus: dto.status };
+    return { 
+      orderId, 
+      previousStatus, 
+      newStatus: dto.status 
+    };
   }
 }

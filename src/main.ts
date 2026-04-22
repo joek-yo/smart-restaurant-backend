@@ -1,8 +1,5 @@
 // FILE: src/main.ts
 
-// 1️⃣ Add this first to enable module-alias for compiled JS
-import 'module-alias/register';
-
 import * as dns from 'node:dns';
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
@@ -14,12 +11,11 @@ import { ConfigService } from '@nestjs/config';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // ✅ FINAL: strict validation (PHASE 7 READY)
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,              // remove unknown fields
-      forbidNonWhitelisted: true,   // ❗ THROW error on unknown fields (important)
-      transform: true,              // auto convert types
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 

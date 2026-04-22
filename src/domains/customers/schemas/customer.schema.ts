@@ -6,6 +6,12 @@ export const CustomerSchema = new Schema(
   {
     _id: { type: String }, // CustomerIdVO value
 
+    businessId: {
+      type: String,
+      required: true,
+      index: true,
+    },
+
     phone: {
       type: String,
       required: true,
@@ -36,8 +42,16 @@ export const CustomerSchema = new Schema(
 // INDEXES (CRITICAL FOR SCALE)
 // -----------------------------
 
-// Ensure global phone lookup is fast
-CustomerSchema.index({ phone: 1 });
+// 🔥 MULTI-TENANT UNIQUE CONSTRAINT
+// Same phone CAN exist in different businesses
+// But NOT duplicated inside one business
+CustomerSchema.index(
+  { phone: 1, businessId: 1 },
+  { unique: true }
+);
 
-// Prevent duplicate customer identity issues
-CustomerSchema.index({ _id: 1 });
+// Optional: fast lookup per business
+CustomerSchema.index({ businessId: 1 });
+
+// Optional: global phone lookup (if needed)
+CustomerSchema.index({ phone: 1 });
