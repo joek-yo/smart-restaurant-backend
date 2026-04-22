@@ -3,6 +3,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
+// 🔥 CORE EVENT SYSTEM IMPORT
+import { CoreEventModule } from '../../core/events/core-event.module';
+
 // Presentation
 import { BusinessController } from './presentation/business.controller';
 
@@ -12,23 +15,29 @@ import { CreateBusinessUseCase } from './application/use-cases/create-business.u
 import { GetSettingsUseCase } from './application/use-cases/get-settings.usecase';
 import { UpdateSettingsUseCase } from './application/use-cases/update-settings.usecase';
 
-// Infrastructure (Using the final 'Business' naming)
+// Infrastructure
 import { Business, BusinessSchema } from './infrastructure/schemas/business.schema';
-import { 
-  BusinessSettings, 
-  BusinessSettingsSchema 
+import {
+  BusinessSettings,
+  BusinessSettingsSchema,
 } from './infrastructure/schemas/business-settings.schema';
+
+// Listeners
+import { BusinessCreatedListener } from './application/listeners/business-created.listener';
 
 @Module({
   imports: [
+    // ✅ ADDED: Explicitly import the Event System
+    CoreEventModule, 
+
     MongooseModule.forFeature([
-      { 
-        name: Business.name, 
-        schema: BusinessSchema 
+      {
+        name: Business.name,
+        schema: BusinessSchema,
       },
-      { 
-        name: BusinessSettings.name, 
-        schema: BusinessSettingsSchema 
+      {
+        name: BusinessSettings.name,
+        schema: BusinessSettingsSchema,
       },
     ]),
   ],
@@ -40,6 +49,7 @@ import {
     CreateBusinessUseCase,
     GetSettingsUseCase,
     UpdateSettingsUseCase,
+    BusinessCreatedListener,
   ],
 
   exports: [

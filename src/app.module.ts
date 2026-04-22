@@ -2,39 +2,45 @@
 
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
-import { DatabaseModule } from './database/database.module';
+// ✅ CORE EVENT BUS
+import { CoreEventModule } from './core/events/core-event.module';
 
 // Infrastructure
+import { DatabaseModule } from './database/database.module';
 import { MongooseRepositoriesModule } from './infrastructure/database/mongoose/mongoose.repositories.module';
 
-// Domains (Older structure - gradually migrating)
-import { SessionsModule } from './domains/sessions/sessions.module';
+// Feature Modules
+import { OrdersModule } from './modules/orders/orders.module';
+import { BusinessModule } from './modules/business/business.module';
 import { MenuModule } from './domains/menu/menu.module';
+import { SessionsModule } from './domains/sessions/sessions.module';
 import { CustomersModule } from './domains/customers/customers.module';
 
-// ✅ MIGRATED MODULES (The New Standard)
-import { OrdersModule } from './modules/orders/orders.module';
-import { BusinessModule } from './modules/business/business.module'; 
+// 🔥 NEW: Notifications Module (The Listener Hub)
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
+    // 1. Core Config & Engines
     ConfigModule.forRoot({ isGlobal: true }),
-    DatabaseModule,
+    EventEmitterModule.forRoot(),
+    CoreEventModule,
 
-    // Global Infrastructure binding
+    // 2. Infrastructure
+    DatabaseModule,
     MongooseRepositoriesModule,
 
-    // Feature Modules (Legacy)
-    // ❌ REMOVED RestaurantsModule from here
+    // 3. Feature Modules (The "Emitters")
     MenuModule,
-    
-    // 🔥 MIGRATED: Using the new Clean Architecture modules
     OrdersModule,
     BusinessModule,
-    
     SessionsModule,
     CustomersModule,
+
+    // 4. Notification Hub (The "Listeners")
+    NotificationsModule, // ✅ Added to the bootstrap process
   ],
 })
 export class AppModule {}

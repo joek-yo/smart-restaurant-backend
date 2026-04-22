@@ -1,18 +1,21 @@
 // src/modules/business/application/use-cases/create-business.usecase.ts
 
 import { Injectable } from '@nestjs/common';
+import { EventBus, EVENTS } from '@core/events';
+
 import { Business } from '../../domain/entities/business.entity';
-// ✅ STEP 3 FIX: Import the correctly named Business DTO
 import { CreateBusinessDto } from '../dto/create-business.dto';
+import { BusinessService } from '../business.service';
 
 @Injectable()
 export class CreateBusinessUseCase {
-  /**
-   * Orchestrates the creation of a new business entity.
-   */
+  constructor(
+    private readonly businessService: BusinessService,
+    private readonly eventBus: EventBus,
+  ) {}
+
   async execute(dto: CreateBusinessDto): Promise<Business> {
-    // We now have full IntelliSense because we're using CreateBusinessDto
-    return new Business({
+    const business = new Business({
       name: dto.name,
       phone: dto.phone,
       email: dto.email,
@@ -24,5 +27,19 @@ export class CreateBusinessUseCase {
       subscriptionPlan: dto.subscriptionPlan || 'starter',
       isActive: true,
     });
+
+    // ✅ SAVE TO DB
+    const saved = await this.businessService.create(business);
+
+    // 🔥 SAFE ID NORMALIZATION (NO TS ERRORS)
+    const businessId = (saved as any)?._id?.toString?.();
+
+    // 🔥 EMIT EVENT
+    this.eventBus.emit(EVENTS.BUSINESS_CREATED, {
+      businessId,
+      name: saved.name,
+    });
+
+    return saved;
   }
 }

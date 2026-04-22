@@ -16,26 +16,21 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
-import { EventBus } from '../../common/events/event-bus';
-
-// 🟢 DOMAIN EVENTS
-import { CategoryCreatedEvent } from './events/category-created.event';
-import { CategoryUpdatedEvent } from './events/category-updated.event';
-import { CategoryDeletedEvent } from './events/category-deleted.event';
-import { ProductCreatedEvent } from './events/product-created.event';
-import { ProductUpdatedEvent } from './events/product-updated.event';
-import { ProductDeletedEvent } from './events/product-deleted.event';
-import { RestaurantSettingsUpdatedEvent } from './events/restaurant-settings-updated.event';
+// ✅ Core Event Bus (NEW ARCHITECTURE)
+import { EventBus } from '@core/events';
 
 @Injectable()
 export class MenuService {
   constructor(
     @InjectModel(Category.name)
     private readonly categoryModel: Model<CategoryDocument>,
+
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>,
+
     @InjectModel(RestaurantSettings.name)
     private readonly settingsModel: Model<RestaurantSettingsDocument>,
+
     private readonly eventBus: EventBus,
   ) {}
 
@@ -57,9 +52,10 @@ export class MenuService {
         : businessId,
     });
 
-    this.eventBus.publish(
-      new CategoryCreatedEvent(category.toObject(), businessId),
-    );
+    this.eventBus.emit('category.created', {
+      category: category.toObject(),
+      businessId,
+    });
 
     return category;
   }
@@ -73,18 +69,14 @@ export class MenuService {
 
   async updateCategory(id: string, dto: UpdateCategoryDto) {
     const category = await this.categoryModel
-      .findByIdAndUpdate(
-        id,
-        { $set: dto },
-        { returnDocument: 'after' }, // ✅ FIX
-      )
+      .findByIdAndUpdate(id, { $set: dto }, { returnDocument: 'after' })
       .exec();
 
     if (!category) return null;
 
-    this.eventBus.publish(
-      new CategoryUpdatedEvent(category.toObject()),
-    );
+    this.eventBus.emit('category.updated', {
+      category: category.toObject(),
+    });
 
     return category;
   }
@@ -93,7 +85,8 @@ export class MenuService {
     const category = await this.categoryModel.findByIdAndDelete(id).exec();
     if (!category) return null;
 
-    this.eventBus.publish(new CategoryDeletedEvent(id));
+    this.eventBus.emit('category.deleted', { id });
+
     return category;
   }
 
@@ -114,9 +107,10 @@ export class MenuService {
       isOutOfStock: stock === 0,
     });
 
-    this.eventBus.publish(
-      new ProductCreatedEvent(product.toObject(), businessId),
-    );
+    this.eventBus.emit('product.created', {
+      product: product.toObject(),
+      businessId,
+    });
 
     return product;
   }
@@ -132,10 +126,10 @@ export class MenuService {
   }
 
   async updateProduct(id: string, dto: UpdateProductDto) {
-    const updates: Partial<ProductDocument> = { ...dto } as any;
+    const updates: any = { ...dto };
 
     if (dto.categoryId) {
-      updates.categoryId = new Types.ObjectId(dto.categoryId) as any;
+      updates.categoryId = new Types.ObjectId(dto.categoryId);
     }
 
     if (dto.stock !== undefined) {
@@ -143,18 +137,15 @@ export class MenuService {
     }
 
     const product = await this.productModel
-      .findByIdAndUpdate(
-        id,
-        { $set: updates },
-        { returnDocument: 'after' }, // ✅ FIX
-      )
+      .findByIdAndUpdate(id, { $set: updates }, { returnDocument: 'after' })
       .exec();
 
     if (!product) return null;
 
-    this.eventBus.publish(
-      new ProductUpdatedEvent(product.toObject(), id),
-    );
+    this.eventBus.emit('product.updated', {
+      product: product.toObject(),
+      id,
+    });
 
     return product;
   }
@@ -163,7 +154,8 @@ export class MenuService {
     const product = await this.productModel.findByIdAndDelete(id).exec();
     if (!product) return null;
 
-    this.eventBus.publish(new ProductDeletedEvent(id));
+    this.eventBus.emit('product.deleted', { id });
+
     return product;
   }
 
@@ -190,16 +182,17 @@ export class MenuService {
         },
       },
       {
-        returnDocument: 'after', // ✅ FIX
+        returnDocument: 'after',
         upsert: true,
       },
     );
 
     if (!settings) return null;
 
-    this.eventBus.publish(
-      new RestaurantSettingsUpdatedEvent(settings.toObject(), businessId),
-    );
+    this.eventBus.emit('restaurant.settings.updated', {
+      settings: settings.toObject(),
+      businessId,
+    });
 
     return settings;
   }

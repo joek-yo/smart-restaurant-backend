@@ -7,11 +7,17 @@ import { OrderRepository } from '@modules/orders/domain/repositories/order.repos
 import { Order } from '@modules/orders/domain/entities/order.entity';
 import { OrderStatus } from '@modules/orders/domain/entities/order-status.enum';
 
+// 🔥 EVENT BUS
+import { EventBus, EVENTS } from '@core/events';
+
 @Injectable()
 export class UpdateOrderStatusUseCase {
   constructor(
     @Inject(ORDER_REPOSITORY)
     private readonly orderRepo: OrderRepository,
+
+    // ✅ ADD EVENT BUS
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(orderId: string, status: OrderStatus): Promise<Order> {
@@ -21,8 +27,26 @@ export class UpdateOrderStatusUseCase {
       throw new Error('Order not found');
     }
 
+    // ✅ update domain
     order.updateStatus(status);
 
-    return this.orderRepo.update(orderId, order);
+    const updated = await this.orderRepo.update(orderId, order);
+
+    // 🔥 EMIT EVENTS BASED ON STATUS
+    if (status === OrderStatus.COMPLETED) {
+      this.eventBus.emit(EVENTS.ORDER_COMPLETED, {
+        orderId,
+        businessId: order.businessId,
+      });
+    }
+
+    if (status === OrderStatus.CANCELLED) {
+      this.eventBus.emit(EVENTS.ORDER_CANCELLED, {
+        orderId,
+        businessId: order.businessId,
+      });
+    }
+
+    return updated;
   }
 }

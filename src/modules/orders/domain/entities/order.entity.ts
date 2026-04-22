@@ -17,8 +17,13 @@ export interface OrderItem {
 export class Order extends BaseEntity {
   id?: string;
 
-  // ✅ FIXED: unified naming with DB (tenantId replaces businessId)
+  // ✅ PRIMARY (NEW STANDARD)
   tenantId!: string;
+
+  // 🔥 BACKWARD COMPAT (DO NOT STORE — DERIVED)
+  get businessId(): string {
+    return this.tenantId;
+  }
 
   customerId!: string;
   customerName!: string;
@@ -40,9 +45,16 @@ export class Order extends BaseEntity {
 
     if (partial) {
       this.id = partial.id;
-      this.tenantId = partial.tenantId as string;
+
+      // ✅ SUPPORT BOTH INPUTS
+      this.tenantId =
+        partial.tenantId ||
+        (partial as any).businessId || // fallback
+        'default';
+
       this.customerId = partial.customerId as string;
       this.customerName = partial.customerName as string;
+
       this.branchId = partial.branchId;
       this.customerPhone = partial.customerPhone;
       this.notes = partial.notes;
@@ -76,7 +88,9 @@ export class Order extends BaseEntity {
 
   static fromSession(session: any): Order {
     return new Order({
+      // ✅ handles both automatically
       tenantId: session.tenantId || session.businessId || 'default',
+
       customerId: session.customerId || session.userId,
       customerName: session.customerName || 'Guest',
       items: session.items || [],

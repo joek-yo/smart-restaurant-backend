@@ -1,3 +1,5 @@
+// src/modules/business/domain/entities/business.entity.ts
+
 export class Business {
   id?: string;
 
