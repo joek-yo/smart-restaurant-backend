@@ -1,9 +1,16 @@
 // 📁 File: src/application/menu/use-cases/dto/update-menu-item.dto.ts
 
-import { IsOptional, IsString, IsNumber, IsEnum, IsArray, ValidateNested } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsNumber,
+  IsEnum,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
-import { MenuItemStatus } from '../../../../domains/menu/enums/menu-item-status.enum';
-import { MenuOptionDto } from './menu-option.dto'; // Optional nested DTO for options
+import { MenuItemStatus } from '@modules/menu/enums/menu-item-status.enum';
+import { MenuOptionDto } from './menu-option.dto';
 
 export class UpdateMenuItemDto {
   @IsOptional()

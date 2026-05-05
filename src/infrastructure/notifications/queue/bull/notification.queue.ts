@@ -3,7 +3,9 @@
 import { Injectable } from '@nestjs/common';
 import { Queue } from 'bull';
 import { InjectQueue } from '@nestjs/bull';
-import { MessagePayloadVO } from '@domains/notifications/value-objects/message-payload.vo'; // ✅ Import via alias
+
+// ✅ FIXED: moved from modules → modules
+import { MessagePayloadVO } from '@modules/notifications/value-objects/message-payload.vo';
 
 @Injectable()
 export class NotificationQueue {
@@ -15,11 +17,9 @@ export class NotificationQueue {
    * Add a notification job to the queue
    */
   async add(payload: MessagePayloadVO) {
-    const jobData = payload as any; // cast if dispatcher expects Notification entity
-
-    return this.queue.add('send_notification', jobData, {
-      attempts: 3,   // retry up to 3 times
-      backoff: 5000, // 5 seconds backoff
+    return this.queue.add('send_notification', payload, {
+      attempts: 3,
+      backoff: 5000,
     });
   }
 }

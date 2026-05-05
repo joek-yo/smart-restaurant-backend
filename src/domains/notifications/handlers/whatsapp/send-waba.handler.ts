@@ -1,8 +1,6 @@
-// src/domains/notifications/handlers/whatsapp/send-waba.handler.ts
-
 import { Injectable, Logger } from '@nestjs/common';
-import { Notification } from '../../entities/notification.entity';
-import { WabaProvider } from '../../../../infrastructure/notifications/providers/whatsapp/waba.provider';
+import { Notification } from '@modules/notifications/entities/notification.entity';
+import { WabaProvider } from '../../../../infrastructure/notifications/providers/whatsapp/waba.provider'';
 
 /**
  * SendWabaHandler

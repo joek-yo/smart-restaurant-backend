@@ -1,8 +1,9 @@
-// 📁 Path: src/infrastructure/database/mongoose/category.schema.ts
+ // 📁 Path: src/infrastructure/database/mongoose/category.schema.ts
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
-import { CategoryStatus } from '../../../domains/menu/enums/category-status.enum';
+
+import { CategoryStatus } from '@modules/menu/enums/category-status.enum';
 
 export type CategoryDocument = CategoryModel & Document;
 

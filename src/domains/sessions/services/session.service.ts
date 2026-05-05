@@ -1,8 +1,7 @@
-// FILE: src/domains/sessions/services/session.service.ts
+// 📁 src/domains/sessions/services/session.service.ts
 
 import { Injectable } from '@nestjs/common';
-
-import { SessionRepository } from '../repositories/session.repository';
+import { SessionRepository } from '../interfaces/session-repository.interface'; // Ensure interface is used for typing
 import { SessionEntity } from '../entities/session.entity';
 import { CartItemEntity } from '../entities/cart-item.entity';
 import { SessionState } from '../value-objects/session-state.vo';
@@ -13,9 +12,6 @@ export class SessionService {
     private readonly sessionRepo: SessionRepository,
   ) {}
 
-  // ==================================================
-  // SESSION IDENTITY RULE (SINGLE SOURCE OF TRUTH)
-  // ==================================================
   private getSessionScope() {
     return {
       businessId: 'default',
@@ -24,11 +20,12 @@ export class SessionService {
   }
 
   // ==================================================
-  // GET OR CREATE SESSION (SAFE + DETERMINISTIC)
+  // GET OR CREATE SESSION
   // ==================================================
   async getOrCreate(userId: string): Promise<SessionEntity> {
     const { businessId, branchId } = this.getSessionScope();
 
+    // ✅ FIXED: Using the new findByUserId method
     const sessions = await this.sessionRepo.findByUserId(userId);
 
     let session = sessions.find((s) =>
@@ -38,9 +35,6 @@ export class SessionService {
     );
 
     if (session) {
-      console.log(
-        `[SessionService] Reusing session: ${session.id} for user: ${userId}`,
-      );
       return session;
     }
 
@@ -51,56 +45,45 @@ export class SessionService {
       items: [],
     });
 
-    const created = await this.sessionRepo.create(session);
-
-    console.log(
-      `[SessionService] Created session: ${created.id} for user: ${userId}`,
-    );
-
-    return created;
+    // Note: If your repo uses 'save', use this.sessionRepo.save(session)
+    return await this.sessionRepo.save(session);
   }
 
   // ==================================================
   // ADD ITEM
   // ==================================================
-  async addItem(
-    userId: string,
-    item: CartItemEntity,
-  ): Promise<SessionEntity> {
+  async addItem(userId: string, item: CartItemEntity): Promise<SessionEntity> {
     const session = await this.getOrCreate(userId);
-
     session.addItem(item);
 
-    return this.sessionRepo.update(session);
+    // ✅ FIXED: Passing ID and Partial object
+    return this.sessionRepo.update(session.id, {
+      items: session.items,
+    });
   }
 
   // ==================================================
   // REMOVE ITEM
   // ==================================================
-  async removeItem(
-    userId: string,
-    productId: string,
-  ): Promise<SessionEntity> {
+  async removeItem(userId: string, productId: string): Promise<SessionEntity> {
     const session = await this.getOrCreate(userId);
-
     session.removeItem(productId);
 
-    return this.sessionRepo.update(session);
+    return this.sessionRepo.update(session.id, {
+      items: session.items,
+    });
   }
 
   // ==================================================
   // UPDATE QUANTITY
   // ==================================================
-  async updateQuantity(
-    userId: string,
-    productId: string,
-    quantity: number,
-  ): Promise<SessionEntity> {
+  async updateQuantity(userId: string, productId: string, quantity: number): Promise<SessionEntity> {
     const session = await this.getOrCreate(userId);
-
     session.updateQuantity(productId, quantity);
 
-    return this.sessionRepo.update(session);
+    return this.sessionRepo.update(session.id, {
+      items: session.items,
+    });
   }
 
   // ==================================================
@@ -108,10 +91,11 @@ export class SessionService {
   // ==================================================
   async checkout(userId: string): Promise<SessionEntity> {
     const session = await this.getOrCreate(userId);
-
     session.checkout();
 
-    return this.sessionRepo.update(session);
+    return this.sessionRepo.update(session.id, {
+      state: session.state,
+    });
   }
 
   // ==================================================
@@ -119,10 +103,12 @@ export class SessionService {
   // ==================================================
   async reset(userId: string): Promise<SessionEntity> {
     const session = await this.getOrCreate(userId);
-
     session.reset();
 
-    return this.sessionRepo.update(session);
+    return this.sessionRepo.update(session.id, {
+      items: [],
+      state: session.state,
+    });
   }
 
   // ==================================================
@@ -130,7 +116,6 @@ export class SessionService {
   // ==================================================
   async getSession(userId: string): Promise<SessionEntity | null> {
     const { businessId, branchId } = this.getSessionScope();
-
     const sessions = await this.sessionRepo.findByUserId(userId);
 
     return (

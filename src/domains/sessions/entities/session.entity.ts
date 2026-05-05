@@ -1,13 +1,16 @@
-// FILE: src/domains/sessions/entities/session.entity.ts
+// 📁 src/domains/sessions/entities/session.entity.ts
 
 import { BaseEntity } from '../../../common/base.entity';
 import { CartItemEntity } from './cart-item.entity';
 import { SessionStateVO, SessionState } from '../value-objects/session-state.vo';
 import { DiscountVO } from '../value-objects/discount.vo';
 
+/**
+ * SessionEntity
+ * Central Domain Model for managing user cart sessions.
+ */
 export class SessionEntity extends BaseEntity {
   id?: string;
-
   businessId!: string;
   branchId?: string;
   userId!: string;
@@ -40,8 +43,7 @@ export class SessionEntity extends BaseEntity {
   }
 
   // ==================================================
-  // CORE RULE: MUTATION IS ALLOWED INSIDE ENTITY
-  // (We STOP cloning to avoid identity corruption)
+  // MUTATION LOGIC
   // ==================================================
 
   addItem(item: CartItemEntity): void {
@@ -80,18 +82,20 @@ export class SessionEntity extends BaseEntity {
     }
 
     item.quantity = quantity;
-
     this.state = new SessionStateVO(SessionState.CART_UPDATED);
   }
 
   // ==================================================
-  // SESSION ACTIONS
+  // SESSION ACTIONS & FIXES
   // ==================================================
 
   applyDiscount(discount: DiscountVO): void {
     this.discount = discount;
   }
 
+  /**
+   * ✅ STEP 5 FIX: Added for compilation compatibility
+   */
   reset(): void {
     this.items = [];
     this.discount = undefined;
@@ -102,7 +106,6 @@ export class SessionEntity extends BaseEntity {
     if (this.items.length === 0) {
       throw new Error('Cart is empty');
     }
-
     this.state = new SessionStateVO(SessionState.CHECKOUT);
   }
 
@@ -111,8 +114,15 @@ export class SessionEntity extends BaseEntity {
   }
 
   // ==================================================
-  // DERIVED VALUE
+  // CALCULATIONS
   // ==================================================
+
+  /**
+   * ✅ STEP 5 FIX: Explicit method for service-layer calls
+   */
+  calculateTotal(): number {
+    return this.totalAmount;
+  }
 
   get totalAmount(): number {
     const subtotal = this.items.reduce(
@@ -126,8 +136,12 @@ export class SessionEntity extends BaseEntity {
   }
 
   // ==================================================
-  // SNAPSHOT (IMPORTANT FOR REPOSITORY)
+  // PERSISTENCE HELPERS
   // ==================================================
+
+  /**
+   * Creates a clean instance of the entity for repository operations.
+   */
   toSnapshot(): SessionEntity {
     return new SessionEntity({
       id: this.id,

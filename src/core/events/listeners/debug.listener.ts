@@ -1,13 +1,12 @@
-// src/core/events/event.module.ts
+// 📁 src/core/events/listeners/debug.listener.ts
 
-import { DebugEventListener } from './listeners/debug.listener';
+import { Injectable } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 
-@Module({
-  imports: [EventEmitterModule.forRoot()],
-  providers: [
-    EventBus,
-    DebugEventListener, // ✅ ADD THIS
-  ],
-  exports: [EventBus],
-})
-export class CoreEventModule {}
+@Injectable()
+export class DebugEventListener {
+  @OnEvent('**') // Listens to all events for debugging
+  handleAllEvents(payload: any, event: string) {
+    console.log(`[DEBUG EVENT] [${event}]:`, JSON.stringify(payload, null, 2));
+  }
+}

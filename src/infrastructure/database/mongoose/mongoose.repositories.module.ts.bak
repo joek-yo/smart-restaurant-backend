@@ -1,4 +1,4 @@
-// src/infrastructure/database/mongoose/mongoose.repositories.module.ts
+ // src/infrastructure/database/mongoose/mongoose.repositories.module.ts
 
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -9,21 +9,14 @@ import { BusinessCustomerRepositoryImpl } from './repositories/business-customer
 import {
   CUSTOMER_REPOSITORY,
   BUSINESS_CUSTOMER_REPOSITORY,
-} from '../../../domains/customers/repositories/customer.tokens';
+} from '@modules/customers/repositories/customer.tokens';
 
 // Import Schemas
-import {
-  CustomerSchema,
-} from './schemas/customer.schema';
-
-import {
-  BusinessCustomerSchema,
-} from './schemas/business-customer.schema';
+import { CustomerSchema } from './schemas/customer.schema';
+import { BusinessCustomerSchema } from './schemas/business-customer.schema';
 
 @Module({
   imports: [
-    // 🔥 THIS IS THE REAL FIX
-    // Register Mongo Models
     MongooseModule.forFeature([
       {
         name: 'Customer',
@@ -47,9 +40,6 @@ import {
     },
   ],
 
-  exports: [
-    CUSTOMER_REPOSITORY,
-    BUSINESS_CUSTOMER_REPOSITORY,
-  ],
+  exports: [CUSTOMER_REPOSITORY, BUSINESS_CUSTOMER_REPOSITORY],
 })
 export class MongooseRepositoriesModule {}

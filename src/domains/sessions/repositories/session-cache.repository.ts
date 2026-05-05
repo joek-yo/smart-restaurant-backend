@@ -1,4 +1,4 @@
-// src/domains/sessions/repositories/session.repository.ts
+// src/domains/sessions/repositories/session-cache.repository.ts
 
 import { Injectable, Inject } from '@nestjs/common';
 import { SessionEntity } from '../entities/session.entity';
@@ -8,13 +8,14 @@ import Redis from 'ioredis';
 // ABSTRACT CONTRACT
 // ========================
 export abstract class SessionCacheRepository {
+  // ✅ Explicitly define that we take the Entity
   abstract set(session: SessionEntity, ttlSeconds?: number): Promise<void>;
   abstract get(sessionId: string): Promise<SessionEntity | null>;
   abstract delete(sessionId: string): Promise<void>;
 }
 
 // ========================
-// REDIS IMPLEMENTATION ONLY
+// REDIS IMPLEMENTATION
 // ========================
 @Injectable()
 export class RedisSessionCacheRepository extends SessionCacheRepository {
@@ -24,51 +25,42 @@ export class RedisSessionCacheRepository extends SessionCacheRepository {
     super();
   }
 
-  // ------------------------
-  // KEY STRATEGY (CRITICAL)
-  // ------------------------
+  /**
+   * KEY STRATEGY: business:branch:sessionId
+   */
   private buildKey(session: SessionEntity): string {
     return `${session.businessId || 'default'}:${
       session.branchId || 'default'
     }:${session.id}`;
   }
 
-  // overload-safe helper for lookup
-  private buildKeyFromParts(
-    businessId: string,
-    branchId: string,
-    sessionId: string,
-  ): string {
-    return `${businessId || 'default'}:${branchId || 'default'}:${sessionId}`;
-  }
-
   // ========================
   // SET SESSION CACHE
   // ========================
   async set(session: SessionEntity, ttlSeconds = 3600): Promise<void> {
+    // If you get a type error here, ensure 'session' is actually an instance of SessionEntity
     const key = this.buildKey(session);
 
-    await this.redisClient.set(
-      key,
-      JSON.stringify(session),
-      'EX',
-      ttlSeconds,
-    );
+    // Standard Redis practice: Serialize the entity to JSON
+    const data = JSON.stringify(session);
+
+    await this.redisClient.set(key, data, 'EX', ttlSeconds);
   }
 
   // ========================
   // GET SESSION CACHE
   // ========================
   async get(sessionId: string): Promise<SessionEntity | null> {
-    // IMPORTANT: we assume sessionId alone is not enough for scale lookup
-    // so we fallback to pattern only if needed (but this should be improved later)
-
+    // Note: Scanning with KEYS is expensive in production. 
+    // Ideally, the service should pass businessId/branchId to build the direct key.
     const keys = await this.redisClient.keys(`*:*:${sessionId}`);
-    if (!keys.length) return null;
+    
+    if (keys.length === 0) return null;
 
     const data = await this.redisClient.get(keys[0]);
     if (!data) return null;
 
+    // Rehydrate the entity from the stored JSON
     return JSON.parse(data) as SessionEntity;
   }
 
@@ -77,8 +69,8 @@ export class RedisSessionCacheRepository extends SessionCacheRepository {
   // ========================
   async delete(sessionId: string): Promise<void> {
     const keys = await this.redisClient.keys(`*:*:${sessionId}`);
-    if (!keys.length) return;
-
-    await this.redisClient.del(...keys);
+    if (keys.length > 0) {
+      await this.redisClient.del(...keys);
+    }
   }
 }

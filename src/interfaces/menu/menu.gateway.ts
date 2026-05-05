@@ -1,4 +1,4 @@
-// 📁 Path: src/interfaces/menu/menu.gateway.ts
+ // 📁 Path: src/interfaces/menu/menu.gateway.ts
 
 import {
   WebSocketGateway,
@@ -10,9 +10,9 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EventBus } from '../../common/events/event-bus';
-import { MenuItemCreatedEvent } from '../../domains/menu/events/menu-item-created.event';
-import { MenuItemUpdatedEvent } from '../../domains/menu/events/menu-item-updated.event';
+import { EventBus } from '@common/events/event-bus';
+import { MenuItemCreatedEvent } from '@modules/menu/events/menu-item-created.event';
+import { MenuItemUpdatedEvent } from '@modules/menu/events/menu-item-updated.event';
 
 @Injectable()
 @WebSocketGateway({
@@ -29,11 +29,14 @@ export class MenuGateway
 
   constructor(private readonly eventBus: EventBus) {
     // Subscribe to domain events
-    this.eventBus.subscribe(MenuItemCreatedEvent, (event: MenuItemCreatedEvent) =>
-      this.handleMenuItemCreated(event),
+    this.eventBus.subscribe(
+      MenuItemCreatedEvent,
+      (event: MenuItemCreatedEvent) => this.handleMenuItemCreated(event),
     );
-    this.eventBus.subscribe(MenuItemUpdatedEvent, (event: MenuItemUpdatedEvent) =>
-      this.handleMenuItemUpdated(event),
+
+    this.eventBus.subscribe(
+      MenuItemUpdatedEvent,
+      (event: MenuItemUpdatedEvent) => this.handleMenuItemUpdated(event),
     );
   }
 

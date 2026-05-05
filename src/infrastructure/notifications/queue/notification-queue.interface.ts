@@ -1,6 +1,6 @@
 // src/infrastructure/notifications/queue/notification-queue.interface.ts
 
-import { Notification } from '../../../domains/notifications/entities/notification.entity';
+import { Notification } from '@modules/notifications/entities/notification.entity';
 
 /**
  * NotificationQueue (Interface)

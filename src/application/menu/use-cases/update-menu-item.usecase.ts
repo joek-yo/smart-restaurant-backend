@@ -2,11 +2,11 @@
 
 import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
-import { MenuItemRepository } from '../../../domains/menu/repositories/menu-item.repository';
+import { MenuItemRepository } from '@modules/menu/repositories/menu-item.repository';
 import { EventBus } from '../../../common/events/event-bus';
-import { MenuItemUpdatedEvent } from '../../../domains/menu/events/menu-item-updated.event';
-import { MenuItem } from '../../../domains/menu/entities/menu-item.entity';
-import { MenuOption } from '../../../domains/menu/entities/menu-option.entity';
+import { MenuItemUpdatedEvent } from '@modules/menu/events/menu-item-updated.event';
+import { MenuItem } from '@modules/menu/entities/menu-item.entity';
+import { MenuOption } from '@modules/menu/entities/menu-option.entity';
 
 @Injectable()
 export class UpdateMenuItemUseCase {
@@ -25,22 +25,25 @@ export class UpdateMenuItemUseCase {
     }
 
     // ✅ Apply updates via DOMAIN METHODS (correct DDD)
-    if (dto.name) existing.name = dto.name; // replaced updateName() with direct assignment or implement in domain
-    if (dto.description) existing.description = dto.description; // replaced updateDescription()
+    if (dto.name) existing.name = dto.name;
+    if (dto.description) existing.description = dto.description;
     if (dto.price !== undefined) existing.price = dto.price;
     if (dto.status) existing.status = dto.status;
 
     if (dto.options) {
-      // Map DTO to domain MenuOption entities
-      const options: MenuOption[] = dto.options.map(opt => new MenuOption({
-        name: opt.name,
-        price: opt.price,
-        required: opt.required ?? false,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        touch: () => {},
-      }));
-      existing.options = options; // assign mapped domain options
+      const options: MenuOption[] = dto.options.map(
+        (opt) =>
+          new MenuOption({
+            name: opt.name,
+            price: opt.price,
+            required: opt.required ?? false,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            touch: () => {},
+          }),
+      );
+
+      existing.options = options;
     }
 
     // ✅ Persist

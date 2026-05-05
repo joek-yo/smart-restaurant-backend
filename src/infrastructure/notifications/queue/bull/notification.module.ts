@@ -2,9 +2,11 @@
 
 import { Module } from '@nestjs/common';
 import { BullModule } from '@nestjs/bull';
+
 import { NotificationQueue } from './notification.queue';
 import { NotificationProcessor } from './notification.processor';
-import { NotificationDispatcherService } from '../../../../domains/notifications/services/notification-dispatcher.service';
+
+import { NotificationDispatcherService } from '@modules/notifications/services/notification-dispatcher.service';
 
 /**
  * NotificationBullModule

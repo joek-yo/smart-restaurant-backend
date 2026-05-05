@@ -1,4 +1,4 @@
-// src/domains/notifications/value-objects/message-payload.vo.ts
+// src/modules/notifications/value-objects/message-payload.vo.ts
 
 /**
  * MessagePayloadVO

@@ -1,5 +1,4 @@
 // src/modules/business/presentation/business.controller.ts
-
 import {
   Controller,
   Get,
@@ -10,70 +9,69 @@ import {
   Delete,
 } from '@nestjs/common';
 
-// ✅ Standardized Use Case imports
-import { CreateBusinessUseCase } from '../application/use-cases/create-business.usecase';
-import { GetSettingsUseCase } from '../application/use-cases/get-settings.usecase';
-import { UpdateSettingsUseCase } from '../application/use-cases/update-settings.usecase';
-
-// ✅ Standardized DTO imports
+import { BusinessService } from '@modules/business/application/business.service';
 import { CreateBusinessDto } from '@modules/business/application/dto/create-business.dto';
 import { UpdateBusinessDto } from '@modules/business/application/dto/update-business.dto';
+import { StorefrontConfig } from '@modules/business/infrastructure/schemas/business.schema';
 
-// ✅ STEP 1 FIX: Updated import path and class name from 'RestaurantSettings' to 'BusinessSettings'
-import { BusinessSettings } from '../infrastructure/schemas/business-settings.schema';
-
-@Controller('business')
+@Controller('businesses')
 export class BusinessController {
-  constructor(
-    private readonly createBusinessUseCase: CreateBusinessUseCase,
-    private readonly getSettingsUseCase: GetSettingsUseCase,
-    private readonly updateSettingsUseCase: UpdateSettingsUseCase,
-  ) {}
+  // Inject BusinessService directly — no use-case indirection needed for
+  // simple CRUD. Use cases are for operations with business rules / side effects.
+  constructor(private readonly businessService: BusinessService) {}
 
-  // --------------------------
-  // Business CRUD
-  // --------------------------
+  // ── CRUD ───────────────────────────────────────────────────────────────────
 
   @Post()
   create(@Body() dto: CreateBusinessDto) {
-    return this.createBusinessUseCase.execute(dto);
+    return this.businessService.create(dto);
   }
 
   @Get()
   findAll() {
-    return (this.createBusinessUseCase as any).businessService.findAll();
+    return this.businessService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return (this.createBusinessUseCase as any).businessService.findOne(id);
+    return this.businessService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() dto: UpdateBusinessDto) {
-    return (this.createBusinessUseCase as any).businessService.update(id, dto);
+    return this.businessService.update(id, dto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return (this.createBusinessUseCase as any).businessService.remove(id);
+    return this.businessService.remove(id);
   }
 
-  // --------------------------
-  // Business Settings
-  // --------------------------
+  // ── Tenant resolution endpoints (used by Next.js middleware) ───────────────
+  // These are PUBLIC — no auth guard. They return only what the storefront needs.
 
-  @Get(':id/settings')
-  getSettings(@Param('id') id: string) {
-    return this.getSettingsUseCase.execute(id);
+  @Get('slug/:slug')
+  findBySlug(@Param('slug') slug: string) {
+    return this.businessService.findBySlug(slug);
   }
 
-  @Patch(':id/settings')
-  updateSettings(
+  @Get('domain/:domain')
+  findByDomain(@Param('domain') domain: string) {
+    return this.businessService.findByDomain(domain);
+  }
+
+  // ── Storefront config ──────────────────────────────────────────────────────
+
+  @Get(':id/storefront')
+  getStorefront(@Param('id') id: string) {
+    return this.businessService.getStorefront(id);
+  }
+
+  @Patch(':id/storefront')
+  updateStorefront(
     @Param('id') id: string,
-    // ✅ STEP 1 FIX: Using the generic BusinessSettings type
-    @Body() data: Partial<BusinessSettings>,
+    @Body() config: Partial<StorefrontConfig>,
   ) {
-    return this.updateSettingsUseCase.execute(id, data);
+    return this.businessService.updateStorefront(id, config);
   }
 }

@@ -1,7 +1,5 @@
-// src/domains/notifications/handlers/whatsapp/send-web.handler.ts
-
 import { Injectable, Logger } from '@nestjs/common';
-import { Notification } from '../../entities/notification.entity';
+import { Notification } from '@modules/notifications/entities/notification.entity';
 import { WebWhatsAppProvider } from '../../../../infrastructure/notifications/providers/whatsapp/web.provider';
 
 /**
@@ -30,7 +28,7 @@ export class SendWebHandler {
     } catch (error) {
       this.logger.error(
         `WEB WhatsApp send failed → ${notification.recipient}`,
-        (error as any).stack, // ✅ Cast error as any
+        (error as any).stack,
       );
       throw error;
     }

@@ -4,43 +4,38 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
-// ✅ CORE EVENT BUS
+// Core
 import { CoreEventModule } from './core/events/core-event.module';
 
 // Infrastructure
-import { DatabaseModule } from './database/database.module';
-import { MongooseRepositoriesModule } from './infrastructure/database/mongoose/mongoose.repositories.module';
+import { DatabaseModule } from './infrastructure/database/database.module';
 
-// Feature Modules
-import { OrdersModule } from './modules/orders/orders.module';
+// ✅ ONLY BusinessModule active — others commented out until backend refactor is complete
 import { BusinessModule } from './modules/business/business.module';
-import { MenuModule } from './domains/menu/menu.module';
-import { SessionsModule } from './domains/sessions/sessions.module';
-import { CustomersModule } from './domains/customers/customers.module';
 
-// 🔥 NEW: Notifications Module (The Listener Hub)
-import { NotificationsModule } from './modules/notifications/notifications.module';
+// 🔴 Commented out — broken mid-refactor, fix later as separate branch
+// import { MongooseRepositoriesModule } from './infrastructure/database/mongoose/mongoose.repositories.module';
+// import { OrdersModule } from './modules/orders/orders.module';
+// import { MenuModule } from './modules/menu/menu.module';
+// import { SessionsModule } from './modules/sessions/sessions.module';
+// import { CustomersModule } from './modules/customers/customers.module';
+// import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
-    // 1. Core Config & Engines
     ConfigModule.forRoot({ isGlobal: true }),
     EventEmitterModule.forRoot(),
     CoreEventModule,
 
-    // 2. Infrastructure
     DatabaseModule,
-    MongooseRepositoriesModule,
+    // MongooseRepositoriesModule,
 
-    // 3. Feature Modules (The "Emitters")
-    MenuModule,
-    OrdersModule,
     BusinessModule,
-    SessionsModule,
-    CustomersModule,
-
-    // 4. Notification Hub (The "Listeners")
-    NotificationsModule, // ✅ Added to the bootstrap process
+    // MenuModule,
+    // OrdersModule,
+    // SessionsModule,
+    // CustomersModule,
+    // NotificationsModule,
   ],
 })
 export class AppModule {}

@@ -1,9 +1,9 @@
 // src/infrastructure/notifications/database/mongoose/notification.schema.ts
 
 import { Schema, Document } from 'mongoose';
-import { NotificationStatusEnum } from '../../../../domains/notifications/enums/notification-status.enum';
-import { NotificationChannelEnum } from '../../../../domains/notifications/enums/notification-channel.enum';
-import { NotificationTypeEnum } from '../../../../domains/notifications/enums/notification-type.enum';
+import { NotificationStatusEnum } from '@modules/notifications/enums/notification-status.enum';
+import { NotificationChannelEnum } from '@modules/notifications/enums/notification-channel.enum';
+import { NotificationTypeEnum } from '@modules/notifications/enums/notification-type.enum';
 
 export interface NotificationDocument extends Document {
   recipient: string;

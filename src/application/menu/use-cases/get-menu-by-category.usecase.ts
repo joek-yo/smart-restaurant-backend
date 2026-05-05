@@ -1,8 +1,8 @@
 // 📁 src/application/menu/use-cases/get-menu-by-category.usecase.ts
 
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { MenuItemRepository } from '../../../domains/menu/repositories/menu-item.repository';
-import { MenuItem } from '../../../domains/menu/entities/menu-item.entity';
+import { MenuItemRepository } from '@modules/menu/repositories/menu-item.repository';
+import { MenuItem } from '@modules/menu/entities/menu-item.entity';
 
 @Injectable()
 export class GetMenuByCategoryUseCase {
@@ -16,7 +16,9 @@ export class GetMenuByCategoryUseCase {
     const items = await this.menuItemRepository.findByCategory(categoryId);
 
     if (!items || items.length === 0) {
-      throw new NotFoundException(`No menu items found for category ${categoryId}`);
+      throw new NotFoundException(
+        `No menu items found for category ${categoryId}`,
+      );
     }
 
     return items;

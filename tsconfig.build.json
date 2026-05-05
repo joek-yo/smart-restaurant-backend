@@ -1,4 +1,39 @@
 {
   "extends": "./tsconfig.json",
-  "exclude": ["node_modules", "test", "dist", "**/*spec.ts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*.spec.ts",
+
+    "src/app.controller.ts",
+
+    "src/application/**/*",
+
+    "src/domains/menu/handlers/**/*",
+    "src/domains/notifications/**/*",
+    "src/domains/sessions/**/*",
+    "src/domains/whatsapp/**/*",
+
+    "src/infrastructure/database/mongoose/category.schema.ts",
+    "src/infrastructure/database/mongoose/menu-item.schema.ts",
+    "src/infrastructure/database/mongoose/mongoose.repositories.module.ts",
+    "src/infrastructure/database/mongoose/repositories/**/*",
+    "src/infrastructure/database/mongoose/schemas/**/*",
+    "src/infrastructure/notifications/**/*",
+
+    "src/interfaces/menu/**/*",
+    "src/interfaces/notifications/**/*",
+    "src/interfaces/orders/**/*",
+
+    "src/modules/orders/**/*",
+    "src/modules/sessions/**/*",
+    "src/modules/customers/**/*",
+    "src/modules/notifications/**/*",
+    "src/modules/menu/**/*",
+    "src/modules/restaurants/**/*",
+    "src/modules/whatsapp/**/*",
+
+    "src/modules/business/infrastructure/repositories/business.repository.ts"
+  ]
 }

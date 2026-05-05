@@ -1,7 +1,7 @@
 // src/application/notifications/dto/create-notification.dto.ts
 
-import { NotificationChannelEnum } from '../../../domains/notifications/enums/notification-channel.enum';
-import { NotificationTypeEnum } from '../../../domains/notifications/enums/notification-type.enum';
+import { NotificationChannelEnum } from '@modules/notifications/enums/notification-channel.enum';
+import { NotificationTypeEnum } from '@modules/notifications/enums/notification-type.enum';
 
 /**
  * CreateNotificationDto
@@ -23,7 +23,7 @@ export class CreateNotificationDto {
    * - email address
    * - device token (push)
    */
-  recipient!: string; // definite assignment
+  recipient!: string;
 
   /**
    * Channel to send through

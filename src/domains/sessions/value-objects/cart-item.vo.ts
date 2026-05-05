@@ -1,5 +1,9 @@
-// FILE: src/domains/sessions/value-objects/cart-item.vo.ts
+// 📁 src/domains/sessions/value-objects/cart-item.vo.ts
 
+/**
+ * Value Object for individual items within a cart session.
+ * Handled as immutable data structures within the domain.
+ */
 export class CartItemVO {
   productId: string;
   name: string;
@@ -21,6 +25,17 @@ export class CartItemVO {
     this.options = partial.options;
   }
 
+  /**
+   * Returns the total cost for this specific line item.
+   */
+  get total(): number {
+    return this.price * this.quantity;
+  }
+
+  /**
+   * Creates a deep copy of the item to maintain immutability 
+   * when performing domain logic updates.
+   */
   clone(): CartItemVO {
     return new CartItemVO({
       productId: this.productId,

@@ -1,8 +1,5 @@
-// src/domains/notifications/handlers/sms/send-sms.handler.ts
-
 import { Injectable, Logger } from '@nestjs/common';
-import { Notification } from '../../entities/notification.entity';
-// ✅ fixed import path
+import { Notification } from '@modules/notifications/entities/notification.entity';
 import { SmsProvider } from '../../../../infrastructure/notifications/providers/sms/sms.provider';
 
 /**
@@ -27,7 +24,6 @@ export class SendSmsHandler {
 
       this.logger.log(`SMS sent → ${notification.recipient}`);
     } catch (error) {
-      // ✅ cast unknown error
       this.logger.error(
         `SMS send failed → ${notification.recipient}`,
         (error as any).stack,

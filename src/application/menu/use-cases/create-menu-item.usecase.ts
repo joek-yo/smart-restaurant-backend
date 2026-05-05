@@ -2,12 +2,12 @@
 
 import { Injectable, Inject } from '@nestjs/common';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
-import { MenuItem } from '../../../domains/menu/entities/menu-item.entity';
-import { MenuOption } from '../../../domains/menu/entities/menu-option.entity';
-import { MenuItemRepository } from '../../../domains/menu/repositories/menu-item.repository';
+import { MenuItem } from '@modules/menu/entities/menu-item.entity';
+import { MenuOption } from '@modules/menu/entities/menu-option.entity';
+import { MenuItemRepository } from '@modules/menu/repositories/menu-item.repository';
 import { EventBus } from '../../../common/events/event-bus';
-import { MenuItemCreatedEvent } from '../../../domains/menu/events/menu-item-created.event';
-import { MenuItemStatus } from '../../../domains/menu/enums/menu-item-status.enum';
+import { MenuItemCreatedEvent } from '@modules/menu/events/menu-item-created.event';
+import { MenuItemStatus } from '@modules/menu/enums/menu-item-status.enum';
 
 @Injectable()
 export class CreateMenuItemUseCase {
@@ -22,14 +22,17 @@ export class CreateMenuItemUseCase {
    */
   async execute(dto: CreateMenuItemDto): Promise<MenuItem> {
     // ✅ Map DTO options to domain entities
-    const options: MenuOption[] = (dto.options ?? []).map(opt => new MenuOption({
-      name: opt.name,
-      price: opt.price,
-      required: opt.required ?? false, // default if not provided
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      touch: () => {}, // placeholder if required by domain
-    }));
+    const options: MenuOption[] = (dto.options ?? []).map(
+      (opt) =>
+        new MenuOption({
+          name: opt.name,
+          price: opt.price,
+          required: opt.required ?? false,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          touch: () => {},
+        }),
+    );
 
     // ✅ Create domain entity (clean + controlled)
     const menuItem = new MenuItem({
@@ -38,7 +41,7 @@ export class CreateMenuItemUseCase {
       price: dto.price,
       categoryId: dto.categoryId,
       options,
-      status: dto.status ?? MenuItemStatus.ACTIVE, // use correct enum value
+      status: dto.status ?? MenuItemStatus.ACTIVE,
     });
 
     // ✅ Persist

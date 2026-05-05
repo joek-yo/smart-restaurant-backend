@@ -1,7 +1,16 @@
 // 📁 src/application/menu/use-cases/dto/create-menu-item.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsNumber, Min, IsArray, ValidateNested } from 'class-validator';
+
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  Min,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
-import { MenuItemStatus } from '../../../../domains/menu/enums/menu-item-status.enum';
+import { MenuItemStatus } from '@modules/menu/enums/menu-item-status.enum';
 import { MenuOptionDto } from './menu-option.dto';
 
 /**
@@ -29,8 +38,8 @@ export class CreateMenuItemDto {
   @ValidateNested({ each: true })
   @Type(() => MenuOptionDto)
   @IsOptional()
-  options?: MenuOptionDto[]; // Use proper DTO array
+  options?: MenuOptionDto[];
 
   @IsOptional()
-  status?: MenuItemStatus; // Use enum instead of string
+  status?: MenuItemStatus;
 }

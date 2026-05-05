@@ -4,6 +4,9 @@ export * from './menu.module';
 export * from './menu.service';
 export * from './menu.controller';
 
+// ⚡ ADD THIS: Export everything from the events folder
+export * from './events'; 
+
 // DTOs
 export * from './dto/create-category.dto';
 export * from './dto/update-category.dto';

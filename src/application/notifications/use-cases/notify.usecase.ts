@@ -1,9 +1,9 @@
 // src/application/notifications/use-cases/notify.usecase.ts
 
 import { Injectable, Logger } from '@nestjs/common';
-import { NotificationFactoryService } from '../../../domains/notifications/services/notification-factory.service';
-import { NotificationQueueService } from '../../../domains/notifications/services/notification-queue.service';
-import { MessagePayloadVO } from '../../../domains/notifications/value-objects/message-payload.vo';
+import { NotificationFactoryService } from '@modules/notifications/services/notification-factory.service';
+import { NotificationQueueService } from '@modules/notifications/services/notification-queue.service';
+import { MessagePayloadVO } from '@modules/notifications/value-objects/message-payload.vo';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { EventBus } from '../../../common/events/event-bus';
 
