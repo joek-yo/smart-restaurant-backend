@@ -1,5 +1,4 @@
-// src/domains/menu/product.controller.ts
-
+// src/modules/catalog/presentation/product.controller.ts
 import {
   Controller,
   Get,
@@ -8,59 +7,43 @@ import {
   Param,
   Patch,
   Delete,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import { CatalogService } from '../application/catalog.service';
 import { CreateProductDto } from '../application/dto/create-product.dto';
 import { UpdateProductDto } from '../application/dto/update-product.dto';
+import { TenantGuard } from '../../../core/tenant/tenant.guard';
 
 @Controller('catalog/products')
+@UseGuards(TenantGuard)
 export class ProductController {
-  constructor(private readonly menuService: CatalogService) {}
+  constructor(private readonly catalogService: CatalogService) {}
 
-  /* =====================================================
-     CREATE PRODUCT
-  ===================================================== */
-  @Post(':businessId')
-  createProduct(
-    @Param('businessId') businessId: string,
-    @Body() dto: CreateProductDto,
-  ) {
-    return this.menuService.createProduct(businessId, dto);
+  @Post()
+  createProduct(@Req() req: Request, @Body() dto: CreateProductDto) {
+    return this.catalogService.createProduct(req.tenantId!, dto);
   }
 
-  /* =====================================================
-     GET PRODUCTS BY BUSINESS
-  ===================================================== */
-  @Get(':businessId')
-  getProducts(@Param('businessId') businessId: string) {
-    return this.menuService.getProducts(businessId);
+  @Get()
+  getProducts(@Req() req: Request) {
+    return this.catalogService.getProducts(req.tenantId!);
   }
 
-  /* =====================================================
-     GET PRODUCTS BY CATEGORY
-  ===================================================== */
   @Get('category/:categoryId')
   getProductsByCategory(@Param('categoryId') categoryId: string) {
-    return this.menuService.getProductsByCategory(categoryId);
+    return this.catalogService.getProductsByCategory(categoryId);
   }
 
-  /* =====================================================
-     UPDATE PRODUCT
-  ===================================================== */
   @Patch(':id')
-  updateProduct(
-    @Param('id') id: string,
-    @Body() dto: UpdateProductDto,
-  ) {
-    return this.menuService.updateProduct(id, dto);
+  updateProduct(@Param('id') id: string, @Body() dto: UpdateProductDto) {
+    return this.catalogService.updateProduct(id, dto);
   }
 
-  /* =====================================================
-     DELETE PRODUCT
-  ===================================================== */
   @Delete(':id')
   deleteProduct(@Param('id') id: string) {
-    return this.menuService.deleteProduct(id);
+    return this.catalogService.deleteProduct(id);
   }
 }

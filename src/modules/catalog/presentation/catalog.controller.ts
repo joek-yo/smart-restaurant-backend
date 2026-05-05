@@ -1,4 +1,4 @@
-// 📁 src/domains/menu/catalog.controller.ts
+// src/modules/catalog/presentation/catalog.controller.ts
 import {
   Controller,
   Get,
@@ -7,92 +7,67 @@ import {
   Param,
   Patch,
   Delete,
-  HttpException,
-  HttpStatus,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import { CatalogService } from '../application/catalog.service';
 import { CreateCategoryDto } from '../application/dto/create-category.dto';
 import { UpdateCategoryDto } from '../application/dto/update-category.dto';
 import { RestaurantSettings } from '../infrastructure/schemas/restaurant-settings.schema';
+import { TenantGuard } from '../../../core/tenant/tenant.guard';
 
 @Controller('catalog')
+@UseGuards(TenantGuard)
 export class CatalogController {
-  constructor(private readonly menuService: CatalogService) {}
+  constructor(private readonly catalogService: CatalogService) {}
 
-  /* =====================================================
-     CATEGORY ROUTES
-  ===================================================== */
+  // ── Categories ─────────────────────────────────────────────────────────────
 
-  @Post('categories/:businessId')
-  async createCategory(
-    @Param('businessId') businessId: string,
-    @Body() dto: CreateCategoryDto,
-  ) {
-    const category = await this.menuService.createCategory(businessId, dto);
+  @Post('categories')
+  async createCategory(@Req() req: Request, @Body() dto: CreateCategoryDto) {
+    const category = await this.catalogService.createCategory(req.tenantId!, dto);
     return { success: true, category };
   }
 
-  @Get('categories/:businessId')
-  async findCategories(@Param('businessId') businessId: string) {
-    const categories = await this.menuService.findCategories(businessId);
+  @Get('categories')
+  async findCategories(@Req() req: Request) {
+    const categories = await this.catalogService.findCategories(req.tenantId!);
     return { success: true, categories };
   }
 
   @Patch('categories/:id')
-  async updateCategory(
-    @Param('id') id: string,
-    @Body() dto: UpdateCategoryDto,
-  ) {
-    const updated = await this.menuService.updateCategory(id, dto);
+  async updateCategory(@Param('id') id: string, @Body() dto: UpdateCategoryDto) {
+    const updated = await this.catalogService.updateCategory(id, dto);
     return { success: !!updated, updated };
   }
 
   @Delete('categories/:id')
   async deleteCategory(@Param('id') id: string) {
-    const deleted = await this.menuService.deleteCategory(id);
+    const deleted = await this.catalogService.deleteCategory(id);
     return { success: !!deleted };
   }
 
-  /* =====================================================
-     RESTAURANT SETTINGS ROUTES
-  ===================================================== */
+  // ── Settings ───────────────────────────────────────────────────────────────
 
-  @Get('settings/:businessId')
-  async getSettings(@Param('businessId') businessId: string) {
-    const settings = await this.menuService.getRestaurantSettings(businessId);
+  @Get('settings')
+  async getSettings(@Req() req: Request) {
+    const settings = await this.catalogService.getRestaurantSettings(req.tenantId!);
     return { success: true, settings };
   }
 
-  @Patch('settings/:businessId')
-  async upsertSettings(
-    @Param('businessId') businessId: string,
-    @Body() data: Partial<RestaurantSettings>,
-  ) {
-    const settings = await this.menuService.upsertRestaurantSettings(
-      businessId,
-      data,
-    );
+  @Patch('settings')
+  async upsertSettings(@Req() req: Request, @Body() data: Partial<RestaurantSettings>) {
+    const settings = await this.catalogService.upsertRestaurantSettings(req.tenantId!, data);
     return { success: true, settings };
   }
 
-  /* =====================================================
-     PRODUCTS ROUTE (FIXED)
-  ===================================================== */
+  // ── Products ───────────────────────────────────────────────────────────────
 
-  @Get('products/:businessId')
-  async listProducts(@Param('businessId') businessId: string) {
-    try {
-      const products = await this.menuService.getProducts(businessId);
-
-      // Ensure Postman gets an array
-      return Array.isArray(products) ? products : [];
-    } catch (error) {
-      console.error('Error fetching products:', error);
-      throw new HttpException(
-        { statusCode: 500, message: 'Internal server error' },
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  @Get('products')
+  async listProducts(@Req() req: Request) {
+    const products = await this.catalogService.getProducts(req.tenantId!);
+    return Array.isArray(products) ? products : [];
   }
 }
