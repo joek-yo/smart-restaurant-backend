@@ -9,6 +9,7 @@ import { Business, BusinessDocument } from '@modules/business/infrastructure/sch
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { JwtPayload } from '../infrastructure/jwt.strategy';
+import { FEATURE_PRESETS } from '@modules/business/domain/entities/business-features';
 
 @Injectable()
 export class AuthService {
@@ -19,33 +20,29 @@ export class AuthService {
   ) {}
 
   async register(dto: RegisterDto) {
-    // Check if slug or email already taken
     const existing = await this.businessModel.findOne({
       $or: [{ email: dto.email }, { slug: dto.slug }],
     }).exec();
 
-    if (existing) {
-      throw new ConflictException('Email or slug already taken');
-    }
+    if (existing) throw new ConflictException('Email or slug already taken');
 
     const hashedPassword = await bcrypt.hash(dto.password, 12);
+
+    // Auto-apply feature preset based on businessType
+    const businessType = dto.businessType || 'general';
+    const features = FEATURE_PRESETS[businessType] || FEATURE_PRESETS['general'];
 
     const business = await this.businessModel.create({
       ...dto,
       password: hashedPassword,
+      businessType,
+      features,
       isActive: true,
     });
 
-    const token = this.generateToken(business);
-
     return {
-      access_token: token,
-      business: {
-        id: (business._id as any).toString(),
-        name: business.name,
-        slug: business.slug,
-        email: business.email,
-      },
+      access_token: this.generateToken(business),
+      business: this.toPublic(business),
     };
   }
 
@@ -55,29 +52,18 @@ export class AuthService {
       .select('+password')
       .exec();
 
-    if (!business) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    if (!business) throw new UnauthorizedException('Invalid credentials');
 
     const passwordMatch = await bcrypt.compare(
       dto.password,
       (business as any).password || '',
     );
 
-    if (!passwordMatch) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const token = this.generateToken(business);
+    if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
 
     return {
-      access_token: token,
-      business: {
-        id: (business._id as any).toString(),
-        name: business.name,
-        slug: business.slug,
-        email: business.email,
-      },
+      access_token: this.generateToken(business),
+      business: this.toPublic(business),
     };
   }
 
@@ -88,5 +74,16 @@ export class AuthService {
       role: 'owner',
     };
     return this.jwtService.sign(payload);
+  }
+
+  private toPublic(business: BusinessDocument) {
+    return {
+      id: (business._id as any).toString(),
+      name: business.name,
+      slug: business.slug,
+      email: business.email,
+      businessType: (business as any).businessType,
+      features: (business as any).features,
+    };
   }
 }

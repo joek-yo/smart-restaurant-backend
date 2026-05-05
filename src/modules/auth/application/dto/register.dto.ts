@@ -1,5 +1,5 @@
 // src/modules/auth/application/dto/register.dto.ts
-import { IsEmail, IsString, MinLength, IsOptional } from 'class-validator';
+import { IsEmail, IsString, MinLength, IsOptional, IsIn } from 'class-validator';
 
 export class RegisterDto {
   @IsString()
@@ -27,4 +27,8 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   address?: string;
+
+  @IsOptional()
+  @IsIn(['restaurant', 'retail', 'salon', 'pharmacy', 'grocery', 'gym', 'hotel', 'general'])
+  businessType?: string;
 }

@@ -162,7 +162,21 @@ export class Business {
   @Prop({ type: Object, default: () => ({}) })
   storefront!: StorefrontConfig;
 
-  // Escape hatch for future engine-specific settings
+  // Business type — drives feature presets
+  @Prop({ default: "general" })
+
+  // Feature flags — what this tenant has enabled
+  @Prop({ type: Object, default: () => ({}) })
+
+    // Business type — drives feature presets
+  @Prop({ default: 'general' })
+  businessType: string = 'general';
+
+  // Feature flags — what this tenant has enabled
+  @Prop({ type: Object, default: () => ({}) })
+  features: Record<string, boolean> = {};
+
+    // Escape hatch for future engine-specific settings
   @Prop({ type: Object, default: {} })
   settings!: Record<string, any>;
 }
