@@ -1,4 +1,4 @@
-// 📁 File: src/domains/menu/menu.service.ts
+// 📁 File: src/domains/menu/catalog.service.ts
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -20,7 +20,7 @@ import { UpdateProductDto } from './dto/update-product.dto';
 import { EventBus } from '@core/events';
 
 @Injectable()
-export class MenuService {
+export class CatalogService {
   constructor(
     @InjectModel(Category.name)
     private readonly categoryModel: Model<CategoryDocument>,

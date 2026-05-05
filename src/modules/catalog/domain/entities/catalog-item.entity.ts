@@ -1,14 +1,14 @@
-// 📁 Path: src/domains/menu/entities/menu-item.entity.ts
+// 📁 Path: src/domains/menu/entities/catalog-item.entity.ts
 
 import { BaseEntity } from '@common/base.entity';
-import { MenuItemStatus } from '../enums/menu-item-status.enum';
-import { MenuOption } from './menu-option.entity';
+import { CatalogItemStatus } from '../enums/catalog-item-status.enum';
+import { CatalogOption } from './catalog-option.entity';
 
 /**
- * Represents a MenuItem (dish/product) in the system.
+ * Represents a CatalogItem (dish/product) in the system.
  * Fully domain-driven with encapsulated behavior for updates and options.
  */
-export class MenuItem extends BaseEntity {
+export class CatalogItem extends BaseEntity {
   /** DB-assigned ID (optional) */
   id?: string;
 
@@ -20,10 +20,10 @@ export class MenuItem extends BaseEntity {
 
   /** Optional fields */
   description?: string;
-  status: MenuItemStatus = MenuItemStatus.ACTIVE;
-  options: MenuOption[] = [];
+  status: CatalogItemStatus = CatalogItemStatus.ACTIVE;
+  options: CatalogOption[] = [];
 
-  constructor(partial?: Partial<MenuItem>) {
+  constructor(partial?: Partial<CatalogItem>) {
     super(partial);
     if (partial) Object.assign(this, partial);
   }
@@ -35,7 +35,7 @@ export class MenuItem extends BaseEntity {
   }
 
   /** Updates the menu item status */
-  updateStatus(newStatus: MenuItemStatus) {
+  updateStatus(newStatus: CatalogItemStatus) {
     this.status = newStatus;
     this.touch();
   }
@@ -48,13 +48,13 @@ export class MenuItem extends BaseEntity {
   }
 
   /** Adds a new option to the menu item */
-  addOption(option: MenuOption) {
+  addOption(option: CatalogOption) {
     this.options.push(option);
     this.touch();
   }
 
   /** Updates all options at once */
-  updateOptions(options: MenuOption[]) {
+  updateOptions(options: CatalogOption[]) {
     this.options = options;
     this.touch();
   }

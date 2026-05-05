@@ -1,12 +1,12 @@
-// src/modules/menu/menu.module.ts
+// src/modules/menu/catalog.module.ts
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { CoreEventModule } from '@core/events/core-event.module';
 
-import { MenuController } from './presentation/menu.controller';
+import { CatalogController } from './presentation/catalog.controller';
 import { ProductController } from './presentation/product.controller';
-import { MenuService } from './application/menu.service';
+import { CatalogService } from './application/catalog.service';
 
 import { Category, CategorySchema } from './infrastructure/schemas/category.schema';
 import { Product, ProductSchema } from './infrastructure/schemas/product.schema';
@@ -21,8 +21,8 @@ import { RestaurantSettings, RestaurantSettingsSchema } from './infrastructure/s
       { name: RestaurantSettings.name, schema: RestaurantSettingsSchema },
     ]),
   ],
-  controllers: [MenuController, ProductController],
-  providers: [MenuService],
-  exports: [MenuService],
+  controllers: [CatalogController, ProductController],
+  providers: [CatalogService],
+  exports: [CatalogService],
 })
-export class MenuModule {}
+export class CatalogModule {}

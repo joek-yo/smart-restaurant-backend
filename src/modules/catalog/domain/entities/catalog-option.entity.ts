@@ -3,9 +3,9 @@
 import { BaseEntity } from '@common/base.entity';
 
 /**
- * Represents an option (addon/variant) for a MenuItem
+ * Represents an option (addon/variant) for a CatalogItem
  */
-export class MenuOption extends BaseEntity {
+export class CatalogOption extends BaseEntity {
   id?: string;
 
   /** Mandatory fields */
@@ -17,7 +17,7 @@ export class MenuOption extends BaseEntity {
   required: boolean = false; // whether this option is mandatory
   maxSelection?: number; // max selectable items for this option
 
-  constructor(partial?: Partial<MenuOption>) {
+  constructor(partial?: Partial<CatalogOption>) {
     super(partial);
     if (partial) Object.assign(this, partial);
   }

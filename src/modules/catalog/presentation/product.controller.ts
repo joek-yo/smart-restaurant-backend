@@ -10,13 +10,13 @@ import {
   Delete,
 } from '@nestjs/common';
 
-import { MenuService } from '../application/menu.service';
+import { CatalogService } from '../application/catalog.service';
 import { CreateProductDto } from '../application/dto/create-product.dto';
 import { UpdateProductDto } from '../application/dto/update-product.dto';
 
-@Controller('menu/products')
+@Controller('catalog/products')
 export class ProductController {
-  constructor(private readonly menuService: MenuService) {}
+  constructor(private readonly menuService: CatalogService) {}
 
   /* =====================================================
      CREATE PRODUCT

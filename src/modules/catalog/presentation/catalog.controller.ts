@@ -1,4 +1,4 @@
-// 📁 src/domains/menu/menu.controller.ts
+// 📁 src/domains/menu/catalog.controller.ts
 import {
   Controller,
   Get,
@@ -11,14 +11,14 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
-import { MenuService } from '../application/menu.service';
+import { CatalogService } from '../application/catalog.service';
 import { CreateCategoryDto } from '../application/dto/create-category.dto';
 import { UpdateCategoryDto } from '../application/dto/update-category.dto';
 import { RestaurantSettings } from '../infrastructure/schemas/restaurant-settings.schema';
 
-@Controller('menu')
-export class MenuController {
-  constructor(private readonly menuService: MenuService) {}
+@Controller('catalog')
+export class CatalogController {
+  constructor(private readonly menuService: CatalogService) {}
 
   /* =====================================================
      CATEGORY ROUTES
