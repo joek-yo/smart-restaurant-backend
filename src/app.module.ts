@@ -1,22 +1,21 @@
 // src/app.module.ts
 
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 // Core
 import { CoreEventModule } from './core/events/core-event.module';
+import { TenantMiddleware } from './core/tenant/tenant.middleware';
+import { TenantModule } from './core/tenant/tenant.module';
 
 // Infrastructure
 import { DatabaseModule } from './infrastructure/database/database.module';
 
-// ✅ ONLY BusinessModule active — others commented out until backend refactor is complete
+// Modules
 import { BusinessModule } from './modules/business/business.module';
-
-// 🔴 Commented out — broken mid-refactor, fix later as separate branch
-// import { MongooseRepositoriesModule } from './infrastructure/database/mongoose/mongoose.repositories.module';
-import { OrdersModule } from './modules/orders/orders.module';
 import { CatalogModule } from './modules/catalog/catalog.module';
+import { OrdersModule } from './modules/orders/orders.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
@@ -27,10 +26,8 @@ import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
     ConfigModule.forRoot({ isGlobal: true }),
     EventEmitterModule.forRoot(),
     CoreEventModule,
-
+    TenantModule,
     DatabaseModule,
-    // MongooseRepositoriesModule,
-
     BusinessModule,
     CatalogModule,
     OrdersModule,
@@ -40,4 +37,10 @@ import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
     WhatsAppModule,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(TenantMiddleware)
+      .forRoutes('*'); // Apply to ALL routes
+  }
+}
