@@ -19,6 +19,7 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { SessionsModule } from './modules/sessions/sessions.module';
 import { CustomersModule } from './modules/customers/customers.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { AuthModule } from './modules/auth/auth.module';
 import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
 
 @Module({
@@ -34,6 +35,7 @@ import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
     SessionsModule,
     CustomersModule,
     NotificationsModule,
+    AuthModule,
     WhatsAppModule,
   ],
 })

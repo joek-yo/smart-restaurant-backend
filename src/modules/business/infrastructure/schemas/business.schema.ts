@@ -145,6 +145,9 @@ export class Business {
   })
   businessHours!: { open: string; close: string };
 
+  @Prop({ select: false })
+  password?: string;
+
   @Prop({ default: 'starter' })
   subscriptionPlan!: string;
 
