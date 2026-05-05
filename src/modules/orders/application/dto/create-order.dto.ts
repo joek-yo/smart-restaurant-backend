@@ -1,4 +1,4 @@
-// src/domains/orders/dto/create-order.dto.ts
+// src/modules/orders/application/dto/create-order.dto.ts
 import { IsArray, IsString, IsNumber, IsOptional, ValidateNested, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -20,6 +20,9 @@ export class CreateOrderItemDto {
 }
 
 export class CreateOrderDto {
+  @IsString()
+  businessId!: string;
+
   @IsString()
   customerName!: string;
 

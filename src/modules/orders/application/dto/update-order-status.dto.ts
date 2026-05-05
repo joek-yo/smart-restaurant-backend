@@ -1,7 +1,7 @@
 // src/modules/orders/dto/update-order-status.dto.ts
 import { IsEnum } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { OrderStatus } from '../entities/order-status.enum';
+import { OrderStatus } from '../../domain/entities/order-status.enum';
 
 /** DTO for updating order status */
 export class UpdateOrderStatusDto {

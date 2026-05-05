@@ -1,24 +1,3 @@
 // src/common/base.entity.ts
-export abstract class BaseEntity {
-  /** Optional ID, usually assigned by DB */
-  id?: string;
-
-  /** When entity was created */
-  createdAt: Date;
-
-  /** Last updated timestamp */
-  updatedAt: Date;
-
-  constructor(partial?: Partial<BaseEntity>) {
-    this.id = partial?.id; // Let DB or application assign it
-    this.createdAt = partial?.createdAt || new Date();
-    this.updatedAt = partial?.updatedAt || new Date();
-  }
-
-  /**
-   * Update the timestamp when entity changes
-   */
-  touch() {
-    this.updatedAt = new Date();
-  }
-}
+// Re-export from core — @common/base.entity still works for all modules
+export { BaseEntity } from '../core/base/base.entity';

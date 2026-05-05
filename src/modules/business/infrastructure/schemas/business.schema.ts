@@ -167,5 +167,3 @@ export class Business {
 export const BusinessSchema = SchemaFactory.createForClass(Business);
 
 // Indexes for fast tenant resolution on every request
-BusinessSchema.index({ slug: 1 });
-BusinessSchema.index({ domain: 1 });

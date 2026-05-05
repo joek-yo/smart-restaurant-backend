@@ -1,24 +1,16 @@
-// src/domains/orders/handlers/order-created.handler.ts
-
+// src/modules/orders/application/handlers/order-created.handler.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { EventBus } from '../../../common/events/event-bus';
-import { OrderCreatedEvent } from '../events/order-created.event';
+import { EventBus } from '@core/events';
 
 @Injectable()
 export class OrderCreatedHandler implements OnModuleInit {
   constructor(private readonly eventBus: EventBus) {}
 
   onModuleInit() {
-    // Subscribe to events on module init
-    this.eventBus.on('OrderCreatedEvent', this.handle.bind(this));
+    this.eventBus.on('order.created', this.handle.bind(this));
   }
 
-  handle(event: OrderCreatedEvent) {
-    const { order } = event;
-    console.log(`[Handler] Order created: ${order.id} for ${order.customerName}`);
-
-    // ✅ Example: trigger other services without touching the core domain
-    // this.kitchenService.notify(order);
-    // this.whatsappService.sendNewOrder(order);
+  handle(payload: any) {
+    console.log(`[Handler] Order created: ${payload.orderId}`);
   }
 }

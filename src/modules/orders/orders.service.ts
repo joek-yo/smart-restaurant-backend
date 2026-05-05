@@ -1,65 +1,47 @@
-// 📁 File: src/modules/orders/orders.service.ts
+// src/modules/orders/orders.service.ts
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 
-// 🧱 SCHEMA
-import { Order, OrderDocument } from './schemas/order.schema';
-
-// 📦 DTOs (adjust paths if needed)
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderDto } from './dto/update-order.dto';
-
-// 🔥 EVENT BUS
+import { OrderDocument } from './infrastructure/schemas/order.schema';
+import { CreateOrderDto } from './application/dto/create-order.dto';
+import { UpdateOrderStatusDto } from './application/dto/update-order-status.dto';
 import { EventBus, EVENTS } from '@core/events';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectModel(Order.name)
+    @InjectModel('Order')
     private readonly orderModel: Model<OrderDocument>,
-
-    // ✅ EVENT BUS INJECTION
     private readonly eventBus: EventBus,
   ) {}
 
-  /* =====================================================
-     CREATE ORDER
-  ===================================================== */
-
   async create(dto: CreateOrderDto) {
+    const tenantId = Types.ObjectId.isValid(dto.businessId)
+      ? new Types.ObjectId(dto.businessId).toString()
+      : dto.businessId;
+
     const order = await this.orderModel.create({
-      ...dto,
-      businessId: Types.ObjectId.isValid(dto.businessId)
-        ? new Types.ObjectId(dto.businessId)
-        : dto.businessId,
+      tenantId,
+      items: dto.items,
+      status: 'PENDING',
+      queueNumber: Date.now(),
     });
 
-    // 🔥 NORMALIZE ID
-    const orderId = (order as any)?._id?.toString?.();
+    const orderId = (order._id as any).toString();
 
-    // 🔥 EMIT EVENT
     this.eventBus.emit(EVENTS.ORDER_CREATED, {
       orderId,
       businessId: dto.businessId,
-      totalAmount: order.totalAmount,
     });
 
     return order;
   }
 
-  /* =====================================================
-     GET ORDERS
-  ===================================================== */
-
   async findAll(businessId: string) {
     return this.orderModel
-      .find({
-        businessId: Types.ObjectId.isValid(businessId)
-          ? new Types.ObjectId(businessId)
-          : businessId,
-      })
+      .find({ tenantId: businessId })
       .sort({ createdAt: -1 })
       .exec();
   }
@@ -68,67 +50,33 @@ export class OrdersService {
     return this.orderModel.findById(id).exec();
   }
 
-  /* =====================================================
-     UPDATE ORDER
-  ===================================================== */
-
-  async update(id: string, dto: UpdateOrderDto) {
-    const order = await this.orderModel.findByIdAndUpdate(
-      id,
-      { $set: dto },
-      { new: true },
-    );
-
-    if (!order) return null;
-
-    return order;
+  async updateStatus(id: string, dto: UpdateOrderStatusDto) {
+    return this.orderModel
+      .findByIdAndUpdate(id, { $set: { status: dto.status } }, { new: true })
+      .exec();
   }
-
-  /* =====================================================
-     COMPLETE ORDER
-  ===================================================== */
 
   async markAsCompleted(orderId: string) {
-    const order = await this.orderModel.findByIdAndUpdate(
-      orderId,
-      { status: 'completed' },
-      { new: true },
-    );
+    const order = await this.orderModel
+      .findByIdAndUpdate(orderId, { status: 'COMPLETED' }, { new: true })
+      .exec();
 
     if (!order) return null;
 
-    this.eventBus.emit(EVENTS.ORDER_COMPLETED, {
-      orderId,
-      businessId: order.businessId,
-    });
-
+    this.eventBus.emit(EVENTS.ORDER_COMPLETED, { orderId });
     return order;
   }
-
-  /* =====================================================
-     CANCEL ORDER
-  ===================================================== */
 
   async cancelOrder(orderId: string) {
-    const order = await this.orderModel.findByIdAndUpdate(
-      orderId,
-      { status: 'cancelled' },
-      { new: true },
-    );
+    const order = await this.orderModel
+      .findByIdAndUpdate(orderId, { status: 'CANCELLED' }, { new: true })
+      .exec();
 
     if (!order) return null;
 
-    this.eventBus.emit(EVENTS.ORDER_CANCELLED, {
-      orderId,
-      businessId: order.businessId,
-    });
-
+    this.eventBus.emit(EVENTS.ORDER_CANCELLED, { orderId });
     return order;
   }
-
-  /* =====================================================
-     DELETE ORDER
-  ===================================================== */
 
   async remove(id: string) {
     return this.orderModel.findByIdAndDelete(id).exec();

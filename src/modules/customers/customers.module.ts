@@ -1,15 +1,20 @@
 // src/modules/customers/customers.module.ts
 
 import { Module } from '@nestjs/common';
+import { MongooseModule } from '@nestjs/mongoose';
 
-/**
- * CustomersModule
- * Phase 2: empty shell (no dependencies yet)
- */
+import { CustomerSchema } from './infrastructure/schemas/customer.schema';
+import { BusinessCustomerSchema } from './infrastructure/schemas/business-customer.schema';
+
 @Module({
-  imports: [],
+  imports: [
+    MongooseModule.forFeature([
+      { name: 'Customer', schema: CustomerSchema },
+      { name: 'BusinessCustomer', schema: BusinessCustomerSchema },
+    ]),
+  ],
   controllers: [],
   providers: [],
-  exports: [],
+  exports: [MongooseModule],
 })
 export class CustomersModule {}

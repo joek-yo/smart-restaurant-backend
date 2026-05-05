@@ -1,5 +1,4 @@
 // src/core/events/event.bus.ts
-
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -9,5 +8,9 @@ export class EventBus {
 
   emit(event: string, payload: any) {
     this.emitter.emit(event, payload);
+  }
+
+  on(event: string, listener: (...args: any[]) => void) {
+    this.emitter.on(event, listener);
   }
 }

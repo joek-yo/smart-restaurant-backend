@@ -1,23 +1,16 @@
-// src/domains/orders/handlers/order-status-updated.handler.ts
+// src/modules/orders/application/handlers/order-status-updated.handler.ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { EventBus } from '../../../common/events/event-bus';
-import { OrderStatusUpdatedEvent } from '../events/order-status-updated.event';
+import { EventBus } from '@core/events';
 
 @Injectable()
 export class OrderStatusUpdatedHandler implements OnModuleInit {
   constructor(private readonly eventBus: EventBus) {}
 
   onModuleInit() {
-    // Subscribe to status update events on module init
-    this.eventBus.on('OrderStatusUpdatedEvent', this.handle.bind(this));
+    this.eventBus.on('order.status.updated', this.handle.bind(this));
   }
 
-  handle(event: OrderStatusUpdatedEvent) {
-    console.log(
-      `[Handler] Order ${event.order.id} status changed from ${event.previousStatus} to ${event.newStatus}`,
-    );
-
-    // ✅ Example: notify gateway or other external services
-    // ordersGateway.emitStatusUpdated(event.order.id, event.previousStatus, event.newStatus);
+  handle(payload: any) {
+    console.log(`[Handler] Order ${payload.orderId} status changed to ${payload.status}`);
   }
 }

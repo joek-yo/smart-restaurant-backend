@@ -15,11 +15,12 @@ import { BusinessModule } from './modules/business/business.module';
 
 // 🔴 Commented out — broken mid-refactor, fix later as separate branch
 // import { MongooseRepositoriesModule } from './infrastructure/database/mongoose/mongoose.repositories.module';
-// import { OrdersModule } from './modules/orders/orders.module';
-// import { MenuModule } from './modules/menu/menu.module';
-// import { SessionsModule } from './modules/sessions/sessions.module';
-// import { CustomersModule } from './modules/customers/customers.module';
-// import { NotificationsModule } from './modules/notifications/notifications.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { MenuModule } from './modules/menu/menu.module';
+import { SessionsModule } from './modules/sessions/sessions.module';
+import { CustomersModule } from './modules/customers/customers.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
+import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
 
 @Module({
   imports: [
@@ -31,11 +32,12 @@ import { BusinessModule } from './modules/business/business.module';
     // MongooseRepositoriesModule,
 
     BusinessModule,
-    // MenuModule,
-    // OrdersModule,
-    // SessionsModule,
-    // CustomersModule,
-    // NotificationsModule,
+    MenuModule,
+    OrdersModule,
+    SessionsModule,
+    CustomersModule,
+    NotificationsModule,
+    WhatsAppModule,
   ],
 })
 export class AppModule {}
