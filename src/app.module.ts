@@ -21,6 +21,9 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
+// --- Add these two lines ---
+import { AboutModule } from './modules/about/about.module';
+import { BlogModule } from './modules/blog/blog.module';
 
 @Module({
   imports: [
@@ -37,6 +40,9 @@ import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
     NotificationsModule,
     AuthModule,
     WhatsAppModule,
+    // --- Add these two lines ---
+    AboutModule,
+    BlogModule,
   ],
 })
 export class AppModule implements NestModule {
