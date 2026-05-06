@@ -1,0 +1,265 @@
+{
+  "info": {
+    "name": "PDK Commerce Platform API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000" },
+    { "key": "token", "value": "" },
+    { "key": "tenantSlug", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register Business",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/register",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"PDK Store\",\n  \"slug\": \"pdk\",\n  \"email\": \"admin@pdk.com\",\n  \"phone\": \"+254700000000\",\n  \"password\": \"password123\",\n  \"timezone\": \"Africa/Nairobi\",\n  \"currency\": \"KES\",\n  \"businessType\": \"retail\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.access_token) {",
+                  "  pm.collectionVariables.set('token', res.access_token);",
+                  "  pm.collectionVariables.set('tenantSlug', res.business.slug);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/auth/login",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@pdk.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Business",
+      "item": [
+        {
+          "name": "Get By Slug",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/businesses/slug/{{tenantSlug}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Get Storefront",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/businesses/{{businessId}}/storefront",
+            "header": []
+          }
+        },
+        {
+          "name": "Update Storefront",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/businesses/{{businessId}}/storefront",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tagline\": \"Best deals in town\",\n  \"whatsapp\": \"+254700000000\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catalog",
+      "item": [
+        {
+          "name": "Get Categories",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/catalog/categories",
+            "header": [
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/catalog/categories",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Electronics\",\n  \"description\": \"Electronic gadgets\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Products",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/catalog/products",
+            "header": [
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/catalog/products",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Wireless Earbuds\",\n  \"price\": 2500,\n  \"categoryId\": \"CATEGORY_ID_HERE\",\n  \"description\": \"High quality earbuds\",\n  \"stock\": 50\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Settings",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/catalog/settings",
+            "header": [
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Create Order",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/orders",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerName\": \"John Doe\",\n  \"customerPhone\": \"+254700000000\",\n  \"items\": [\n    {\n      \"productId\": \"PRODUCT_ID_HERE\",\n      \"name\": \"Wireless Earbuds\",\n      \"quantity\": 1,\n      \"price\": 2500\n    }\n  ],\n  \"notes\": \"Please deliver fast\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Orders",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/orders",
+            "header": [
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Get Order By ID",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/orders/{{orderId}}",
+            "header": [
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ]
+          }
+        },
+        {
+          "name": "Update Order Status",
+          "request": {
+            "method": "PATCH",
+            "url": "{{baseUrl}}/orders/{{orderId}}/status",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-tenant-slug", "value": "{{tenantSlug}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"ACCEPTED\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Add To Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/sessions/cart",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user-123\",\n  \"productId\": \"PRODUCT_ID_HERE\",\n  \"name\": \"Wireless Earbuds\",\n  \"price\": 2500,\n  \"quantity\": 1\n}"
+            }
+          }
+        },
+        {
+          "name": "Remove From Cart",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/sessions/cart/remove",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user-123\",\n  \"productId\": \"PRODUCT_ID_HERE\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Update Quantity",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/sessions/cart/quantity",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user-123\",\n  \"productId\": \"PRODUCT_ID_HERE\",\n  \"quantity\": 3\n}"
+            }
+          }
+        },
+        {
+          "name": "Checkout",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/sessions/checkout",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user-123\"\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
