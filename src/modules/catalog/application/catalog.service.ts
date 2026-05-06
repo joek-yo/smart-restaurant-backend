@@ -7,9 +7,9 @@ import { Model, Types } from 'mongoose';
 import { Category, CategoryDocument } from '../infrastructure/schemas/category.schema';
 import { Product, ProductDocument } from '../infrastructure/schemas/product.schema';
 import {
-  RestaurantSettings,
-  RestaurantSettingsDocument,
-} from '../infrastructure/schemas/restaurant-settings.schema';
+  CatalogSettings,
+  CatalogSettingsDocument,
+} from '../infrastructure/schemas/catalog-settings.schema';
 
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -28,8 +28,8 @@ export class CatalogService {
     @InjectModel(Product.name)
     private readonly productModel: Model<ProductDocument>,
 
-    @InjectModel(RestaurantSettings.name)
-    private readonly settingsModel: Model<RestaurantSettingsDocument>,
+    @InjectModel(CatalogSettings.name)
+    private readonly settingsModel: Model<CatalogSettingsDocument>,
 
     private readonly eventBus: EventBus,
   ) {}
@@ -163,13 +163,13 @@ export class CatalogService {
      SETTINGS METHODS
   ===================================================== */
 
-  async getRestaurantSettings(businessId: string) {
+  async getCatalogSettings(businessId: string) {
     return this.settingsModel.findOne(this.toBusinessFilter(businessId));
   }
 
-  async upsertRestaurantSettings(
+  async upsertCatalogSettings(
     businessId: string,
-    data: Partial<RestaurantSettings>,
+    data: Partial<CatalogSettings>,
   ) {
     const settings = await this.settingsModel.findOneAndUpdate(
       this.toBusinessFilter(businessId),

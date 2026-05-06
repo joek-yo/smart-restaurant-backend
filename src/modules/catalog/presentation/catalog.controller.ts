@@ -15,7 +15,7 @@ import { Request } from 'express';
 import { CatalogService } from '../application/catalog.service';
 import { CreateCategoryDto } from '../application/dto/create-category.dto';
 import { UpdateCategoryDto } from '../application/dto/update-category.dto';
-import { RestaurantSettings } from '../infrastructure/schemas/restaurant-settings.schema';
+import { CatalogSettings } from '../infrastructure/schemas/catalog-settings.schema';
 import { TenantGuard } from '../../../core/tenant/tenant.guard';
 
 @Controller('catalog')
@@ -53,13 +53,13 @@ export class CatalogController {
 
   @Get('settings')
   async getSettings(@Req() req: Request) {
-    const settings = await this.catalogService.getRestaurantSettings(req.tenantId!);
+    const settings = await this.catalogService.getCatalogSettings(req.tenantId!);
     return { success: true, settings };
   }
 
   @Patch('settings')
-  async upsertSettings(@Req() req: Request, @Body() data: Partial<RestaurantSettings>) {
-    const settings = await this.catalogService.upsertRestaurantSettings(req.tenantId!, data);
+  async upsertSettings(@Req() req: Request, @Body() data: Partial<CatalogSettings>) {
+    const settings = await this.catalogService.upsertCatalogSettings(req.tenantId!, data);
     return { success: true, settings };
   }
 

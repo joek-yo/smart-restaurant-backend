@@ -1,11 +1,11 @@
-// src/domains/menu/schemas/restaurant-settings.schema.ts
+// src/domains/menu/schemas/catalog-settings.schema.ts
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
 
-export type RestaurantSettingsDocument = RestaurantSettings & Document;
+export type CatalogSettingsDocument = CatalogSettings & Document;
 
 @Schema({ timestamps: true })
-export class RestaurantSettings {
+export class CatalogSettings {
   @Prop({ type: Types.ObjectId, ref: 'Restaurant', required: true, unique: true })
   businessId!: Types.ObjectId;
 
@@ -19,5 +19,5 @@ export class RestaurantSettings {
   isOpen!: boolean; // ✅ camelCase
 }
 
-export const RestaurantSettingsSchema =
-  SchemaFactory.createForClass(RestaurantSettings);
+export const CatalogSettingsSchema =
+  SchemaFactory.createForClass(CatalogSettings);

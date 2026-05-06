@@ -1,7 +1,7 @@
 // 📁 src/modules/sessions/domain/adapters/analytics.adapter.ts
 
 import { Injectable, Logger } from '@nestjs/common';
-import { SessionEntity } from '../entities/session.entity';
+import { SessionEntity } from '../../domain/entities/session.entity';
 
 export interface AnalyticsEvent {
   event: string;

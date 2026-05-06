@@ -10,7 +10,7 @@ import { CatalogService } from './application/catalog.service';
 
 import { Category, CategorySchema } from './infrastructure/schemas/category.schema';
 import { Product, ProductSchema } from './infrastructure/schemas/product.schema';
-import { RestaurantSettings, RestaurantSettingsSchema } from './infrastructure/schemas/restaurant-settings.schema';
+import { CatalogSettings, CatalogSettingsSchema } from './infrastructure/schemas/catalog-settings.schema';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { RestaurantSettings, RestaurantSettingsSchema } from './infrastructure/s
     MongooseModule.forFeature([
       { name: Category.name, schema: CategorySchema },
       { name: Product.name, schema: ProductSchema },
-      { name: RestaurantSettings.name, schema: RestaurantSettingsSchema },
+      { name: CatalogSettings.name, schema: CatalogSettingsSchema },
     ]),
   ],
   controllers: [CatalogController, ProductController],
