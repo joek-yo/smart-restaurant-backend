@@ -3,7 +3,6 @@
 A SaaS-ready multi-tenant backend built with NestJS, MongoDB, and Redis.
 
 ## Features
-
 - Multi-tenant architecture — every request scoped to a business
 - JWT authentication — register/login with bcrypt
 - Business type config — feature flags driven from DB
@@ -14,7 +13,6 @@ A SaaS-ready multi-tenant backend built with NestJS, MongoDB, and Redis.
 - Event-driven — cross-module communication via EventBus
 
 ## Tech Stack
-
 - NestJS + TypeScript
 - MongoDB + Mongoose
 - Redis (sessions/cache)
@@ -22,14 +20,9 @@ A SaaS-ready multi-tenant backend built with NestJS, MongoDB, and Redis.
 - Socket.io (WhatsApp gateway)
 
 ## Getting Started
-
-```bash
 cp .env.example .env
-# Fill in your values
-
 npm install
 npm run start:dev
-```
 
 ## API Routes
 
@@ -60,11 +53,10 @@ npm run start:dev
 - GET/PATCH /businesses/:id/storefront
 
 ## Business Types
-
-When registering, pass `businessType` to auto-configure features:
-- `restaurant` — orders, cart, delivery, whatsapp
-- `retail` — orders, cart, delivery
-- `salon` — bookings, SMS notifications
-- `pharmacy` — orders, cart, delivery
-- `gym` — bookings, push notifications
-- `general` — catalog only
+Pass businessType on register to auto-configure features:
+- restaurant — orders, cart, delivery, whatsapp
+- retail — orders, cart, delivery
+- salon — bookings, SMS notifications
+- pharmacy — orders, cart, delivery
+- gym — bookings, push notifications
+- general — catalog only
