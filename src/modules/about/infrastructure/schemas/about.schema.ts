@@ -93,5 +93,4 @@ export class About {
 
 export const AboutSchema = SchemaFactory.createForClass(About);
 
-// Fast lookup by businessId
-AboutSchema.index({ businessId: 1 });
+// Note: businessId index created via @Prop({ index: true }) above

@@ -46,7 +46,7 @@ export class AboutService {
             businessId: new Types.ObjectId(businessId),
           },
         },
-        { returnDocument: 'after', upsert: true, new: true },
+        { returnDocument: 'after', upsert: true },
       )
       .exec();
 
