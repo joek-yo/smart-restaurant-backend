@@ -25,3 +25,15 @@ export const EVENTS = {
 // Type helper so you can use it in listeners: 
 // e.g. @OnEvent(EVENTS.BUSINESS_CREATED)
 export type AppEventType = typeof EVENTS[keyof typeof EVENTS];
+// === CONVERSATION EVENTS (NEW SECTION) ===
+export const CONVERSATION_EVENTS = {
+  MESSAGE_RECEIVED: 'conversation.message.received',
+  INTENT_DETECTED: 'conversation.intent.detected',
+  STATE_CHANGED: 'conversation.state.changed',
+  RESPONSE_READY: 'conversation.response.ready',
+
+  // Downstream business triggers
+  CART_UPDATED: 'conversation.cart.updated',
+  CHECKOUT_STARTED: 'conversation.checkout.started',
+  ORDER_REQUESTED: 'order.create.requested',
+} as const;

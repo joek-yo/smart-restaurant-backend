@@ -1,5 +1,4 @@
 // FILE: src/main.ts
-
 import * as dns from 'node:dns';
 dns.setServers(['8.8.8.8', '8.8.4.4']);
 
@@ -10,6 +9,24 @@ import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  app.enableCors({
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://localhost:3002',
+    ],
+    methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-tenant-id',
+      'x-tenant-slug',
+      'x-business-id',
+      'x-business-slug',
+    ],
+    credentials: true,
+  });
 
   app.useGlobalPipes(
     new ValidationPipe({
