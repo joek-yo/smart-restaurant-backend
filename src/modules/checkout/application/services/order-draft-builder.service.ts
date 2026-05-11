@@ -1,26 +1,39 @@
 // src/modules/checkout/application/services/order-draft-builder.service.ts
 
+import { Injectable } from '@nestjs/common';
+import { SessionEntity } from '@modules/sessions/domain/entities/session.entity';
+import { OrderItem } from '@modules/orders/domain/entities/order.entity';
 import { MoneyVO } from '../../domain/value-objects/money.vo';
+
+export interface OrderDraft {
+  tenantId: string;
+  userId: string;
+  items: OrderItem[];
+  total: MoneyVO;
+  createdAt: Date;
+}
 
 /**
  * OrderDraftBuilderService
  * ------------------------
- * Converts cart/session → order-ready immutable draft
- *
- * NOTE:
- * Pure transformation layer (no DB, no session mutation).
+ * Converts SessionEntity → typed immutable order draft.
+ * Pure transformation — no DB, no session mutation.
  */
-
+@Injectable()
 export class OrderDraftBuilderService {
-  build(session: any) {
-    const items = session.items || [];
+  build(session: SessionEntity): OrderDraft {
+    const items: OrderItem[] = session.items.map((i) => ({
+      productId: i.productId,
+      name: i.name,
+      quantity: i.quantity,
+      price: i.price,
+      total: i.total,
+    }));
 
-    const totalValue = items.reduce((sum: number, i: any) => {
-      return sum + i.price * i.quantity;
-    }, 0);
+    const totalValue = items.reduce((sum, i) => sum + i.total, 0);
 
     return {
-      tenantId: session.businessId ?? session.tenantId,
+      tenantId: session.tenantId,
       userId: session.userId,
       items,
       total: new MoneyVO(totalValue),

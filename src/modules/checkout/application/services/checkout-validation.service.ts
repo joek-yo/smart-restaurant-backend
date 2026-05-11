@@ -1,10 +1,8 @@
 // src/modules/checkout/application/services/checkout-validation.service.ts
-//
-// ✅ FIX 2 & 5 — Complete validation pipeline.
-// Covers: empty cart, quantities, prices, tenant mismatch, total sanity.
 
 import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { SessionEntity } from '@modules/sessions/domain/entities/session.entity';
+import { CartItemEntity } from '@modules/sessions/domain/entities/cart-item.entity';
 
 export interface ValidationResult {
   valid: boolean;
@@ -17,7 +15,7 @@ export class CheckoutValidationService {
 
   /**
    * Full validation pipeline — runs before checkout transitions.
-   * NOTE: throws on first critical failure (fail-fast behavior).
+   * Fail-fast: throws on first critical failure.
    */
   validateSession(session: SessionEntity, tenantId: string): ValidationResult {
     const errors: string[] = [];
@@ -42,15 +40,15 @@ export class CheckoutValidationService {
     }
 
     // ── Rule 4: Total sanity check ─────────────────────────────────────────
-    const total = session.calculateTotal?.() ?? 0;
+    const total = session.calculateTotal();
     if (total <= 0) {
       errors.push('Cart total is zero or invalid');
     }
 
     // ── Rule 5: Tenant isolation integrity ─────────────────────────────────
-    if (session.businessId !== tenantId) {
+    if (session.tenantId !== tenantId) {
       errors.push(
-        `Tenant mismatch: session=${session.businessId}, request=${tenantId}`,
+        `Tenant mismatch: session=${session.tenantId}, request=${tenantId}`,
       );
     }
 
@@ -58,18 +56,15 @@ export class CheckoutValidationService {
       this.logger.warn(
         `[CheckoutValidation] userId=${session.userId} errors=${errors.join('; ')}`,
       );
-
       throw new BadRequestException(errors[0]);
     }
 
     return { valid: true, errors: [] };
   }
 
-  // ──────────────────────────────────────────────────────────────────────────
-  // Granular validators (used by specific use-cases)
-  // ──────────────────────────────────────────────────────────────────────────
+  // ── Granular validators (used by specific use-cases) ─────────────────────
 
-  validateCartNotEmpty(items: any[]): void {
+  validateCartNotEmpty(items: CartItemEntity[]): void {
     if (!items || items.length === 0) {
       throw new BadRequestException('Cart is empty');
     }

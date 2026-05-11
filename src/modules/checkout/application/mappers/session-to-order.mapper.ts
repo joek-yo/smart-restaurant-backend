@@ -40,7 +40,7 @@ export class SessionToOrderMapper {
     const total = items.reduce((sum, i) => sum + i.total, 0);
 
     return {
-      tenantId: session.businessId,
+      tenantId: session.tenantId,
       userId: session.userId,
       items,
       total: new MoneyVO(total),
@@ -54,7 +54,7 @@ export class SessionToOrderMapper {
   static toCheckoutSnapshot(session: SessionEntity): CheckoutSnapshot {
     return {
       sessionId: session.id,
-      tenantId: session.businessId,
+      tenantId: session.tenantId,
       userId: session.userId,
       state: session.state,
       items: session.items,

@@ -1,23 +1,25 @@
 // src/modules/checkout/application/services/checkout-summary.service.ts
 
+import { Injectable } from '@nestjs/common';
+import { CartItemEntity } from '@modules/sessions/domain/entities/cart-item.entity';
 import { MoneyVO } from '../../domain/value-objects/money.vo';
+
+export interface CheckoutSummary {
+  items: CartItemEntity[];
+  subtotal: MoneyVO;
+  itemCount: number;
+}
 
 /**
  * CheckoutSummaryService
  * ----------------------
- * Builds final checkout breakdown
- *
- * NOTE:
+ * Builds final checkout breakdown.
  * Pure domain service — no SessionService dependency.
- * Works on raw cart-like structures only.
  */
-
+@Injectable()
 export class CheckoutSummaryService {
-  build(items: Array<{ name: string; price: number; quantity: number }>) {
-    const subtotalValue = items.reduce((sum, i) => {
-      return sum + i.price * i.quantity;
-    }, 0);
-
+  build(items: CartItemEntity[]): CheckoutSummary {
+    const subtotalValue = items.reduce((sum, i) => sum + i.total, 0);
     const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
     return {

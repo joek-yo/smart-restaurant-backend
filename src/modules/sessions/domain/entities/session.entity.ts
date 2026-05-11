@@ -1,4 +1,4 @@
-// 📁 src/domains/sessions/entities/session.entity.ts
+// src/modules/sessions/domain/entities/session.entity.ts
 
 import { BaseEntity } from '@common/base.entity';
 import { CartItemEntity } from './cart-item.entity';
@@ -8,6 +8,11 @@ import { DiscountVO } from '../value-objects/discount.vo';
 /**
  * SessionEntity
  * Central Domain Model for managing user cart sessions.
+ *
+ * NAMING NOTE:
+ * Internally uses `businessId` (legacy persistence field).
+ * Exposes `tenantId` as the canonical getter for all new code.
+ * Both refer to the same value — never store both.
  */
 export class SessionEntity extends BaseEntity {
   id?: string;
@@ -26,7 +31,13 @@ export class SessionEntity extends BaseEntity {
     if (!partial) return;
 
     this.id = partial.id;
-    this.businessId = partial.businessId!;
+
+    // Support both tenantId (new) and businessId (legacy) on input
+    this.businessId =
+      partial.businessId ??
+      (partial as any).tenantId ??
+      'default';
+
     this.branchId = partial.branchId;
     this.userId = partial.userId!;
 
@@ -40,6 +51,11 @@ export class SessionEntity extends BaseEntity {
 
     this.discount = partial.discount;
     this.expiresAt = partial.expiresAt;
+  }
+
+  // ── Canonical name for all new code ──────────────────────────────────────
+  get tenantId(): string {
+    return this.businessId;
   }
 
   // ==================================================
@@ -86,16 +102,13 @@ export class SessionEntity extends BaseEntity {
   }
 
   // ==================================================
-  // SESSION ACTIONS & FIXES
+  // SESSION ACTIONS
   // ==================================================
 
   applyDiscount(discount: DiscountVO): void {
     this.discount = discount;
   }
 
-  /**
-   * ✅ STEP 5 FIX: Added for compilation compatibility
-   */
   reset(): void {
     this.items = [];
     this.discount = undefined;
@@ -117,9 +130,6 @@ export class SessionEntity extends BaseEntity {
   // CALCULATIONS
   // ==================================================
 
-  /**
-   * ✅ STEP 5 FIX: Explicit method for service-layer calls
-   */
   calculateTotal(): number {
     return this.totalAmount;
   }
@@ -139,9 +149,6 @@ export class SessionEntity extends BaseEntity {
   // PERSISTENCE HELPERS
   // ==================================================
 
-  /**
-   * Creates a clean instance of the entity for repository operations.
-   */
   toSnapshot(): SessionEntity {
     return new SessionEntity({
       id: this.id,
