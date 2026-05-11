@@ -1,28 +1,31 @@
 // src/modules/checkout/application/use-cases/update-cart-quantity.use-case.ts
 
-import { Injectable } from '@nestjs/common';
-import { SessionService } from '@modules/sessions/application/services/session.service';
-
-/**
- * UpdateCartQuantityUseCase
- * -------------------------
- * Updates quantity of an existing cart item.
- */
+import { Injectable, Inject } from '@nestjs/common';
+import { CheckoutSessionPort, CHECKOUT_SESSION_PORT } from '../ports/checkout-session.port';
 
 @Injectable()
 export class UpdateCartQuantityUseCase {
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(
+    @Inject(CHECKOUT_SESSION_PORT)
+    private readonly sessionPort: CheckoutSessionPort,
+  ) {}
 
   async execute(input: {
     userId: string;
+    tenantId: string;
+    branchId?: string;
     productId: string;
     quantity: number;
   }) {
-    const session = await this.sessionService.getOrCreate(input.userId);
+    const session = await this.sessionPort.getOrCreate(
+      input.userId,
+      input.tenantId,
+      input.branchId,
+    );
 
     session.updateQuantity(input.productId, input.quantity);
 
-    await this.sessionService.save(session);
+    await this.sessionPort.save(session);
 
     return session;
   }

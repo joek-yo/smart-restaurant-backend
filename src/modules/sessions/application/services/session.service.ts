@@ -1,77 +1,117 @@
-/**
- * FILE: src/modules/sessions/application/services/session.service.ts
- *
- * REFACTORED: PURE SESSION CACHE LAYER
- * - NO business logic
- * - NO cart logic
- * - NO state transitions
- * - ONLY persistence operations
- */
+// src/modules/sessions/application/services/session.service.ts
+//
+// ✅ FIX 4 — Tenant isolation + abstraction-ready design
+// This service remains the default implementation of SessionPort.
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SessionRepository } from '../../domain/repositories/session.repository';
 import { SessionEntity } from '../../domain/entities/session.entity';
 
+// ─────────────────────────────────────────────────────────────
+// PORT INTERFACE (ABSTRACTION LAYER)
+// ─────────────────────────────────────────────────────────────
+
+export interface SessionScope {
+  userId: string;
+  tenantId: string;
+  branchId?: string;
+}
+
+/**
+ * SessionPort
+ * ----------------
+ * This is the abstraction layer for session management.
+ * Future implementations could be:
+ * - RedisSessionService
+ * - Event-sourced session engine
+ * - External API session store
+ */
+export abstract class SessionPort {
+  abstract getOrCreate(
+    userId: string,
+    tenantId: string,
+    branchId?: string,
+  ): Promise<SessionEntity>;
+
+  abstract getSession(scope: SessionScope): Promise<SessionEntity | null>;
+
+  abstract save(session: SessionEntity): Promise<SessionEntity>;
+
+  abstract update(
+    id: string,
+    partial: Partial<SessionEntity>,
+  ): Promise<SessionEntity>;
+
+  abstract delete(id: string): Promise<void>;
+}
+
+// ─────────────────────────────────────────────────────────────
+// DEFAULT IMPLEMENTATION (CURRENT SYSTEM)
+// ─────────────────────────────────────────────────────────────
+
 @Injectable()
-export class SessionService {
-  constructor(
-    private readonly sessionRepo: SessionRepository,
-  ) {}
+export class SessionService implements SessionPort {
+  private readonly logger = new Logger(SessionService.name);
 
-  private getSessionScope() {
-    return { businessId: 'default', branchId: 'default' };
-  }
+  constructor(private readonly sessionRepo: SessionRepository) {}
 
-  /**
-   * 🔵 PURE FETCH OR CREATE
-   * No business rules allowed here
-   */
-  async getOrCreate(userId: string): Promise<SessionEntity> {
-    const { businessId, branchId } = this.getSessionScope();
+  // ─── Core: tenant-scoped get or create ────────────────────────────────
+
+  async getOrCreate(
+    userId: string,
+    tenantId: string,
+    branchId?: string,
+  ): Promise<SessionEntity> {
+    if (!tenantId) {
+      throw new Error('SessionService.getOrCreate: tenantId is required');
+    }
 
     const sessions = await this.sessionRepo.findByUserId(userId);
 
-    let session = sessions.find((s) =>
-      s.businessId === businessId &&
-      s.branchId === branchId,
+    let session = sessions.find(
+      (s) =>
+        s.businessId === tenantId &&
+        (branchId ? s.branchId === branchId : true),
     );
 
     if (session) return session;
 
     session = new SessionEntity({
       userId,
-      businessId,
-      branchId,
+      businessId: tenantId,
+      branchId: branchId ?? 'main',
       items: [],
     });
+
+    this.logger.log(
+      `[Session] Created new session userId=${userId} tenantId=${tenantId}`,
+    );
 
     return this.sessionRepo.save(session);
   }
 
-  /**
-   * 🔵 FETCH SESSION
-   */
-  async getSession(userId: string): Promise<SessionEntity | null> {
-    const { businessId, branchId } = this.getSessionScope();
+  // ─── Fetch by scope ────────────────────────────────────────────────
+
+  async getSession(scope: SessionScope): Promise<SessionEntity | null> {
+    const { userId, tenantId, branchId } = scope;
 
     const sessions = await this.sessionRepo.findByUserId(userId);
 
-    return sessions.find((s) =>
-      s.businessId === businessId &&
-      s.branchId === branchId,
-    ) || null;
+    return (
+      sessions.find(
+        (s) =>
+          s.businessId === tenantId &&
+          (branchId ? s.branchId === branchId : true),
+      ) ?? null
+    );
   }
 
-  /**
-   * 🔵 SAVE SESSION
-   */
+  // ─── Persistence ────────────────────────────────────────────────
+
   async save(session: SessionEntity): Promise<SessionEntity> {
     return this.sessionRepo.save(session);
   }
 
-  /**
-   * 🔵 UPDATE SESSION (PARTIAL PATCH ONLY)
-   */
   async update(
     id: string,
     partial: Partial<SessionEntity>,
@@ -79,9 +119,6 @@ export class SessionService {
     return this.sessionRepo.update(id, partial);
   }
 
-  /**
-   * 🔵 DELETE SESSION (optional utility)
-   */
   async delete(id: string): Promise<void> {
     return this.sessionRepo.delete(id);
   }

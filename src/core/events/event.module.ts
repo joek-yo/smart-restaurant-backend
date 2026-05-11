@@ -1,16 +1,27 @@
-// src/core/events/event.module.ts
+// FILE: src/core/events/core-event.module.ts
+// PURPOSE: Global single-instance event system (NO DUPLICATES ALLOWED)
 
 import { Module, Global } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EventBus } from './event.bus';
 
-@Global() // Makes EventBus available everywhere without re-importing
+@Global()
 @Module({
   imports: [
-    // Initialize the NestJS emitter engine here
-    EventEmitterModule.forRoot() 
+    // SINGLE EventEmitter instance for entire app
+    EventEmitterModule.forRoot({
+      wildcard: true,
+      delimiter: '.',
+      maxListeners: 50,
+    }),
   ],
-  providers: [EventBus],
-  exports: [EventBus],
+
+  providers: [
+    EventBus,
+  ],
+
+  exports: [
+    EventBus,
+  ],
 })
 export class CoreEventModule {}

@@ -5,16 +5,21 @@ import { MoneyVO } from '../../domain/value-objects/money.vo';
 /**
  * CartCalculationService
  * -----------------------
- * PURE DOMAIN ORCHESTRATION SERVICE
+ * PURE DOMAIN SERVICE (NO SESSION DEPENDENCY)
  *
  * Responsibility:
- * - Calculate cart totals
- * - Aggregate item pricing
- * - Avoid duplication across use-cases
+ * - Compute item totals
+ * - Compute cart totals
+ * - Remain framework-agnostic (usable by API / WhatsApp / AI agents)
  */
 
 export class CartCalculationService {
-  calculateTotal(items: Array<{ price: number; quantity: number }>): MoneyVO {
+  /**
+   * Calculate total cart value from items
+   */
+  calculateTotal(
+    items: Array<{ price: number; quantity: number }>,
+  ): MoneyVO {
     const total = items.reduce((sum, item) => {
       return sum + item.price * item.quantity;
     }, 0);
@@ -22,7 +27,19 @@ export class CartCalculationService {
     return new MoneyVO(total);
   }
 
+  /**
+   * Calculate single item total
+   */
   calculateItemTotal(price: number, quantity: number): MoneyVO {
     return new MoneyVO(price * quantity);
+  }
+
+  /**
+   * Optional helper: safe guard for empty carts
+   */
+  assertNotEmpty(items: Array<any>) {
+    if (!items || items.length === 0) {
+      throw new Error('Cart is empty');
+    }
   }
 }

@@ -1,27 +1,46 @@
 // src/modules/checkout/application/mappers/session-to-order.mapper.ts
 
+import { SessionEntity } from '@modules/sessions/domain/entities/session.entity';
+import { OrderItem } from '@modules/orders/domain/entities/order.entity';
 import { CartItemMapper } from './cart-item.mapper';
 import { MoneyVO } from '../../domain/value-objects/money.vo';
+
+export interface OrderDraft {
+  tenantId: string;
+  userId: string;
+  items: OrderItem[];
+  total: MoneyVO;
+  metadata: {
+    source: string;
+    convertedAt: Date;
+  };
+}
+
+export interface CheckoutSnapshot {
+  sessionId: string | undefined;
+  tenantId: string;
+  userId: string;
+  state: SessionEntity['state'];
+  items: SessionEntity['items'];
+  total: number;
+}
 
 /**
  * SessionToOrderMapper
  * --------------------
- * Converts a full session into a draft order structure.
+ * Converts a SessionEntity into a typed order draft or checkout snapshot.
  */
-
 export class SessionToOrderMapper {
 
-  static toOrderDraft(session: any) {
-    const items = (session.items || []).map((i: any) =>
+  static toOrderDraft(session: SessionEntity): OrderDraft {
+    const items: OrderItem[] = session.items.map((i) =>
       CartItemMapper.toOrderItem(i),
     );
 
-    const total = items.reduce((sum: number, i: any) => {
-      return sum + i.total;
-    }, 0);
+    const total = items.reduce((sum, i) => sum + i.total, 0);
 
     return {
-      tenantId: session.tenantId,
+      tenantId: session.businessId,
       userId: session.userId,
       items,
       total: new MoneyVO(total),
@@ -32,17 +51,14 @@ export class SessionToOrderMapper {
     };
   }
 
-  static toCheckoutSnapshot(session: any) {
+  static toCheckoutSnapshot(session: SessionEntity): CheckoutSnapshot {
     return {
       sessionId: session.id,
-      tenantId: session.tenantId,
+      tenantId: session.businessId,
       userId: session.userId,
       state: session.state,
       items: session.items,
-      total: session.items?.reduce(
-        (sum: number, i: any) => sum + i.price * i.quantity,
-        0,
-      ),
+      total: session.totalAmount,
     };
   }
 }

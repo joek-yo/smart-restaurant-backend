@@ -1,25 +1,29 @@
 // src/modules/checkout/application/use-cases/cancel-checkout.use-case.ts
 
-import { Injectable } from '@nestjs/common';
-import { SessionService } from '@modules/sessions/application/services/session.service';
-
-/**
- * CancelCheckoutUseCase
- * ----------------------
- * Rolls back checkout state safely
- */
+import { Injectable, Inject } from '@nestjs/common';
+import { CheckoutSessionPort, CHECKOUT_SESSION_PORT } from '../ports/checkout-session.port';
 
 @Injectable()
 export class CancelCheckoutUseCase {
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(
+    @Inject(CHECKOUT_SESSION_PORT)
+    private readonly sessionPort: CheckoutSessionPort,
+  ) {}
 
-  async execute(input: { userId: string }) {
-    const session = await this.sessionService.getOrCreate(input.userId);
+  async execute(input: {
+    userId: string;
+    tenantId: string;
+    branchId?: string;
+  }) {
+    const session = await this.sessionPort.getOrCreate(
+      input.userId,
+      input.tenantId,
+      input.branchId,
+    );
 
-    // Reset session state + cart
     session.reset();
 
-    await this.sessionService.save(session);
+    await this.sessionPort.save(session);
 
     return {
       cancelled: true,

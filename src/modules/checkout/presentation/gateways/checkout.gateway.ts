@@ -10,17 +10,21 @@ import {
 
 import { Server, Socket } from 'socket.io';
 
+import { CheckoutOrchestratorService } from '../../application/orchestrators/checkout-orchestrator.service';
+
 /**
- * CHECKOUT GATEWAY
- * -----------------
- * ROLE:
- * Real-time transport adapter (WebSocket / WhatsApp bridge layer)
+ * CheckoutGateway
+ * ----------------
+ * PURE TRANSPORT LAYER ONLY
  *
- * RULES:
- * - NO business logic
- * - NO cart manipulation
- * - NO validation
- * - ONLY forwards to orchestrator
+ * Responsibilities:
+ * - Receive websocket events
+ * - Forward to orchestrator
+ * - Return response to client
+ *
+ * ❌ NO business logic
+ * ❌ NO event emission
+ * ❌ NO state mutation
  */
 
 @WebSocketGateway({
@@ -31,87 +35,69 @@ export class CheckoutGateway {
   server!: Server;
 
   constructor(
-    // ⚠️ This should be CheckoutOrchestratorService
-    private readonly orchestrator: any,
+    private readonly orchestrator: CheckoutOrchestratorService,
   ) {}
 
-  // ==================================================
-  // 🛒 CART EVENTS (REAL-TIME SYNC)
-  // ==================================================
+  // ─────────────────────────────────────────────
+  // 🛒 CART EVENTS
+  // ─────────────────────────────────────────────
 
   @SubscribeMessage('cart:add')
   async handleAddItem(
     @MessageBody() payload: any,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
   ) {
-    const result = await this.orchestrator.addItemToCart(payload);
-
-    client.emit('cart:updated', result);
-
-    return result;
+    return this.orchestrator.addToCart(payload);
   }
 
   @SubscribeMessage('cart:update')
   async handleUpdateQuantity(
     @MessageBody() payload: any,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
   ) {
-    const result = await this.orchestrator.updateCartQuantity(payload);
-
-    client.emit('cart:updated', result);
-
-    return result;
+    return this.orchestrator.updateCartQuantity(
+      payload,
+      payload.productId,
+      payload.quantity,
+    );
   }
 
   @SubscribeMessage('cart:remove')
   async handleRemoveItem(
     @MessageBody() payload: any,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
   ) {
-    const result = await this.orchestrator.removeItemFromCart(payload);
-
-    client.emit('cart:updated', result);
-
-    return result;
+    return this.orchestrator.removeFromCart(
+      payload,
+      payload.productId,
+    );
   }
 
-  // ==================================================
-  // 💳 CHECKOUT EVENTS
-  // ==================================================
+  // ─────────────────────────────────────────────
+  // 💳 CHECKOUT FLOW
+  // ─────────────────────────────────────────────
 
   @SubscribeMessage('checkout:start')
   async handleStartCheckout(
     @MessageBody() payload: any,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
   ) {
-    const result = await this.orchestrator.startCheckout(payload);
-
-    client.emit('checkout:started', result);
-
-    return result;
+    return this.orchestrator.startCheckout(payload);
   }
 
   @SubscribeMessage('checkout:confirm')
   async handleConfirmCheckout(
     @MessageBody() payload: any,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
   ) {
-    const result = await this.orchestrator.confirmCheckout(payload);
-
-    client.emit('checkout:confirmed', result);
-
-    return result;
+    return this.orchestrator.confirmCheckout(payload);
   }
 
   @SubscribeMessage('checkout:cancel')
   async handleCancelCheckout(
     @MessageBody() payload: any,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
   ) {
-    const result = await this.orchestrator.cancelCheckout(payload);
-
-    client.emit('checkout:cancelled', result);
-
-    return result;
+    return this.orchestrator.cancelCheckout(payload);
   }
 }

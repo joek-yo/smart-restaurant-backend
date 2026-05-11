@@ -1,25 +1,28 @@
-// src/modules/checkout/presentation/dto/add-cart-item.dto.ts
-
-import { IsString, IsNumber, Min } from 'class-validator';
-
-/**
- * ADD CART ITEM DTO
- * ------------------
- * Input contract for adding items to cart
- */
+import { IsString, IsNumber, IsOptional, Min } from 'class-validator';
 
 export class AddCartItemDto {
   @IsString()
-  productId: string;
+  userId!: string;
 
   @IsString()
-  name: string;
+  productId!: string;
+
+  @IsString()
+  name!: string;
 
   @IsNumber()
   @Min(1)
-  quantity: number;
+  quantity!: number;
 
   @IsNumber()
   @Min(0)
-  price: number;
+  price!: number;
+
+  @IsString()
+  @IsOptional()
+  tenantId?: string;
+
+  @IsString()
+  @IsOptional()
+  branchId?: string;
 }

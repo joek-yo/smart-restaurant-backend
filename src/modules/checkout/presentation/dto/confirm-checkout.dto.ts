@@ -1,20 +1,14 @@
-// src/modules/checkout/presentation/dto/confirm-checkout.dto.ts
-
-import { IsString } from 'class-validator';
-
-/**
- * CONFIRM CHECKOUT DTO
- * --------------------
- */
+import { IsString, IsOptional } from 'class-validator';
 
 export class ConfirmCheckoutDto {
   @IsString()
-  userId: string;
+  userId!: string;
 
-  /**
-   * Used for idempotency protection
-   * prevents duplicate confirmations
-   */
   @IsString()
-  requestId: string;
+  @IsOptional()
+  tenantId?: string;
+
+  @IsString()
+  @IsOptional()
+  branchId?: string;
 }

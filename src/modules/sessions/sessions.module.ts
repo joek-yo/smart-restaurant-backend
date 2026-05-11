@@ -12,7 +12,8 @@ import { RemoveFromCartUseCase } from './application/use-cases/remove-from-cart.
 import { UpdateQuantityUseCase } from './application/use-cases/update-quantity.use-case';
 import { CheckoutUseCase } from './application/use-cases/checkout.use-case';
 
-import { SessionRepository, InMemorySessionRepository } from './domain/repositories/session.repository';
+import { SessionRepository } from './domain/repositories/session.repository';
+import { RedisSessionRepository } from './infrastructure/repositories/session.redis.repository';
 import { CartItemRepository, InMemoryCartItemRepository } from './domain/repositories/cart-item.repository';
 import { SessionCacheRepository } from './domain/repositories/session-cache.repository';
 import { RedisSessionCacheRepository } from './infrastructure/repositories/session-cache.redis.repository';
@@ -33,7 +34,7 @@ const redisProvider = {
     RemoveFromCartUseCase,
     UpdateQuantityUseCase,
     CheckoutUseCase,
-    { provide: SessionRepository, useClass: InMemorySessionRepository },
+    { provide: SessionRepository, useClass: RedisSessionRepository },
     { provide: CartItemRepository, useClass: InMemoryCartItemRepository },
     { provide: SessionCacheRepository, useClass: RedisSessionCacheRepository },
     SessionIndexRepository,

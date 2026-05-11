@@ -1,24 +1,27 @@
 // src/modules/checkout/application/use-cases/generate-checkout-summary.use-case.ts
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { CheckoutSummaryService } from '../services/checkout-summary.service';
-import { SessionService } from '@modules/sessions/application/services/session.service';
-
-/**
- * GenerateCheckoutSummaryUseCase
- * ------------------------------
- * Builds final review snapshot BEFORE confirmation
- */
+import { CheckoutSessionPort, CHECKOUT_SESSION_PORT } from '../ports/checkout-session.port';
 
 @Injectable()
 export class GenerateCheckoutSummaryUseCase {
   constructor(
-    private readonly sessionService: SessionService,
+    @Inject(CHECKOUT_SESSION_PORT)
+    private readonly sessionPort: CheckoutSessionPort,
     private readonly summaryService: CheckoutSummaryService,
   ) {}
 
-  async execute(input: { userId: string }) {
-    const session = await this.sessionService.getOrCreate(input.userId);
+  async execute(input: {
+    userId: string;
+    tenantId: string;
+    branchId?: string;
+  }) {
+    const session = await this.sessionPort.getOrCreate(
+      input.userId,
+      input.tenantId,
+      input.branchId,
+    );
 
     const summary = this.summaryService.build(session.items);
 

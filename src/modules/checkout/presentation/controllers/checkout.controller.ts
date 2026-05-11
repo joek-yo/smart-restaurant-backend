@@ -1,13 +1,5 @@
-// src/modules/checkout/presentation/controllers/checkout.controller.ts
-
-import {
-  Body,
-  Controller,
-  Post,
-  Delete,
-  Patch,
-} from '@nestjs/common';
-
+import { Body, Controller, Post, Delete, Patch, Req } from '@nestjs/common';
+import { CheckoutOrchestratorService } from '../../application/orchestrators/checkout-orchestrator.service';
 import { AddCartItemDto } from '../dto/add-cart-item.dto';
 import { RemoveCartItemDto } from '../dto/remove-cart-item.dto';
 import { UpdateCartQuantityDto } from '../dto/update-cart-quantity.dto';
@@ -15,62 +7,53 @@ import { StartCheckoutDto } from '../dto/start-checkout.dto';
 import { ConfirmCheckoutDto } from '../dto/confirm-checkout.dto';
 import { CancelCheckoutDto } from '../dto/cancel-checkout.dto';
 
-/**
- * CHECKOUT CONTROLLER
- * -------------------
- * ROLE:
- * Pure HTTP adapter layer.
- *
- * RULES:
- * - NO business logic
- * - NO calculations
- * - NO validation logic beyond DTO
- * - ONLY forwards to orchestrator/use-cases
- */
-
 @Controller('checkout')
 export class CheckoutController {
-  constructor(
-    // ⚠️ In real wiring this should be CheckoutOrchestrator
-    // We keep it abstract here as per your phased design
-    private readonly orchestrator: any,
-  ) {}
-
-  // ==================================================
-  // 🛒 CART ACTIONS
-  // ==================================================
+  constructor(private readonly orchestrator: CheckoutOrchestratorService) {}
 
   @Post('cart/add')
-  async addItem(@Body() dto: AddCartItemDto) {
-    return this.orchestrator.addItemToCart(dto);
+  async addItem(@Body() dto: AddCartItemDto, @Req() req: any) {
+    return this.orchestrator.addToCart(
+      { userId: req.user?.id ?? dto.userId, tenantId: req.tenantId ?? dto.tenantId, branchId: dto.branchId, channel: 'api' },
+      { productId: dto.productId, name: dto.name, price: dto.price, quantity: dto.quantity },
+    );
   }
 
   @Patch('cart/update')
-  async updateQuantity(@Body() dto: UpdateCartQuantityDto) {
-    return this.orchestrator.updateCartQuantity(dto);
+  async updateQuantity(@Body() dto: UpdateCartQuantityDto, @Req() req: any) {
+    return this.orchestrator.updateCartQuantity(
+      { userId: req.user?.id ?? dto.userId, tenantId: req.tenantId ?? dto.tenantId, branchId: dto.branchId, channel: 'api' },
+      dto.productId,
+      dto.quantity,
+    );
   }
 
   @Delete('cart/remove')
-  async removeItem(@Body() dto: RemoveCartItemDto) {
-    return this.orchestrator.removeItemFromCart(dto);
+  async removeItem(@Body() dto: RemoveCartItemDto, @Req() req: any) {
+    return this.orchestrator.removeFromCart(
+      { userId: req.user?.id ?? dto.userId, tenantId: req.tenantId ?? dto.tenantId, branchId: dto.branchId, channel: 'api' },
+      dto.productId,
+    );
   }
 
-  // ==================================================
-  // 💳 CHECKOUT FLOW
-  // ==================================================
-
   @Post('start')
-  async startCheckout(@Body() dto: StartCheckoutDto) {
-    return this.orchestrator.startCheckout(dto);
+  async startCheckout(@Body() dto: StartCheckoutDto, @Req() req: any) {
+    return this.orchestrator.startCheckout(
+      { userId: req.user?.id ?? dto.userId, tenantId: req.tenantId ?? dto.tenantId, branchId: dto.branchId, channel: dto.channel ?? 'api' },
+    );
   }
 
   @Post('confirm')
-  async confirmCheckout(@Body() dto: ConfirmCheckoutDto) {
-    return this.orchestrator.confirmCheckout(dto);
+  async confirmCheckout(@Body() dto: ConfirmCheckoutDto, @Req() req: any) {
+    return this.orchestrator.confirmCheckout(
+      { userId: req.user?.id ?? dto.userId, tenantId: req.tenantId ?? dto.tenantId, branchId: dto.branchId, channel: 'api' },
+    );
   }
 
   @Post('cancel')
-  async cancelCheckout(@Body() dto: CancelCheckoutDto) {
-    return this.orchestrator.cancelCheckout(dto);
+  async cancelCheckout(@Body() dto: CancelCheckoutDto, @Req() req: any) {
+    return this.orchestrator.cancelCheckout(
+      { userId: req.user?.id ?? dto.userId, tenantId: req.tenantId ?? dto.tenantId, branchId: dto.branchId, channel: 'api' },
+    );
   }
 }

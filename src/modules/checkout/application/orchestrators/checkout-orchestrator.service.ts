@@ -1,149 +1,160 @@
-// src/modules/checkout/application/orchestrators/checkout-orchestrator.service.ts
+// FILE: src/modules/checkout/application/orchestrators/checkout-orchestrator.service.ts
+// PURPOSE: Pure orchestration layer (no raw events, clean domain flow)
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
+import { EventBus } from '@core/events';
+import { EVENTS } from '@core/events/event.constants';
 
-// ===============================
-// CART USE CASES
-// ===============================
+import { CheckoutSessionPort, CHECKOUT_SESSION_PORT } from '../ports/checkout-session.port';
+
 import { AddItemToCartUseCase } from '../use-cases/add-item-to-cart.use-case';
 import { RemoveItemFromCartUseCase } from '../use-cases/remove-item-from-cart.use-case';
 import { UpdateCartQuantityUseCase } from '../use-cases/update-cart-quantity.use-case';
 import { ClearCartUseCase } from '../use-cases/clear-cart.use-case';
-
-// ===============================
-// CHECKOUT FLOW USE CASES
-// ===============================
 import { StartCheckoutUseCase } from '../use-cases/start-checkout.use-case';
 import { ValidateCheckoutUseCase } from '../use-cases/validate-checkout.use-case';
 import { GenerateCheckoutSummaryUseCase } from '../use-cases/generate-checkout-summary.use-case';
 import { ConfirmCheckoutUseCase } from '../use-cases/confirm-checkout.use-case';
 import { CancelCheckoutUseCase } from '../use-cases/cancel-checkout.use-case';
-
-// ===============================
-// ORDER CREATION
-// ===============================
 import { CreateOrderFromCheckoutUseCase } from '../use-cases/create-order-from-checkout.use-case';
 
-// ===============================
-// SERVICES (future expansion safe)
-// ===============================
-import { EventBus } from '@core/events';
+// ─────────────────────────────────────────────
+// Context
+// ─────────────────────────────────────────────
 
-/**
- * CheckoutOrchestratorService
- * ---------------------------
- * THE COMMERCE BRAIN
- *
- * This layer does NOT contain business logic.
- * It ONLY coordinates use-cases in correct order.
- */
+export interface CommerceContext {
+  userId: string;
+  tenantId: string;
+  branchId?: string;
+  channel: string;
+  sessionId?: string;
+}
 
 @Injectable()
 export class CheckoutOrchestratorService {
+  private readonly logger = new Logger(CheckoutOrchestratorService.name);
+
   constructor(
-    // CART
-    private readonly addItem: AddItemToCartUseCase,
-    private readonly removeItem: RemoveItemFromCartUseCase,
-    private readonly updateQty: UpdateCartQuantityUseCase,
-    private readonly clearCart: ClearCartUseCase,
+    // Cart
+    private readonly addItemUC: AddItemToCartUseCase,
+    private readonly removeItemUC: RemoveItemFromCartUseCase,
+    private readonly updateQtyUC: UpdateCartQuantityUseCase,
+    private readonly clearCartUC: ClearCartUseCase,
 
-    // CHECKOUT
-    private readonly startCheckout: StartCheckoutUseCase,
-    private readonly validateCheckout: ValidateCheckoutUseCase,
-    private readonly summary: GenerateCheckoutSummaryUseCase,
-    private readonly confirmCheckout: ConfirmCheckoutUseCase,
-    private readonly cancelCheckout: CancelCheckoutUseCase,
+    // Checkout flow
+    private readonly startCheckoutUC: StartCheckoutUseCase,
+    private readonly validateCheckoutUC: ValidateCheckoutUseCase,
+    private readonly summaryUC: GenerateCheckoutSummaryUseCase,
+    private readonly confirmCheckoutUC: ConfirmCheckoutUseCase,
+    private readonly cancelCheckoutUC: CancelCheckoutUseCase,
 
-    // ORDER
-    private readonly createOrder: CreateOrderFromCheckoutUseCase,
+    // Order creation
+    private readonly createOrderUC: CreateOrderFromCheckoutUseCase,
 
-    // EVENTS
+    @Inject(CHECKOUT_SESSION_PORT)
+    private readonly sessionPort: CheckoutSessionPort,
+
     private readonly eventBus: EventBus,
   ) {}
 
-  // ==================================================
+  // ─────────────────────────────────────────────
   // 🛒 CART OPERATIONS
-  // ==================================================
+  // ─────────────────────────────────────────────
 
-  async addToCart(dto: {
-    userId: string;
-    productId: string;
-    name: string;
-    price: number;
-    quantity: number;
-  }) {
-    return this.addItem.execute(dto);
+  async addToCart(
+    ctx: CommerceContext,
+    item: { productId: string; name: string; price: number; quantity: number },
+  ) {
+    this.logger.log(`[Cart] add user=${ctx.userId} tenant=${ctx.tenantId}`);
+    return this.addItemUC.execute({ ...ctx, ...item });
   }
 
-  async removeFromCart(dto: { userId: string; productId: string }) {
-    return this.removeItem.execute(dto);
+  async removeFromCart(ctx: CommerceContext, productId: string) {
+    this.logger.log(`[Cart] remove user=${ctx.userId}`);
+    return this.removeItemUC.execute({ ...ctx, productId });
   }
 
-  async updateCartQuantity(dto: {
-    userId: string;
-    productId: string;
-    quantity: number;
-  }) {
-    return this.updateQty.execute(dto);
+  async updateCartQuantity(
+    ctx: CommerceContext,
+    productId: string,
+    quantity: number,
+  ) {
+    return this.updateQtyUC.execute({ ...ctx, productId, quantity });
   }
 
-  async clearCart(userId: string) {
-    return this.clearCart.execute(userId);
+  async clearCart(ctx: CommerceContext) {
+    return this.clearCartUC.execute(ctx);
   }
 
-  // ==================================================
+  // ─────────────────────────────────────────────
   // 🚀 CHECKOUT FLOW
-  // ==================================================
+  // ─────────────────────────────────────────────
 
-  async startCheckout(userId: string) {
-    const session = await this.startCheckout.execute({ userId });
+  async startCheckout(ctx: CommerceContext) {
+    this.logger.log(`[Checkout] start user=${ctx.userId}`);
 
-    this.eventBus.emit('checkout.started', {
-      userId,
+    await this.validateCheckoutUC.execute(ctx);
+
+    const session = await this.startCheckoutUC.execute(ctx);
+
+    this.eventBus.emit(EVENTS.CHECKOUT_STARTED, {
+      userId: ctx.userId,
+      tenantId: ctx.tenantId,
+      channel: ctx.channel,
       sessionId: session.sessionId,
     });
 
     return session;
   }
 
-  async validate(userId: string) {
-    return this.validateCheckout.execute({ userId });
+  async getCheckoutSummary(ctx: CommerceContext) {
+    return this.summaryUC.execute(ctx);
   }
 
-  async summary(userId: string) {
-    return this.summary.execute({ userId });
-  }
-
-  // ==================================================
+  // ─────────────────────────────────────────────
   // 💳 FINALIZATION
-  // ==================================================
+  // ─────────────────────────────────────────────
 
-  async confirm(userId: string) {
-    const result = await this.confirmCheckout.execute({ userId });
+  async confirmCheckout(ctx: CommerceContext) {
+    this.logger.log(`[Checkout] confirm user=${ctx.userId}`);
 
-    this.eventBus.emit('checkout.confirmed', {
-      userId,
+    const result = await this.confirmCheckoutUC.execute(ctx);
+
+    this.eventBus.emit(EVENTS.ORDER_CREATED, {
+      userId: ctx.userId,
+      tenantId: ctx.tenantId,
+      channel: ctx.channel,
       orderId: result.orderId,
     });
 
     return result;
   }
 
-  async cancel(userId: string) {
-    const result = await this.cancelCheckout.execute({ userId });
+  async cancelCheckout(ctx: CommerceContext) {
+    this.logger.log(`[Checkout] cancel user=${ctx.userId}`);
 
-    this.eventBus.emit('checkout.cancelled', {
-      userId,
+    await this.cancelCheckoutUC.execute(ctx);
+
+    this.eventBus.emit(EVENTS.ORDER_CANCELLED, {
+      userId: ctx.userId,
+      tenantId: ctx.tenantId,
+      channel: ctx.channel,
     });
-
-    return result;
   }
 
-  // ==================================================
-  // 🔥 DIRECT ORDER CREATION (internal safe path)
-  // ==================================================
+  // ─────────────────────────────────────────────
+  // 🔥 INTERNAL ORDER CREATION
+  // ─────────────────────────────────────────────
 
-  async createOrderFromSession(session: any) {
-    return this.createOrder.execute(session);
+  async createOrderFromCheckout(ctx: CommerceContext) {
+    this.logger.log(`[Order] createFromCheckout user=${ctx.userId}`);
+
+    const session = await this.sessionPort.getOrCreate(
+      ctx.userId,
+      ctx.tenantId,
+      ctx.branchId,
+    );
+
+    return this.createOrderUC.execute(session);
   }
 }

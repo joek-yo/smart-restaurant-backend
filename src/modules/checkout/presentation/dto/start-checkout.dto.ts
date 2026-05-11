@@ -1,13 +1,18 @@
-// src/modules/checkout/presentation/dto/start-checkout.dto.ts
-
-import { IsString } from 'class-validator';
-
-/**
- * START CHECKOUT DTO
- * ------------------
- */
+import { IsString, IsOptional } from 'class-validator';
 
 export class StartCheckoutDto {
   @IsString()
-  userId: string;
+  userId!: string;
+
+  @IsString()
+  @IsOptional()
+  tenantId?: string;
+
+  @IsString()
+  @IsOptional()
+  branchId?: string;
+
+  @IsString()
+  @IsOptional()
+  channel?: string;
 }

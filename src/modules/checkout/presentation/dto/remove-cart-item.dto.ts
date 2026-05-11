@@ -1,13 +1,17 @@
-// src/modules/checkout/presentation/dto/remove-cart-item.dto.ts
-
-import { IsString } from 'class-validator';
-
-/**
- * REMOVE CART ITEM DTO
- * --------------------
- */
+import { IsString, IsOptional } from 'class-validator';
 
 export class RemoveCartItemDto {
   @IsString()
-  productId: string;
+  userId!: string;
+
+  @IsString()
+  productId!: string;
+
+  @IsString()
+  @IsOptional()
+  tenantId?: string;
+
+  @IsString()
+  @IsOptional()
+  branchId?: string;
 }

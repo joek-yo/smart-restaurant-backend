@@ -1,24 +1,29 @@
 // src/modules/checkout/application/use-cases/clear-cart.use-case.ts
 
-import { Injectable } from '@nestjs/common';
-import { SessionService } from '@modules/sessions/application/services/session.service';
-
-/**
- * ClearCartUseCase
- * -----------------
- * Resets cart completely.
- */
+import { Injectable, Inject } from '@nestjs/common';
+import { CheckoutSessionPort, CHECKOUT_SESSION_PORT } from '../ports/checkout-session.port';
 
 @Injectable()
 export class ClearCartUseCase {
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(
+    @Inject(CHECKOUT_SESSION_PORT)
+    private readonly sessionPort: CheckoutSessionPort,
+  ) {}
 
-  async execute(userId: string) {
-    const session = await this.sessionService.getOrCreate(userId);
+  async execute(input: {
+    userId: string;
+    tenantId: string;
+    branchId?: string;
+  }) {
+    const session = await this.sessionPort.getOrCreate(
+      input.userId,
+      input.tenantId,
+      input.branchId,
+    );
 
     session.reset();
 
-    await this.sessionService.save(session);
+    await this.sessionPort.save(session);
 
     return session;
   }

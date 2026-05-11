@@ -1,13 +1,14 @@
-// src/modules/checkout/presentation/dto/cancel-checkout.dto.ts
-
-import { IsString } from 'class-validator';
-
-/**
- * CANCEL CHECKOUT DTO
- * -------------------
- */
+import { IsString, IsOptional } from 'class-validator';
 
 export class CancelCheckoutDto {
   @IsString()
-  userId: string;
+  userId!: string;
+
+  @IsString()
+  @IsOptional()
+  tenantId?: string;
+
+  @IsString()
+  @IsOptional()
+  branchId?: string;
 }

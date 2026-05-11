@@ -1,27 +1,30 @@
 // src/modules/checkout/application/use-cases/add-item-to-cart.use-case.ts
 
-import { Injectable } from '@nestjs/common';
-import { SessionService } from '@modules/sessions/application/services/session.service';
+import { Injectable, Inject } from '@nestjs/common';
 import { CartItemEntity } from '@modules/sessions/domain/entities/cart-item.entity';
-
-/**
- * AddItemToCartUseCase
- * ---------------------
- * Handles adding items into cart session.
- */
+import { CheckoutSessionPort, CHECKOUT_SESSION_PORT } from '../ports/checkout-session.port';
 
 @Injectable()
 export class AddItemToCartUseCase {
-  constructor(private readonly sessionService: SessionService) {}
+  constructor(
+    @Inject(CHECKOUT_SESSION_PORT)
+    private readonly sessionPort: CheckoutSessionPort,
+  ) {}
 
   async execute(input: {
     userId: string;
+    tenantId: string;
+    branchId?: string;
     productId: string;
     name: string;
     price: number;
     quantity: number;
   }) {
-    const session = await this.sessionService.getOrCreate(input.userId);
+    const session = await this.sessionPort.getOrCreate(
+      input.userId,
+      input.tenantId,
+      input.branchId,
+    );
 
     const item = new CartItemEntity({
       productId: input.productId,
@@ -34,7 +37,7 @@ export class AddItemToCartUseCase {
 
     session.addItem(item);
 
-    await this.sessionService.save(session);
+    await this.sessionPort.save(session);
 
     return session;
   }

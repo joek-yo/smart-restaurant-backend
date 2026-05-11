@@ -1,19 +1,12 @@
-// FILE: src/modules/sessions/application/use-cases/update-quantity.use-case.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { SessionService } from '../services/session.service';
 
 @Injectable()
 export class UpdateQuantityUseCase {
-  constructor(
-    private readonly sessionService: SessionService,
-  ) {}
+  constructor(private readonly sessionService: SessionService) {}
 
-  async execute(
-    userId: string,
-    productId: string,
-    quantity: number,
-  ): Promise<void> {
-    const session = await this.sessionService.getSession(userId);
+  async execute(userId: string, productId: string, quantity: number, tenantId: string, branchId?: string): Promise<void> {
+    const session = await this.sessionService.getSession({ userId, tenantId, branchId });
     if (!session) throw new NotFoundException('Session not found');
 
     const item = session.items.find((i) => i.productId === productId);
