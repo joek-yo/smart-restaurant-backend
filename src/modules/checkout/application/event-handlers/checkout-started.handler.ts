@@ -1,26 +1,15 @@
 // src/modules/checkout/application/event-handlers/checkout-started.handler.ts
 
 import { Injectable } from '@nestjs/common';
-
-/**
- * CHECKOUT STARTED HANDLER
- * ------------------------
- * Side effects:
- * - lock checkout session
- * - snapshot state
- * - tracking funnel conversion
- */
+import { CheckoutStartedPayload } from '@core/events/event-payloads';
 
 @Injectable()
 export class CheckoutStartedHandler {
-  async handle(event: any): Promise<void> {
+  async handle(event: CheckoutStartedPayload): Promise<void> {
     const { tenantId, userId } = event;
 
     console.log('[CHECKOUT STARTED]', { tenantId, userId });
 
-    // 🔮 Future:
-    // - mark funnel step STARTED
-    // - send WhatsApp "review order" message
-    // - create checkout snapshot
+    // 🔮 Future: funnel tracking, WhatsApp "review order", checkout snapshot
   }
 }

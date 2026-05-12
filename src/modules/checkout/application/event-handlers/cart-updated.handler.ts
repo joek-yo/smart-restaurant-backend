@@ -1,19 +1,11 @@
 // src/modules/checkout/application/event-handlers/cart-updated.handler.ts
 
 import { Injectable } from '@nestjs/common';
-
-/**
- * CART UPDATED HANDLER
- * --------------------
- * Side effects:
- * - analytics tracking
- * - cache snapshot updates
- * - UI sync triggers (future WhatsApp/WebSocket)
- */
+import { CartUpdatedPayload } from '@core/events/event-payloads';
 
 @Injectable()
 export class CartUpdatedHandler {
-  async handle(event: any): Promise<void> {
+  async handle(event: CartUpdatedPayload): Promise<void> {
     const { tenantId, userId, cart } = event;
 
     console.log('[CART UPDATED]', {
@@ -23,9 +15,6 @@ export class CartUpdatedHandler {
       total: cart?.total,
     });
 
-    // 🔮 Future:
-    // - emit analytics event
-    // - update live cart UI
-    // - trigger recommendation engine
+    // 🔮 Future: analytics, live cart UI, recommendation engine
   }
 }

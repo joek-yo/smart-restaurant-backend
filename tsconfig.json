@@ -2,14 +2,11 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2021",
-
     "declaration": true,
     "removeComments": true,
     "sourceMap": true,
-
     "outDir": "./dist",
     "rootDir": "./src",
-
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -17,18 +14,14 @@
     "strictBindCallApply": true,
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
-
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-
     "skipLibCheck": true,
     "incremental": true,
-
     "baseUrl": "./src",
-
+    "typeRoots": ["./src/common/types", "./node_modules/@types"],
     "paths": {
       "@core/*": ["core/*"],
       "@modules/*": ["modules/*"],
@@ -38,32 +31,25 @@
       "@common/*": ["common/*"]
     }
   },
-
   "include": ["src/**/*"],
   "exclude": [
     "node_modules",
     "dist",
-
     "src/app.controller.ts",
-
     "src/application/menu/**/*",
     "src/application/notifications/**/*",
-
     "src/domains/menu/handlers/**/*",
     "src/domains/notifications/**/*",
     "src/domains/sessions/**/*",
     "src/domains/whatsapp/**/*",
-
     "src/infrastructure/database/mongoose/category.schema.ts",
     "src/infrastructure/database/mongoose/menu-item.schema.ts",
     "src/infrastructure/database/mongoose/mongoose.repositories.module.ts",
     "src/infrastructure/database/mongoose/repositories/**/*",
     "src/infrastructure/notifications/**/*",
-
     "src/interfaces/menu/**/*",
     "src/interfaces/notifications/**/*",
     "src/interfaces/orders/**/*",
-
     "src/modules/orders/**/*",
     "src/modules/business/infrastructure/repositories/business.repository.ts"
   ]

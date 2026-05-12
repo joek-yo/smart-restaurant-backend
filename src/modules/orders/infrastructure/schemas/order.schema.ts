@@ -1,12 +1,9 @@
 // src/modules/orders/infrastructure/schemas/order.schema.ts
-
 import { Schema, Document } from 'mongoose';
 
-/**
- * MongoDB document type
- */
 export interface OrderDocument extends Document {
   tenantId: string;
+  sessionId?: string;
   items: any[];
   status: string;
   queueNumber: number;
@@ -14,12 +11,10 @@ export interface OrderDocument extends Document {
   updatedAt: Date;
 }
 
-/**
- * Mongoose schema
- */
 export const OrderSchema = new Schema<OrderDocument>(
   {
     tenantId: { type: String, required: true },
+    sessionId: { type: String },
     items: {
       type: [
         {
@@ -37,3 +32,6 @@ export const OrderSchema = new Schema<OrderDocument>(
   },
   { timestamps: true },
 );
+
+// Idempotency: prevent duplicate orders from same checkout session
+OrderSchema.index({ sessionId: 1 }, { unique: true, sparse: true });

@@ -1,19 +1,11 @@
 // src/modules/checkout/application/event-handlers/checkout-confirmed.handler.ts
 
 import { Injectable } from '@nestjs/common';
-
-/**
- * CHECKOUT CONFIRMED HANDLER
- * --------------------------
- * Side effects:
- * - trigger order creation pipeline
- * - send confirmation notifications
- * - analytics conversion tracking
- */
+import { CheckoutConfirmedPayload } from '@core/events/event-payloads';
 
 @Injectable()
 export class CheckoutConfirmedHandler {
-  async handle(event: any): Promise<void> {
+  async handle(event: CheckoutConfirmedPayload): Promise<void> {
     const { tenantId, userId, orderDraft } = event;
 
     console.log('[CHECKOUT CONFIRMED]', {
@@ -22,10 +14,6 @@ export class CheckoutConfirmedHandler {
       orderId: orderDraft?.id,
     });
 
-    // 🔥 Future integrations:
-    // - CreateOrderFromCheckoutUseCase trigger
-    // - WhatsApp confirmation message
-    // - Payment initialization (if needed)
-    // - analytics: checkout_success
+    // 🔮 Future: WhatsApp confirmation, payment init, analytics
   }
 }

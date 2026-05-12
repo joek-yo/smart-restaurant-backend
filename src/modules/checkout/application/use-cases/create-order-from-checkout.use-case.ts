@@ -1,5 +1,4 @@
 // src/modules/checkout/application/use-cases/create-order-from-checkout.use-case.ts
-
 import { Injectable, Inject, Logger } from '@nestjs/common';
 
 import { SessionEntity } from '@modules/sessions/domain/entities/session.entity';
@@ -12,15 +11,6 @@ import { SessionToOrderMapper } from '../mappers/session-to-order.mapper';
 import { EventBus } from '@core/events/event.bus';
 import { EVENTS } from '@core/events/event.constants';
 
-/**
- * CreateOrderFromCheckoutUseCase
- * --------------------------------
- * SINGLE RESPONSIBILITY:
- * Converts a checked-out SessionEntity → persisted Order
- * Emits ORDER_CREATED after persistence success.
- *
- * This is the ONLY place in the system that creates orders from sessions.
- */
 @Injectable()
 export class CreateOrderFromCheckoutUseCase {
   private readonly logger = new Logger(CreateOrderFromCheckoutUseCase.name);
@@ -28,7 +18,6 @@ export class CreateOrderFromCheckoutUseCase {
   constructor(
     @Inject(ORDER_REPOSITORY)
     private readonly orderRepo: OrderRepository,
-
     private readonly eventBus: EventBus,
   ) {}
 
@@ -38,25 +27,55 @@ export class CreateOrderFromCheckoutUseCase {
     }
 
     // ─────────────────────────────────────────────
-    // 1. Map session → typed order draft
+    // 1. Idempotency — return existing order if already created
+    // ─────────────────────────────────────────────
+    if (session.id) {
+      const existing = await this.orderRepo.findBySessionId(session.id);
+      if (existing) {
+        this.logger.warn(
+          `[IDEMPOTENT] Order already exists for sessionId=${session.id}, orderId=${existing.id}`,
+        );
+        return existing;
+      }
+    }
+
+    // ─────────────────────────────────────────────
+    // 2. Map session → typed order draft
     // ─────────────────────────────────────────────
     const draft = SessionToOrderMapper.toOrderDraft(session);
 
     // ─────────────────────────────────────────────
-    // 2. Build a proper Order domain object
+    // 3. Recompute total from session items (never trust stored value)
+    // ─────────────────────────────────────────────
+    const recomputedTotal = session.items.reduce(
+      (sum, item) => sum + item.total,
+      0,
+    );
+
+    if (Math.abs(recomputedTotal - draft.total.value) > 0.01) {
+      this.logger.warn(
+        `[TOTAL MISMATCH] draft=${draft.total.value} recomputed=${recomputedTotal} — using recomputed`,
+      );
+    }
+
+    // ─────────────────────────────────────────────
+    // 4. Build Order domain object
     // ─────────────────────────────────────────────
     const orderInput = new Order({
       tenantId: draft.tenantId,
       customerId: draft.userId,
       customerName: 'Guest',
       items: draft.items,
-      totalAmount: draft.total.value,
+      totalAmount: recomputedTotal,
       status: OrderStatus.PENDING,
       source: draft.metadata.source,
     });
 
+    // Attach sessionId for idempotency on future retries
+    (orderInput as any).sessionId = session.id;
+
     // ─────────────────────────────────────────────
-    // 3. Persist (source of truth)
+    // 5. Persist
     // ─────────────────────────────────────────────
     const order = await this.orderRepo.create(orderInput);
 
@@ -66,19 +85,19 @@ export class CreateOrderFromCheckoutUseCase {
     }
 
     // ─────────────────────────────────────────────
-    // 4. Emit domain event
+    // 6. Emit domain event
     // ─────────────────────────────────────────────
     this.eventBus.emit(EVENTS.ORDER_CREATED, {
       orderId: order.id,
       businessId: draft.tenantId,
-      totalAmount: draft.total.value,
+      totalAmount: recomputedTotal,
       customerId: draft.userId,
       source: 'checkout',
       timestamp: new Date().toISOString(),
     });
 
     this.logger.log(
-      `[ORDER_CREATED] orderId=${order.id} tenant=${draft.tenantId}`,
+      `[ORDER_CREATED] orderId=${order.id} tenant=${draft.tenantId} total=${recomputedTotal}`,
     );
 
     return order;
