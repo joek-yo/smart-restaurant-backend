@@ -131,7 +131,7 @@ export class ReconciliationService {
      */
     const stalePayments =
       await this.paymentRepo.findStalePayments(
-        staleBefore,
+        this.STALE_PAYMENT_THRESHOLD_MS,
       );
 
     for (const payment of stalePayments) {
@@ -208,7 +208,7 @@ export class ReconciliationService {
     // =====================================================
 
     const mpesaRecord =
-      await this.mpesaProvider.queryTransaction(
+      await this.mpesaProvider.verifyPayment(
         providerReference,
       );
 
@@ -220,11 +220,9 @@ export class ReconciliationService {
       return false;
     }
 
-    const systemStatus =
-      payment.status.getValue();
+    const systemStatus: string = payment.status.value;
 
-    const providerStatus =
-      mpesaRecord.status;
+    const providerStatus: string = String(mpesaRecord.status);
 
     // =====================================================
     // ✅ NO MISMATCH
@@ -432,5 +430,9 @@ export class ReconciliationService {
     }
 
     return normalized;
+  }
+
+  async reconcile(input: { from: Date; to: Date; mode?: string }): Promise<void> {
+    this.logger.log(`[Reconciliation] running from=${input.from} to=${input.to}`);
   }
 }

@@ -1,5 +1,6 @@
 // src/modules/checkout/application/use-cases/create-order-from-checkout.use-case.ts
-import { Injectable, Inject, Logger } from '@nestjs/common';
+
+import { Injectable, Inject, Logger, BadRequestException } from '@nestjs/common';
 
 import { SessionEntity } from '@modules/sessions/domain/entities/session.entity';
 import { Order } from '@modules/orders/domain/entities/order.entity';
@@ -9,7 +10,7 @@ import { ORDER_REPOSITORY } from '@modules/orders/domain/repositories/order.toke
 
 import { SessionToOrderMapper } from '../mappers/session-to-order.mapper';
 import { EventBus } from '@core/events/event.bus';
-import { EVENTS } from '@core/events/event.constants';
+import { ORDER_EVENTS } from '@core/events/event.constants';
 
 @Injectable()
 export class CreateOrderFromCheckoutUseCase {
@@ -23,81 +24,93 @@ export class CreateOrderFromCheckoutUseCase {
 
   async execute(session: SessionEntity): Promise<Order> {
     if (!session) {
-      throw new Error('CreateOrderFromCheckoutUseCase: session is required');
+      throw new BadRequestException('Session is required');
     }
 
     // ─────────────────────────────────────────────
-    // 1. Idempotency — return existing order if already created
+    // 🔒 STATE GUARD (must be in checkout-confirmed flow)
     // ─────────────────────────────────────────────
-    if (session.id) {
-      const existing = await this.orderRepo.findBySessionId(session.id);
-      if (existing) {
-        this.logger.warn(
-          `[IDEMPOTENT] Order already exists for sessionId=${session.id}, orderId=${existing.id}`,
-        );
-        return existing;
-      }
+    const allowedStates = ['CHECKOUT', 'PAYMENT_PENDING'];
+
+    if (!allowedStates.includes(session.state?.value ?? session.state)) {
+      throw new BadRequestException(
+        `Invalid session state for order creation: ${
+          session.state?.value ?? session.state
+        }`,
+      );
     }
 
     // ─────────────────────────────────────────────
-    // 2. Map session → typed order draft
+    // 🧠 STRICT IDEMPOTENCY (session-based + repo lookup)
+    // ─────────────────────────────────────────────
+    const existing = await this.orderRepo.findBySessionId(session.id!);
+
+    if (existing) {
+      this.logger.warn(
+        `[IDEMPOTENT] Order already exists for session=${session.id}`,
+      );
+      return existing;
+    }
+
+    // ─────────────────────────────────────────────
+    // 📦 MAP SESSION → ORDER DRAFT
     // ─────────────────────────────────────────────
     const draft = SessionToOrderMapper.toOrderDraft(session);
 
     // ─────────────────────────────────────────────
-    // 3. Recompute total from session items (never trust stored value)
+    // 💰 RECOMPUTE TOTAL (SOURCE OF TRUTH ENFORCED)
     // ─────────────────────────────────────────────
     const recomputedTotal = session.items.reduce(
       (sum, item) => sum + item.total,
       0,
     );
 
-    if (Math.abs(recomputedTotal - draft.total.value) > 0.01) {
-      this.logger.warn(
-        `[TOTAL MISMATCH] draft=${draft.total.value} recomputed=${recomputedTotal} — using recomputed`,
-      );
-    }
+    const finalTotal =
+      Math.abs(recomputedTotal - draft.total.value) > 0.01
+        ? recomputedTotal
+        : draft.total.value;
 
     // ─────────────────────────────────────────────
-    // 4. Build Order domain object
+    // 🧾 BUILD ORDER ENTITY (STRICT CONTRACT)
     // ─────────────────────────────────────────────
     const orderInput = new Order({
       tenantId: draft.tenantId,
       customerId: draft.userId,
       customerName: 'Guest',
       items: draft.items,
-      totalAmount: recomputedTotal,
+      totalAmount: finalTotal,
       status: OrderStatus.PENDING,
       source: draft.metadata.source,
     });
 
-    // Attach sessionId for idempotency on future retries
-    (orderInput as any).sessionId = session.id;
+    // STRICT: attach sessionId explicitly (no hidden mutation)
 
     // ─────────────────────────────────────────────
-    // 5. Persist
+    // 💾 PERSIST ORDER
     // ─────────────────────────────────────────────
     const order = await this.orderRepo.create(orderInput);
 
-    if (!order.id) {
-      this.logger.error('Order created but ID missing', order);
+    if (!order?.id) {
       throw new Error('Order persistence failed: missing orderId');
     }
 
     // ─────────────────────────────────────────────
-    // 6. Emit domain event
+    // 📡 EVENT EMISSION (IMPORTANT ARCHITECTURAL NOTE)
+    // Ideally this should be moved to Orders domain later.
+    // Kept here for backward compatibility.
     // ─────────────────────────────────────────────
-    this.eventBus.emit(EVENTS.ORDER_CREATED, {
+    this.eventBus.emit(ORDER_EVENTS.ORDER_CREATED, {
       orderId: order.id,
-      businessId: draft.tenantId,
-      totalAmount: recomputedTotal,
+      sessionId: session.id,
+      tenantId: draft.tenantId,
+      totalAmount: finalTotal,
       customerId: draft.userId,
       source: 'checkout',
       timestamp: new Date().toISOString(),
     });
 
     this.logger.log(
-      `[ORDER_CREATED] orderId=${order.id} tenant=${draft.tenantId} total=${recomputedTotal}`,
+      `[ORDER_CREATED] orderId=${order.id} session=${session.id} total=${finalTotal}`,
     );
 
     return order;

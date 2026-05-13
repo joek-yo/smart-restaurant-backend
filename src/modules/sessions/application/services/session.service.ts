@@ -1,125 +1,161 @@
-// src/modules/sessions/application/services/session.service.ts
-//
-// ✅ FIX 4 — Tenant isolation + abstraction-ready design
-// This service remains the default implementation of SessionPort.
+// FILE: src/modules/sessions/application/services/session.service.ts
 
-import { Injectable, Logger } from '@nestjs/common';
-import { SessionRepository } from '../../domain/repositories/session.repository';
+import { Injectable, Inject } from '@nestjs/common';
+
 import { SessionEntity } from '../../domain/entities/session.entity';
+import { CartItemEntity } from '../../domain/entities/cart-item.entity';
 
-// ─────────────────────────────────────────────────────────────
-// PORT INTERFACE (ABSTRACTION LAYER)
-// ─────────────────────────────────────────────────────────────
-
-export interface SessionScope {
-  userId: string;
-  tenantId: string;
-  branchId?: string;
-}
-
-/**
- * SessionPort
- * ----------------
- * This is the abstraction layer for session management.
- * Future implementations could be:
- * - RedisSessionService
- * - Event-sourced session engine
- * - External API session store
- */
-export abstract class SessionPort {
-  abstract getOrCreate(
-    userId: string,
-    tenantId: string,
-    branchId?: string,
-  ): Promise<SessionEntity>;
-
-  abstract getSession(scope: SessionScope): Promise<SessionEntity | null>;
-
-  abstract save(session: SessionEntity): Promise<SessionEntity>;
-
-  abstract update(
-    id: string,
-    partial: Partial<SessionEntity>,
-  ): Promise<SessionEntity>;
-
-  abstract delete(id: string): Promise<void>;
-}
-
-// ─────────────────────────────────────────────────────────────
-// DEFAULT IMPLEMENTATION (CURRENT SYSTEM)
-// ─────────────────────────────────────────────────────────────
+import { SessionRepository } from '../../domain/repositories/session.repository';
+import { CartItemRepository } from '../../domain/repositories/cart-item.repository';
+import { SessionCacheRepository } from '../../domain/repositories/session-cache.repository';
 
 @Injectable()
-export class SessionService implements SessionPort {
-  private readonly logger = new Logger(SessionService.name);
+export class SessionService {
+  constructor(
+    @Inject(SessionRepository)
+    private readonly sessionRepo: SessionRepository,
 
-  constructor(private readonly sessionRepo: SessionRepository) {}
+    @Inject(CartItemRepository)
+    private readonly cartRepo: CartItemRepository,
 
-  // ─── Core: tenant-scoped get or create ────────────────────────────────
+    @Inject(SessionCacheRepository)
+    private readonly cacheRepo: SessionCacheRepository,
+  ) {}
+
+  // ==================================================
+  // 🧠 SESSION CREATION / FETCH
+  // ==================================================
 
   async getOrCreate(
     userId: string,
     tenantId: string,
     branchId?: string,
   ): Promise<SessionEntity> {
-    if (!tenantId) {
-      throw new Error('SessionService.getOrCreate: tenantId is required');
+    const match = await this.sessionRepo.findActiveByUser({ tenantId, userId, branchId });
+
+    if (match) {
+      return this.hydrate(match);
     }
 
-    const sessions = await this.sessionRepo.findByUserId(userId);
-
-    let session = sessions.find(
-      (s) =>
-        s.businessId === tenantId &&
-        (branchId ? s.branchId === branchId : true),
-    );
-
-    if (session) return session;
-
-    session = new SessionEntity({
-      userId,
+    const session = new SessionEntity({
+      id: undefined,
       businessId: tenantId,
-      branchId: branchId ?? 'main',
-      items: [],
+      branchId,
+      userId,
     });
 
-    this.logger.log(
-      `[Session] Created new session userId=${userId} tenantId=${tenantId}`,
-    );
+    const saved = await this.sessionRepo.save(session);
+    await this.cacheRepo.set(saved);
 
-    return this.sessionRepo.save(session);
+    return saved;
   }
 
-  // ─── Fetch by scope ────────────────────────────────────────────────
+  async getById(sessionId: string): Promise<SessionEntity | null> {
+    const cached = await this.cacheRepo.getBySessionId(sessionId);
+    if (cached) return cached;
 
-  async getSession(scope: SessionScope): Promise<SessionEntity | null> {
-    const { userId, tenantId, branchId } = scope;
+    const session = await this.sessionRepo.findById(sessionId);
+    if (!session) return null;
 
-    const sessions = await this.sessionRepo.findByUserId(userId);
-
-    return (
-      sessions.find(
-        (s) =>
-          s.businessId === tenantId &&
-          (branchId ? s.branchId === branchId : true),
-      ) ?? null
-    );
+    await this.cacheRepo.set(session);
+    return session;
   }
 
-  // ─── Persistence ────────────────────────────────────────────────
+  // ==================================================
+  // 🛒 CART OPERATIONS (ONLY SOURCE OF TRUTH)
+  // ==================================================
 
-  async save(session: SessionEntity): Promise<SessionEntity> {
-    return this.sessionRepo.save(session);
+  async addItem(sessionId: string, item: CartItemEntity): Promise<SessionEntity> {
+    const session = await this.getOrFail(sessionId);
+
+    session.addItem(item);
+
+    await this.sessionRepo.update(sessionId, session);
+    await this.cacheRepo.set(session);
+
+    return session;
   }
 
-  async update(
-    id: string,
-    partial: Partial<SessionEntity>,
+  async removeItem(sessionId: string, productId: string): Promise<SessionEntity> {
+    const session = await this.getOrFail(sessionId);
+
+    session.removeItem(productId);
+
+    await this.sessionRepo.update(sessionId, session);
+    await this.cacheRepo.set(session);
+
+    return session;
+  }
+
+  async updateQuantity(
+    sessionId: string,
+    productId: string,
+    quantity: number,
   ): Promise<SessionEntity> {
-    return this.sessionRepo.update(id, partial);
+    const session = await this.getOrFail(sessionId);
+
+    session.updateQuantity(productId, quantity);
+
+    await this.sessionRepo.update(sessionId, session);
+    await this.cacheRepo.set(session);
+
+    return session;
   }
 
-  async delete(id: string): Promise<void> {
-    return this.sessionRepo.delete(id);
+  async clear(sessionId: string): Promise<SessionEntity> {
+    const session = await this.getOrFail(sessionId);
+
+    session.clearCart();
+
+    await this.sessionRepo.update(sessionId, session);
+    await this.cacheRepo.set(session);
+
+    return session;
+  }
+
+  // ==================================================
+  // 🔄 SESSION STATE OPERATIONS
+  // ==================================================
+
+  async startCheckout(sessionId: string): Promise<SessionEntity> {
+    const session = await this.getOrFail(sessionId);
+
+    session.checkoutStart();
+
+    await this.sessionRepo.update(sessionId, session);
+    await this.cacheRepo.set(session);
+
+    return session;
+  }
+
+  // ==================================================
+  // 📦 SNAPSHOT (USED BY CHECKOUT ONLY)
+  // ==================================================
+
+  async getSnapshot(sessionId: string): Promise<SessionEntity> {
+    const session = await this.getOrFail(sessionId);
+    return session.toSnapshot();
+  }
+
+  // ==================================================
+  // 🧠 INTERNAL HELPERS
+  // ==================================================
+
+  private async getOrFail(sessionId: string): Promise<SessionEntity> {
+    const session = await this.getById(sessionId);
+
+    if (!session) {
+      throw new Error(`Session not found: ${sessionId}`);
+    }
+
+    return session;
+  }
+
+  private async hydrate(session: SessionEntity): Promise<SessionEntity> {
+    // Load cart items if needed (future DB optimization hook)
+    const items = await this.cartRepo.findBySession(session.id!);
+
+    session.items = items;
+    return session;
   }
 }

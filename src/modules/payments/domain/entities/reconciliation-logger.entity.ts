@@ -24,35 +24,35 @@ export interface ReconciliationCorrection {
 }
 
 export class ReconciliationLoggerEntity {
-  id: string;
+  id!: string;
 
   /**
    * Type of reconciliation run
    */
-  runType: ReconciliationRunType;
+  runType!: ReconciliationRunType;
 
   /**
    * Time range evaluated
    */
-  fromDate: Date;
-  toDate: Date;
+  fromDate!: Date;
+  toDate!: Date;
 
   /**
    * Summary stats
    */
-  matched: number;
-  mismatched: number;
-  fixed: number;
+  matched!: number;
+  mismatched!: number;
+  fixed!: number;
 
   /**
    * Detailed corrections applied
    */
-  corrections: ReconciliationCorrection[];
+  corrections!: ReconciliationCorrection[];
 
   /**
    * System metadata
    */
-  createdAt: Date;
+  createdAt!: Date;
 
   constructor(partial: Partial<ReconciliationLoggerEntity>) {
     Object.assign(this, partial);

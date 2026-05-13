@@ -1,26 +1,17 @@
-// src/modules/checkout/infrastructure/persistence/mongo/checkout.schema.ts
-
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import { CheckoutStatus } from '../../../domain/value-objects/checkout-status.vo';
 
-/**
- * CHECKOUT PERSISTENCE SCHEMA
- * ---------------------------
- * This is the DATABASE representation only.
- * It must NOT contain business logic.
- */
-
 @Schema({ timestamps: true })
 export class CheckoutSchema extends Document {
   @Prop({ required: true })
-  tenantId: string;
+  tenantId!: string;
 
   @Prop({ required: true })
-  userId: string;
+  userId!: string;
 
-  @Prop({ type: String, default: CheckoutStatus.CART_ACTIVE })
-  status: CheckoutStatus;
+  @Prop({ type: String, default: CheckoutStatus.CART_BUILDING })
+  status!: CheckoutStatus;
 
   @Prop({
     type: [
@@ -34,7 +25,7 @@ export class CheckoutSchema extends Document {
     ],
     default: [],
   })
-  items: Array<{
+  items!: Array<{
     productId: string;
     name: string;
     quantity: number;
@@ -43,16 +34,16 @@ export class CheckoutSchema extends Document {
   }>;
 
   @Prop({ default: 0 })
-  subtotal: number;
+  subtotal!: number;
 
   @Prop({ default: 0 })
-  tax: number;
+  tax!: number;
 
   @Prop({ default: 0 })
-  discount: number;
+  discount!: number;
 
   @Prop({ default: 0 })
-  total: number;
+  total!: number;
 
   @Prop({ default: null })
   lockedAt?: Date;

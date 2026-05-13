@@ -1,61 +1,22 @@
-// src/modules/conversation/presentation/webchat.controller.ts
+// FILE: src/modules/conversation/presentation/webchat.controller.ts
 
 import { Controller, Post, Body } from '@nestjs/common';
-import { ConversationEngineService } from '../application/services/conversation-engine.service';
-import { ConversationChannel } from '../domain/enums/conversation-channel.enum';
-
-/**
- * WebChat Controller (Future UI / SaaS Widget Entry Point)
- * --------------------------------------------------------
- * This is the browser / frontend entry point for conversations.
- *
- * Examples:
- * - Embedded chat widget on websites
- * - Admin dashboard chat
- * - SaaS customer portal
- *
- * IMPORTANT:
- * - No business logic here
- * - No state handling here
- * - No cart/session logic here
- * Everything goes to Conversation Engine
- */
+import { MessageRouter } from './gateway/message.router';
+import { v4 as uuidv4 } from 'uuid';
 
 @Controller('api/conversation/webchat')
 export class WebChatController {
-  constructor(
-    private readonly conversationEngine: ConversationEngineService,
-  ) {}
+  constructor(private readonly messageRouter: MessageRouter) {}
 
-  /**
-   * Handles incoming messages from web chat UI
-   */
   @Post('message')
   async handleMessage(@Body() body: any) {
-    // -------------------------------------------------
-    // 1. Normalize web chat payload
-    // -------------------------------------------------
-    const normalizedMessage = {
+    const result = await this.messageRouter.routeWebChat({
       userId: body.userId,
       tenantId: body.tenantId,
-      channel: ConversationChannel.WEB,
-      content: body.message,
-      raw: body,
-    };
-
-    // -------------------------------------------------
-    // 2. Send to Conversation Engine (single brain)
-    // -------------------------------------------------
-    const result = await this.conversationEngine.processMessage(
-      normalizedMessage,
-    );
-
-    // -------------------------------------------------
-    // 3. Return engine response
-    // -------------------------------------------------
-    return {
-      success: true,
-      data: result,
-    };
+      message: body.message,
+      messageId: body.messageId ?? uuidv4(),
+      metadata: { source: 'webchat', raw: body },
+    });
+    return { success: true, data: result };
   }
 }

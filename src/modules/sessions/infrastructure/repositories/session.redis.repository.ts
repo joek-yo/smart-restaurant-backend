@@ -1,7 +1,7 @@
 // src/modules/sessions/infrastructure/repositories/session.redis.repository.ts
 
 import { Injectable } from '@nestjs/common';
-import { SessionRepository } from '../../domain/repositories/session.repository';
+import { SessionRepository, FindSessionByUserInput } from '../../domain/repositories/session.repository';
 import { SessionEntity } from '../../domain/entities/session.entity';
 import { SessionCacheRepository } from '../../domain/repositories/session-cache.repository';
 import { SessionIndexRepository } from './session-index.repository';
@@ -39,7 +39,7 @@ export class RedisSessionRepository extends SessionRepository {
   }
 
   async findById(id: string): Promise<SessionEntity | null> {
-    const raw = await this.cache.get(id);
+    const raw = await this.cache.getBySessionId(id);
     if (!raw) return null;
     return new SessionEntity(raw);
   }
@@ -68,6 +68,19 @@ export class RedisSessionRepository extends SessionRepository {
         }
       }
     }
-    await this.cache.delete(id);
+    await this.cache.deleteBySessionId(id);
+  }
+
+  async findActiveByUser(input: FindSessionByUserInput): Promise<SessionEntity | null> {
+    const sessions = await this.findByUserId(input.userId);
+    return sessions[0] ?? null;
+  }
+
+  async findByTenant(tenantId: string): Promise<SessionEntity[]> {
+    return [];
+  }
+
+  async findExpiredSessions(): Promise<SessionEntity[]> {
+    return [];
   }
 }

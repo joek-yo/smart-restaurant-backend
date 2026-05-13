@@ -70,10 +70,10 @@ export class CheckoutUseCase {
     }
 
     // ── 7. Domain mutation — business rule lives in entity ────────────────
-    session.checkout();
+    session.checkoutStart();
 
     // ── 8. Persist state change ───────────────────────────────────────────
-    await this.sessionService.save(session);
+    await this.sessionService.startCheckout(session.id!);
 
     this.logger.log(
       `[Checkout] userId=${userId} tenantId=${tenantId} channel=${channel} items=${session.items.length} total=${total}`,

@@ -21,7 +21,7 @@ export class CancelCheckoutUseCase {
       input.branchId,
     );
 
-    session.reset();
+    session.clearCart();
 
     await this.sessionPort.save(session);
 

@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PaymentLogDocument } from '../schemas/payment-log.schema';
+import { PaymentLogDocument } from '../../infrastructure/schemas/payment-log.schema';
 
 /**
  * PAYMENT LOG REPOSITORY

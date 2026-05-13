@@ -1,7 +1,8 @@
 // src/modules/orders/application/handlers/order-created.handler.ts
 
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { EventBus, EVENTS } from '@core/events';
+import { EventBus } from '@core/events';
+import { ORDER_EVENTS } from '@core/events/event.constants';
 import { OrderCreatedPayload } from '@core/events/event-payloads';
 
 @Injectable()
@@ -9,7 +10,7 @@ export class OrderCreatedHandler implements OnModuleInit {
   constructor(private readonly eventBus: EventBus) {}
 
   onModuleInit() {
-    this.eventBus.on(EVENTS.ORDER_CREATED, this.handle.bind(this));
+    this.eventBus.on(ORDER_EVENTS.ORDER_CREATED, this.handle.bind(this));
   }
 
   handle(payload: OrderCreatedPayload): void {

@@ -1,7 +1,7 @@
 // FILE: src/modules/conversation/domain/interfaces/state-machine.interface.ts
 
-import { ConversationStateEnum } from '../enums/conversation-state.enum';
-import { ConversationIntentEnum } from '../enums/conversation-intent.enum';
+import { ConversationState } from '../enums/conversation-state.enum';
+import { ConversationIntent } from '../enums/conversation-intent.enum';
 import { ConversationContextEntity } from '../entities/conversation-context.entity';
 
 /**
@@ -20,7 +20,7 @@ import { ConversationContextEntity } from '../entities/conversation-context.enti
  */
 
 export interface StateTransitionResult {
-  nextState: ConversationStateEnum;
+  nextState: ConversationState;
   emitEvents?: Array<{
     event: string;
     payload: any;
@@ -32,8 +32,8 @@ export interface StateMachineInterface {
    * Core transition function
    */
   transition(params: {
-    state: ConversationStateEnum;
-    intent: ConversationIntentEnum;
+    state: ConversationState;
+    intent: ConversationIntent;
     context: ConversationContextEntity;
   }): StateTransitionResult;
 
@@ -41,7 +41,7 @@ export interface StateMachineInterface {
    * Optional validation hook
    */
   canTransition(
-    from: ConversationStateEnum,
-    to: ConversationStateEnum,
+    from: ConversationState,
+    to: ConversationState,
   ): boolean;
 }

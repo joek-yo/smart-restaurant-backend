@@ -1,4 +1,4 @@
-// FILE: src/domains/sessions/repositories/cart-item.repository.ts
+// FILE: src/modules/sessions/domain/repositories/cart-item.repository.ts
 
 import { Injectable } from '@nestjs/common';
 import { CartItemEntity } from '../entities/cart-item.entity';
@@ -8,6 +8,16 @@ import { v4 as uuidv4 } from 'uuid';
 // ABSTRACT CONTRACT
 // ========================
 
+/**
+ * CartItemRepository
+ * -------------------
+ * Canonical contract for cart item persistence.
+ *
+ * RULES:
+ * - MUST be tenant-safe (businessId = tenantId)
+ * - sessionId is required for all reads
+ * - no global scans or cross-tenant leakage
+ */
 export abstract class CartItemRepository {
   abstract add(item: CartItemEntity): Promise<CartItemEntity>;
 
@@ -17,7 +27,6 @@ export abstract class CartItemRepository {
 
   abstract findBySession(sessionId: string): Promise<CartItemEntity[]>;
 
-  // ✅ REQUIRED BY SERVICE (FIX)
   abstract deleteBySession(sessionId: string): Promise<void>;
 }
 
@@ -29,33 +38,47 @@ export abstract class CartItemRepository {
 export class InMemoryCartItemRepository extends CartItemRepository {
   private cartItems: Map<string, CartItemEntity> = new Map();
 
+  /**
+   * INTERNAL KEY STRATEGY
+   * Ensures deterministic overwrite and prevents collisions
+   */
+  private buildKey(item: CartItemEntity): string {
+    return `${item.businessId || 'default'}:${item.id}`;
+  }
+
   async add(item: CartItemEntity): Promise<CartItemEntity> {
     if (!item.id) {
       item.id = uuidv4();
     }
 
-    item.createdAt = new Date();
+    item.createdAt = item.createdAt ?? new Date();
     item.updatedAt = new Date();
 
-    this.cartItems.set(item.id, item);
+    const key = this.buildKey(item);
+
+    this.cartItems.set(key, item);
     return item;
   }
 
   async update(item: CartItemEntity): Promise<CartItemEntity> {
-    const existing = this.cartItems.get(item.id!);
+    if (!item.id) {
+      throw new Error(`CartItem id is required`);
+    }
+
+    const key = this.buildKey(item);
+    const existing = this.cartItems.get(key);
 
     if (!existing) {
       throw new Error(`CartItem ${item.id} not found`);
     }
 
-    const updated: CartItemEntity = Object.assign(
-      Object.create(Object.getPrototypeOf(existing)),
-      existing,
-      item,
-      { updatedAt: new Date() },
-    );
+    const updated = new CartItemEntity({
+      ...existing,
+      ...item,
+      updatedAt: new Date(),
+    });
 
-    this.cartItems.set(updated.id!, updated);
+    this.cartItems.set(key, updated);
     return updated;
   }
 
@@ -66,17 +89,24 @@ export class InMemoryCartItemRepository extends CartItemRepository {
   }
 
   async delete(id: string): Promise<void> {
-    this.cartItems.delete(id);
+    // deterministic delete (find by id only)
+    const entry = Array.from(this.cartItems.entries()).find(
+      ([_, item]) => item.id === id,
+    );
+
+    if (!entry) return;
+
+    this.cartItems.delete(entry[0]);
   }
 
-  // ✅ IMPLEMENTATION (FIX)
   async deleteBySession(sessionId: string): Promise<void> {
     const items = await this.findBySession(sessionId);
 
-    items.forEach((item) => {
-      if (item.id) {
-        this.cartItems.delete(item.id);
-      }
-    });
+    for (const item of items) {
+      if (!item.id) continue;
+
+      const key = this.buildKey(item);
+      this.cartItems.delete(key);
+    }
   }
 }

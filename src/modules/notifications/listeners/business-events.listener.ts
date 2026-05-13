@@ -2,7 +2,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { EVENTS } from '@core/events';
+import { ORDER_EVENTS, BUSINESS_EVENTS } from '@core/events/event.constants';
 
 @Injectable()
 export class BusinessEventsListener {
@@ -11,7 +11,7 @@ export class BusinessEventsListener {
    * Reacts when a new business/restaurant is registered.
    * Perfect for triggering the onboarding sequence.
    */
-  @OnEvent(EVENTS.BUSINESS_CREATED)
+  @OnEvent(BUSINESS_EVENTS.BUSINESS_CREATED)
   handleBusinessCreated(payload: { 
     businessId: string; 
     name: string; 
@@ -34,7 +34,7 @@ export class BusinessEventsListener {
   /**
    * Reacts to profile or settings updates.
    */
-  @OnEvent(EVENTS.BUSINESS_UPDATED)
+  @OnEvent(BUSINESS_EVENTS.BUSINESS_UPDATED)
   handleBusinessUpdated(payload: { businessId: string; changes: string[] }) {
     console.log(`🔄 [EVENT] business.updated | ID: ${payload.businessId}`);
     console.log(`📝 Changes detected in: ${payload.changes.join(', ')}`);

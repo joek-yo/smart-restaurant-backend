@@ -224,7 +224,7 @@ export class PaymentEntity {
     }
   }
 
-  private touch(): void {
+  touch(): void {
     this.props.updatedAt = new Date();
   }
 

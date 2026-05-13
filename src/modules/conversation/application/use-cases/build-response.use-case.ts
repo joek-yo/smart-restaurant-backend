@@ -1,67 +1,106 @@
 // src/modules/conversation/application/use-cases/build-response.use-case.ts
+
 import { Injectable } from '@nestjs/common';
 
-const LOCKED_STATES = ['PAYMENT_PENDING', 'ORDER_CONFIRMED'];
+const LOCKED_STATES = [
+  'PAYMENT_PENDING',
+  'ORDER_CONFIRMED',
+];
 
 @Injectable()
 export class BuildResponseUseCase {
-  execute({ intent, transition, currentState }: {
+
+  execute({
+    intent,
+    transition,
+    currentState,
+  }: {
     intent: string;
     transition: { nextState: string };
     currentState: string;
   }): string {
 
-    // 🔒 Locked states always return state-aware response
-    // regardless of intent
+    // =========================
+    // 🔒 LOCKED STATES OVERRIDE EVERYTHING
+    // =========================
     if (LOCKED_STATES.includes(currentState)) {
       return this.stateAwareResponse(currentState);
     }
 
-    // Intent-specific responses
+    // =========================
+    // 🧭 INTENT-ASSISTED RESPONSES (SOFT LAYER)
+    // =========================
     switch (intent) {
-      case 'ADD_TO_CART':
-        return '✅ Item added to your cart. Type "my cart" to review or "checkout" when ready.';
-      case 'REMOVE_FROM_CART':
-        return '🗑️ Item removed from your cart.';
-      case 'VIEW_CART':
-        return '🛒 Here is your cart. Type "checkout" to proceed or "add [item]" to add more.';
-      case 'VIEW_PRODUCTS':
-        return '🛍️ Here is our menu. Type "add [item name]" to add something to your cart.';
-      case 'CHECKOUT':
-        return '💳 Reviewing your order. Type "confirm order" to place it or "cancel" to go back.';
-      case 'CONFIRM_ORDER':
-        return '⏳ Order confirmed! Processing your payment...';
-      case 'CANCEL_ORDER':
-        return '❌ Order cancelled. Type "menu" to start again.';
-      case 'ASK_HELP':
-        return '👋 Here is what you can do:\n• "menu" — browse products\n• "add [item]" — add to cart\n• "my cart" — view cart\n• "checkout" — place order\n• "cancel" — cancel order';
-    }
 
-    // State-aware fallback for SMALL_TALK / UNKNOWN
-    return this.stateAwareResponse(currentState);
+      case 'ADD_TO_CART':
+        return 'Item added successfully. You can continue shopping or proceed to checkout.';
+
+      case 'REMOVE_FROM_CART':
+        return 'Item removed successfully.';
+
+      case 'VIEW_CART':
+        return 'Here is your current selection. You can add more items or proceed when ready.';
+
+      case 'VIEW_PRODUCTS':
+        return 'Here are the available items. You can add any item to continue.';
+
+      case 'CHECKOUT':
+        return 'Reviewing your selection. You may confirm or cancel.';
+
+      case 'CONFIRM_ORDER':
+        return 'Order confirmation in progress. Please wait.';
+
+      case 'CANCEL_ORDER':
+        return 'Process cancelled. You can start again anytime.';
+
+      case 'ASK_HELP':
+        return `You can:
+- browse items
+- add items
+- view selection
+- proceed to checkout
+- cancel process`;
+
+      case 'SMALL_TALK':
+      default:
+        return this.stateAwareResponse(currentState);
+    }
   }
 
+  // =========================
+  // 🧠 STATE-DRIVEN RESPONSES (PRIMARY SOURCE OF TRUTH)
+  // =========================
   private stateAwareResponse(state: string): string {
+
     switch (state) {
+
       case 'IDLE':
-        return '👋 Welcome! Type "menu" to see what we offer or "help" for options.';
+        return 'Welcome. You can browse available items or ask for help.';
+
       case 'BROWSING':
-        return '🛍️ You are browsing our menu. Type "add [item]" to add something to your cart.';
+        return 'You are browsing available items. You may add items to continue.';
+
       case 'CART_ACTIVE':
-        return '🛒 You have items in your cart. Type "my cart" to review, "add [item]" to add more, or "checkout" to order.';
+        return 'You have selected items. You may continue shopping or proceed when ready.';
+
       case 'CHECKOUT':
-        return '💳 You are in checkout. Type "confirm order" to place your order or "cancel" to go back.';
+        return 'Checkout is in progress. You may confirm or cancel.';
+
       case 'PAYMENT_PENDING':
-        return '⏳ Your order is being processed. Please wait.\nType "cancel" if you want to stop.';
+        return 'Processing your request. Please wait or cancel if needed.';
+
       case 'ORDER_CONFIRMED':
-        return '🎉 Your order has been confirmed! We will notify you when it is ready.';
+        return 'Your request has been completed successfully.';
+
       case 'ORDER_FAILED':
-        return '❌ Something went wrong. Type "checkout" to try again or "cancel" to start over.';
+        return 'Something went wrong. You may retry or cancel.';
+
       case 'ABANDONED':
       case 'RECOVERY_FLOW':
-        return '👋 Welcome back! You have items in your cart. Type "my cart" to continue or "cancel" to start fresh.';
+        return 'You can continue where you left off or start a new session.';
+
       default:
-        return '🤖 Type "help" to see available options.';
+        return 'System ready. You may proceed.';
     }
   }
 }

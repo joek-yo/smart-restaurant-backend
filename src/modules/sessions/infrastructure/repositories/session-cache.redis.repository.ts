@@ -60,4 +60,12 @@ export class RedisSessionCacheRepository extends SessionCacheRepository {
   async delete(sessionId: string): Promise<void> {
     await this.redis.del(this.key(sessionId));
   }
+
+  async getBySessionId(sessionId: string): Promise<SessionEntity | null> {
+    return this.get(sessionId);
+  }
+
+  async deleteBySessionId(sessionId: string): Promise<void> {
+    await this.redis.del(this.key(sessionId));
+  }
 }

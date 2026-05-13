@@ -2,7 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { EVENTS } from '@core/events';
+import { ORDER_EVENTS, BUSINESS_EVENTS } from '@core/events/event.constants';
 
 @Injectable()
 export class OrderEventsListener {
@@ -13,7 +13,7 @@ export class OrderEventsListener {
    * Reacts to new orders.
    * Logic: Customer confirmation & Restaurant alerts.
    */
-  @OnEvent(EVENTS.ORDER_CREATED)
+  @OnEvent(ORDER_EVENTS.ORDER_CREATED)
   handleOrderCreated(payload: { 
     orderId: string; 
     businessId: string; 
@@ -33,7 +33,7 @@ export class OrderEventsListener {
    * Reacts when an order is finalized.
    * Logic: Loyalty points or Feedback requests.
    */
-  @OnEvent(EVENTS.ORDER_COMPLETED)
+  @OnEvent(ORDER_EVENTS.ORDER_COMPLETED)
   handleOrderCompleted(payload: { orderId: string; businessId: string }) {
     this.logger.log(`✅ [EVENT] order.completed | ID: ${payload.orderId}`);
   }
@@ -42,7 +42,7 @@ export class OrderEventsListener {
    * Reacts to cancellations.
    * Logic: Kitchen stoppage & Refund alerts.
    */
-  @OnEvent(EVENTS.ORDER_CANCELLED)
+  @OnEvent(ORDER_EVENTS.ORDER_CANCELLED)
   handleOrderCancelled(payload: { orderId: string; reason?: string }) {
     this.logger.warn(`❌ [EVENT] order.cancelled | ID: ${payload.orderId} | Reason: ${payload.reason || 'Not specified'}`);
   }

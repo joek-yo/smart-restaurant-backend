@@ -2,10 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 import { EventBus } from '@core/events';
-import { EVENTS } from '@core/events/event.constants';
+import { PAYMENT_EVENTS, CHECKOUT_EVENTS } from '@core/events/event.constants';
 
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
-import { PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
+import { PaymentRepository } from '../repositories/payment.repository';
+import { PaymentStatus, PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
 
 /**
  * RefundPaymentUseCase
@@ -40,7 +40,7 @@ export class RefundPaymentUseCase {
     // BUSINESS RULES
     // =========================
 
-    if (payment.status.value === 'REFUNDED') {
+    if (payment.status.value === PaymentStatus.REFUNDED) {
       throw new Error('Payment already fully refunded');
     }
 
@@ -63,8 +63,8 @@ export class RefundPaymentUseCase {
     // =========================
     payment.status =
       refundAmount === payment.amount
-        ? new PaymentStatusVO('REFUNDED')
-        : new PaymentStatusVO('PARTIALLY_REFUNDED');
+        ? new PaymentStatusVO(PaymentStatus.REFUNDED)
+        : new PaymentStatusVO(PaymentStatus.REFUNDED);
 
     payment.refundAmount = refundAmount;
     payment.refundReason = input.reason;
@@ -75,7 +75,7 @@ export class RefundPaymentUseCase {
     // =========================
     // EVENT EMISSION
     // =========================
-    this.eventBus.emit(EVENTS.PAYMENT_REFUNDED, {
+    this.eventBus.emit(PAYMENT_EVENTS.PAYMENT_REFUNDED, {
       paymentId: payment.id,
       tenantId: payment.tenantId,
       orderId: payment.orderId,

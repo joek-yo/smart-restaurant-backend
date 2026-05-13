@@ -1,6 +1,7 @@
-// src/modules/conversation/presentation/whatsapp.controller.ts
+// FILE: src/modules/conversation/presentation/whatsapp.controller.ts
+
 import { Controller, Post, Get, Body, Query, Logger, HttpCode } from '@nestjs/common';
-import { ConversationEngineService } from '../application/services/conversation-engine.service';
+import { MessageRouter } from './gateway/message.router';
 import { WhatsAppAdapter } from '../infrastructure/adapters/whatsapp.adapter';
 
 @Controller('webhook/whatsapp')
@@ -8,7 +9,7 @@ export class WhatsappController {
   private readonly logger = new Logger(WhatsappController.name);
 
   constructor(
-    private readonly conversationEngine: ConversationEngineService,
+    private readonly messageRouter: MessageRouter,
     private readonly whatsappAdapter: WhatsAppAdapter,
   ) {}
 
@@ -20,6 +21,7 @@ export class WhatsappController {
       this.logger.debug('[WEBHOOK] Non-message event — acknowledged');
       return { status: 'ignored' };
     }
+
     let normalized: ReturnType<WhatsAppAdapter['normalizeIncomingMessage']>;
     try {
       normalized = this.whatsappAdapter.normalizeIncomingMessage(payload);
@@ -27,20 +29,22 @@ export class WhatsappController {
       this.logger.warn(`[WEBHOOK] Normalization failed: ${err.message}`);
       return { status: 'ignored', reason: err.message };
     }
+
     this.logger.log(`[WEBHOOK] Message from ${normalized.userId} | id: ${normalized.messageId}`);
-    const result = await this.conversationEngine.processMessage({
+
+    const result = await this.messageRouter.routeWhatsApp({
       userId: normalized.userId,
       tenantId: normalized.tenantId,
-      channel: normalized.channel,
-      content: normalized.content,
+      message: normalized.content,
       messageId: normalized.messageId,
       metadata: normalized.metadata,
     });
+
     if (result?.response && normalized.metadata?.phone) {
       await this.whatsappAdapter.sendMessage(normalized.metadata.phone, result.response);
     }
-    const idempotent = (result as any)?.idempotent ?? false;
-    return { status: 'ok', idempotent };
+
+    return { status: 'ok', idempotent: result?.idempotent ?? false };
   }
 
   @Get('verify')

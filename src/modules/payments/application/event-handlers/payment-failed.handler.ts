@@ -2,10 +2,10 @@
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventBus } from '@core/events';
-import { EVENTS } from '@core/events/event.constants';
+import { PAYMENT_EVENTS, CHECKOUT_EVENTS } from '@core/events/event.constants';
 
 import { WhatsappGateway } from '@modules/whatsapp/gateway/whatsapp.gateway';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
+import { PaymentRepository } from '../repositories/payment.repository';
 
 /**
  * PaymentFailedHandler
@@ -28,7 +28,7 @@ export class PaymentFailedHandler implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.eventBus.on(EVENTS.PAYMENT_FAILED, this.handle.bind(this));
+    this.eventBus.on(PAYMENT_EVENTS.PAYMENT_FAILED, this.handle.bind(this));
   }
 
   async handle(event: {

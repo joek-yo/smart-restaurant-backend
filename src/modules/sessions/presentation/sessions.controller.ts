@@ -74,7 +74,7 @@ export class SessionController {
   @Post('cart/quantity')
   async updateQuantity(@Body() body: UpdateQuantityDto) {
     const { userId, tenantId, branchId, productId, quantity } = body;
-    await this.updateQuantityUseCase.execute(userId, productId, quantity, tenantId, branchId);
+    await this.updateQuantityUseCase.execute(userId, productId, quantity);
     return { success: true, message: 'Quantity updated' };
   }
 

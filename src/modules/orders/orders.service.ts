@@ -7,7 +7,8 @@ import { Model, Types } from 'mongoose';
 import { OrderDocument } from './infrastructure/schemas/order.schema';
 import { CreateOrderDto } from './application/dto/create-order.dto';
 import { UpdateOrderStatusDto } from './application/dto/update-order-status.dto';
-import { EventBus, EVENTS } from '@core/events';
+import { EventBus } from '@core/events';
+import { ORDER_EVENTS } from '@core/events/event.constants';
 
 @Injectable()
 export class OrdersService {
@@ -31,7 +32,7 @@ export class OrdersService {
 
     const orderId = (order._id as any).toString();
 
-    this.eventBus.emit(EVENTS.ORDER_CREATED, {
+    this.eventBus.emit(ORDER_EVENTS.ORDER_CREATED, {
       orderId,
       businessId: dto.businessId,
     });
@@ -63,7 +64,7 @@ export class OrdersService {
 
     if (!order) return null;
 
-    this.eventBus.emit(EVENTS.ORDER_COMPLETED, { orderId });
+    this.eventBus.emit(ORDER_EVENTS.ORDER_COMPLETED, { orderId });
     return order;
   }
 
@@ -74,7 +75,7 @@ export class OrdersService {
 
     if (!order) return null;
 
-    this.eventBus.emit(EVENTS.ORDER_CANCELLED, { orderId });
+    this.eventBus.emit(ORDER_EVENTS.ORDER_CANCELLED, { orderId });
     return order;
   }
 

@@ -14,18 +14,27 @@ import { OrderRepositoryImpl } from './infrastructure/repositories/order.reposit
 import { ORDER_REPOSITORY } from './domain/repositories/order.tokens';
 import { OrderSchema } from './infrastructure/schemas/order.schema';
 
+// ─────────────────────────────────────────────
+// EVENT HANDLERS (MISSING FIX)
+// ─────────────────────────────────────────────
+import { OrderCreatedHandler } from './application/handlers/order-created.handler';
+import { OrderStatusUpdatedHandler } from './application/handlers/order-status-updated.handler';
+
 /**
  * OrdersModule
  * ------------
- * Responsibility:
- * - Owns ORDER lifecycle AFTER checkout completion
- * - Exposes ORDER_REPOSITORY for use by checkout module
- * - Handles status transitions and order queries
+ * PURE BUSINESS OWNERSHIP LAYER
  *
- * IMPORTANT:
- * - Order creation from sessions is handled exclusively by:
- *   CheckoutModule → CreateOrderFromCheckoutUseCase
- * - This module does NOT create orders from sessions
+ * RULES:
+ * ❌ Does NOT initiate checkout
+ * ❌ Does NOT read conversation state
+ * ❌ Does NOT manage sessions
+ *
+ * ✅ ONLY:
+ * - order lifecycle
+ * - order status transitions
+ * - order persistence
+ * - reacting to checkout completion events
  */
 @Module({
   imports: [
@@ -40,6 +49,9 @@ import { OrderSchema } from './infrastructure/schemas/order.schema';
   ],
 
   providers: [
+    // ─────────────────────────────────────────────
+    // CORE SERVICE
+    // ─────────────────────────────────────────────
     OrdersService,
 
     // ─────────────────────────────────────────────
@@ -54,13 +66,16 @@ import { OrderSchema } from './infrastructure/schemas/order.schema';
       provide: ORDER_REPOSITORY,
       useClass: OrderRepositoryImpl,
     },
+
+    // ─────────────────────────────────────────────
+    // EVENT HANDLERS (CRITICAL FIX)
+    // ─────────────────────────────────────────────
+    OrderCreatedHandler,
+    OrderStatusUpdatedHandler,
   ],
 
   exports: [
-    // repository for checkout module
     ORDER_REPOSITORY,
-
-    // service for internal orchestration
     OrdersService,
   ],
 })

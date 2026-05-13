@@ -27,7 +27,7 @@ import {
   RefundInput,
 } from './payment-provider.port';
 
-import { PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
+import { PaymentStatus, PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
 
 @Injectable()
 export class StripeProvider implements PaymentProviderPort {
@@ -52,7 +52,7 @@ export class StripeProvider implements PaymentProviderPort {
     return {
       paymentId: `${input.orderId}-payment`,
       providerReference: fakeIntentId,
-      status: PaymentStatusVO.INITIATED,
+      status: new PaymentStatusVO(PaymentStatus.INITIATED),
       raw: {
         message: 'Stripe PaymentIntent simulated (replace with real SDK call)',
       },
@@ -70,7 +70,7 @@ export class StripeProvider implements PaymentProviderPort {
 
     return {
       paymentId,
-      status: PaymentStatusVO.PENDING_PROVIDER,
+      status: new PaymentStatusVO(PaymentStatus.PENDING_PROVIDER),
       providerReference: `stripe-verify-${paymentId}`,
     };
   }

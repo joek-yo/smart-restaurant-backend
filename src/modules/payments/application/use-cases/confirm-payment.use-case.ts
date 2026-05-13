@@ -2,10 +2,10 @@
 
 import { Injectable } from '@nestjs/common';
 import { EventBus } from '@core/events';
-import { EVENTS } from '@core/events/event.constants';
+import { PAYMENT_EVENTS, CHECKOUT_EVENTS } from '@core/events/event.constants';
 
-import { PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
-import { PaymentRepository } from '../../domain/repositories/payment.repository';
+import { PaymentStatus, PaymentStatusVO } from '../../domain/value-objects/payment-status.vo';
+import { PaymentRepository } from '../repositories/payment.repository';
 
 /**
  * ConfirmPaymentUseCase
@@ -39,7 +39,7 @@ export class ConfirmPaymentUseCase {
     // =========================
     // DOMAIN STATE TRANSITION
     // =========================
-    payment.status = new PaymentStatusVO('CONFIRMED');
+    payment.status = new PaymentStatusVO(PaymentStatus.CONFIRMED);
     payment.providerRef = input.providerRef ?? payment.providerRef;
     payment.confirmedAt = new Date();
 
@@ -48,7 +48,7 @@ export class ConfirmPaymentUseCase {
     // =========================
     // EVENT EMISSION
     // =========================
-    this.eventBus.emit(EVENTS.PAYMENT_CONFIRMED, {
+    this.eventBus.emit(PAYMENT_EVENTS.PAYMENT_CONFIRMED, {
       paymentId: payment.id,
       tenantId: payment.tenantId,
       orderId: payment.orderId,

@@ -2,10 +2,11 @@
 
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventBus } from '@core/events';
-import { EVENTS } from '@core/events/event.constants';
+import { PAYMENT_EVENTS, CHECKOUT_EVENTS } from '@core/events/event.constants';
 
 import { OrdersService } from '@modules/orders/orders.service';
 import { WhatsappGateway } from '@modules/whatsapp/gateway/whatsapp.gateway';
+import { OrderStatus } from '@modules/orders/domain/entities/order-status.enum';
 
 /**
  * PaymentConfirmedHandler
@@ -28,7 +29,7 @@ export class PaymentConfirmedHandler implements OnModuleInit {
   ) {}
 
   onModuleInit() {
-    this.eventBus.on(EVENTS.PAYMENT_CONFIRMED, this.handle.bind(this));
+    this.eventBus.on(PAYMENT_EVENTS.PAYMENT_CONFIRMED, this.handle.bind(this));
   }
 
   async handle(event: {
@@ -48,10 +49,7 @@ export class PaymentConfirmedHandler implements OnModuleInit {
     // 1. ACTIVATE ORDER
     // =========================
     if (event.orderId) {
-      await this.ordersService.updateOrderStatus({
-        orderId: event.orderId,
-        status: 'CONFIRMED',
-      });
+      await this.ordersService.updateStatus(event.orderId, { status: OrderStatus.ACCEPTED });
     }
 
     // =========================

@@ -1,4 +1,4 @@
-// FILE: src/domains/sessions/entities/cart-item.entity.ts
+// FILE: src/modules/sessions/domain/entities/cart-item.entity.ts
 
 import { BaseEntity } from '@common/base.entity';
 
@@ -6,72 +6,235 @@ export class CartItemEntity extends BaseEntity {
   id?: string;
 
   sessionId!: string;
+
+  /**
+   * Legacy persistence name.
+   * Canonical accessor = tenantId
+   */
   businessId!: string;
+
   branchId?: string;
 
   productId!: string;
+
   name!: string;
 
   quantity: number = 1;
+
   price: number = 0;
 
-  // keep flexible but safe
   options?: Record<string, any>;
 
   constructor(partial?: Partial<CartItemEntity>) {
     super(partial);
 
-    if (partial) {
-      Object.assign(this, partial);
+    if (!partial) {
+      return;
     }
 
-    // 🔒 safety defaults (prevents NaN / undefined bugs)
-    this.quantity = this.quantity ?? 1;
-    this.price = this.price ?? 0;
+    Object.assign(this, partial);
+
+    this.businessId =
+      partial.businessId ??
+      (partial as any).tenantId ??
+      'default';
+
+    this.quantity = this.normalizeQuantity(
+      partial.quantity,
+    );
+
+    this.price = this.normalizePrice(
+      partial.price,
+    );
+
+    this.validate();
   }
 
-  // =========================
-  // DOMAIN BEHAVIOR
-  // =========================
+  // ─────────────────────────────────────────────
+  // Canonical tenant accessor
+  // ─────────────────────────────────────────────
 
-  updateQuantity(qty: number) {
-    if (qty <= 0) {
-      throw new Error('Quantity must be greater than 0');
+  get tenantId(): string {
+    return this.businessId;
+  }
+
+  // ─────────────────────────────────────────────
+  // Quantity Logic
+  // ─────────────────────────────────────────────
+
+  updateQuantity(quantity: number): void {
+    this.quantity =
+      this.normalizeQuantity(quantity);
+
+    this.touch();
+  }
+
+  increase(quantity = 1): void {
+    const safeQty =
+      this.normalizeQuantity(quantity);
+
+    this.quantity += safeQty;
+
+    this.touch();
+  }
+
+  decrease(quantity = 1): void {
+    const safeQty =
+      this.normalizeQuantity(quantity);
+
+    const nextQuantity =
+      this.quantity - safeQty;
+
+    if (nextQuantity <= 0) {
+      throw new Error(
+        'Quantity cannot be zero or negative',
+      );
     }
 
-    this.quantity = qty;
-    this.touch?.();
+    this.quantity = nextQuantity;
+
+    this.touch();
   }
 
-  increase(qty: number = 1) {
-    this.quantity += qty;
-    this.touch?.();
+  // ─────────────────────────────────────────────
+  // Price Logic
+  // ─────────────────────────────────────────────
+
+  updatePrice(price: number): void {
+    this.price = this.normalizePrice(price);
+
+    this.touch();
   }
 
-  decrease(qty: number = 1) {
-    const newQty = this.quantity - qty;
-
-    if (newQty <= 0) {
-      throw new Error('Quantity cannot be zero or negative');
-    }
-
-    this.quantity = newQty;
-    this.touch?.();
-  }
-
-  // =========================
-  // DERIVED VALUE
-  // =========================
+  // ─────────────────────────────────────────────
+  // Derived Values
+  // ─────────────────────────────────────────────
 
   get total(): number {
-    return this.price * this.quantity;
+    return Number(
+      (this.price * this.quantity).toFixed(2),
+    );
   }
 
-  // =========================
-  // DOMAIN HELPERS
-  // =========================
+  // ─────────────────────────────────────────────
+  // Helpers
+  // ─────────────────────────────────────────────
 
   isSameProduct(productId: string): boolean {
     return this.productId === productId;
+  }
+
+  clone(): CartItemEntity {
+    return new CartItemEntity({
+      id: this.id,
+      sessionId: this.sessionId,
+      businessId: this.businessId,
+      branchId: this.branchId,
+      productId: this.productId,
+      name: this.name,
+      quantity: this.quantity,
+      price: this.price,
+      options: this.options,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    });
+  }
+
+  // ─────────────────────────────────────────────
+  // Validation
+  // ─────────────────────────────────────────────
+
+  private validate(): void {
+    if (!this.productId?.trim()) {
+      throw new Error(
+        'Cart item productId is required',
+      );
+    }
+
+    if (!this.name?.trim()) {
+      throw new Error(
+        'Cart item name is required',
+      );
+    }
+
+    if (!Number.isFinite(this.quantity)) {
+      throw new Error(
+        'Cart item quantity must be finite',
+      );
+    }
+
+    if (!Number.isFinite(this.price)) {
+      throw new Error(
+        'Cart item price must be finite',
+      );
+    }
+
+    if (this.quantity <= 0) {
+      throw new Error(
+        'Cart item quantity must be greater than zero',
+      );
+    }
+
+    if (this.price < 0) {
+      throw new Error(
+        'Cart item price cannot be negative',
+      );
+    }
+  }
+
+  private normalizeQuantity(
+    quantity?: number,
+  ): number {
+    const normalized =
+      quantity ?? 1;
+
+    if (
+      !Number.isFinite(normalized) ||
+      Number.isNaN(normalized)
+    ) {
+      throw new Error(
+        'Invalid cart quantity',
+      );
+    }
+
+    if (normalized <= 0) {
+      throw new Error(
+        'Quantity must be greater than zero',
+      );
+    }
+
+    return Math.floor(normalized);
+  }
+
+  private normalizePrice(
+    price?: number,
+  ): number {
+    const normalized =
+      price ?? 0;
+
+    if (
+      !Number.isFinite(normalized) ||
+      Number.isNaN(normalized)
+    ) {
+      throw new Error(
+        'Invalid cart price',
+      );
+    }
+
+    if (normalized < 0) {
+      throw new Error(
+        'Price cannot be negative',
+      );
+    }
+
+    return Number(normalized.toFixed(2));
+  }
+
+  // ─────────────────────────────────────────────
+  // Internal
+  // ─────────────────────────────────────────────
+
+  touch(): void {
+    this.updatedAt = new Date();
   }
 }

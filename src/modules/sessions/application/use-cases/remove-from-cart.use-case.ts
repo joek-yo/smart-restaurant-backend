@@ -8,6 +8,6 @@ export class RemoveFromCartUseCase {
   async execute(userId: string, productId: string, tenantId: string, branchId?: string): Promise<void> {
     const session = await this.sessionService.getOrCreate(userId, tenantId, branchId);
     session.removeItem(productId);
-    await this.sessionService.save(session);
+    await this.sessionService.removeItem(session.id!, productId);
   }
 }

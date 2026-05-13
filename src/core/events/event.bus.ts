@@ -2,7 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { EVENTS, AppEventType } from './event.constants';
+import { AppEventType } from './event.constants';
 
 @Injectable()
 export class EventBus {

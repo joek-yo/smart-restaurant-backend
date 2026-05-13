@@ -2,7 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventsHandler, IEventHandler } from '@nestjs/cqrs';
-import { PaymentRepository } from '../../infrastructure/repositories/payment.repository';
+import { PaymentRepository } from '../repositories/payment.repository';
 
 /**
  * Payment Timeout Handler

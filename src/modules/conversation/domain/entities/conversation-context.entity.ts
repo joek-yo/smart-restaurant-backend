@@ -1,10 +1,25 @@
 // src/modules/conversation/domain/entities/conversation-context.entity.ts
-//
-// ✅ FIX 1 — Cart REMOVED. Conversation owns: state, memory, orchestration only.
-// Session engine is the single source of truth for cart/items/totals.
 
 import { ConversationState } from '../enums/conversation-state.enum';
 import { ConversationChannel } from '../enums/conversation-channel.enum';
+
+/**
+ * ConversationContextEntity
+ * --------------------------
+ * PURE conversation memory ONLY.
+ *
+ * ❌ MUST NEVER contain:
+ * - cart
+ * - orders
+ * - payment state
+ * - business logic state
+ *
+ * ✅ ONLY contains:
+ * - conversation state
+ * - dialogue memory
+ * - recovery metadata
+ * - prompt flow state
+ */
 
 export interface PendingPrompt {
   type: string;
@@ -15,6 +30,7 @@ export interface RecoveryMarker {
   fromState: ConversationState;
   reason: string;
   timestamp: Date;
+  retryCount?: number;
 }
 
 export class ConversationContextEntity {
@@ -22,10 +38,32 @@ export class ConversationContextEntity {
   public tenantId: string;
   public userId: string;
   public channel: ConversationChannel;
+
   public state: ConversationState;
+
+  /**
+   * MEMORY = conversational context ONLY
+   * Examples:
+   * - last intent
+   * - user preferences
+   * - language
+   * - last message snippet
+   */
   public memory: Record<string, any>;
+
+  /**
+   * Pending system prompt (for multi-step flows)
+   */
   public pendingPrompt?: PendingPrompt;
+
+  /**
+   * Recovery tracking for:
+   * - retries
+   * - WhatsApp reconnect
+   * - abandoned sessions
+   */
   public recoveryMarker?: RecoveryMarker;
+
   public expiresAt: Date;
   public updatedAt: Date;
 
@@ -58,10 +96,15 @@ export class ConversationContextEntity {
       this.userId = idOrParams.userId;
       this.channel = idOrParams.channel;
       this.state = idOrParams.state ?? ConversationState.IDLE;
+
       this.memory = idOrParams.memory ?? {};
       this.pendingPrompt = idOrParams.pendingPrompt;
       this.recoveryMarker = idOrParams.recoveryMarker;
-      this.expiresAt = idOrParams.expiresAt ?? new Date(Date.now() + 1000 * 60 * 60 * 3);
+
+      this.expiresAt =
+        idOrParams.expiresAt ??
+        new Date(Date.now() + 1000 * 60 * 60 * 3); // 3h default TTL
+
       this.updatedAt = idOrParams.updatedAt ?? new Date();
     } else {
       this.id = idOrParams;
@@ -69,20 +112,28 @@ export class ConversationContextEntity {
       this.userId = userId!;
       this.channel = channel!;
       this.state = state ?? ConversationState.IDLE;
+
       this.memory = memory ?? {};
-      this.expiresAt = expiresAt ?? new Date(Date.now() + 1000 * 60 * 60 * 3);
+
+      this.expiresAt =
+        expiresAt ?? new Date(Date.now() + 1000 * 60 * 60 * 3);
+
       this.updatedAt = updatedAt ?? new Date();
     }
   }
 
-  // ─── State ────────────────────────────────────────────────────────────────
+  // ==================================================
+  // STATE MANAGEMENT
+  // ==================================================
 
   updateState(newState: ConversationState): void {
     this.state = newState;
     this.touch();
   }
 
-  // ─── Memory (dialogue context only — NOT cart data) ───────────────────────
+  // ==================================================
+  // MEMORY (CONVERSATION ONLY)
+  // ==================================================
 
   setMemory(key: string, value: any): void {
     this.memory[key] = value;
@@ -98,7 +149,9 @@ export class ConversationContextEntity {
     this.touch();
   }
 
-  // ─── Pending Prompt ───────────────────────────────────────────────────────
+  // ==================================================
+  // PROMPT FLOW CONTROL
+  // ==================================================
 
   setPendingPrompt(prompt: PendingPrompt): void {
     this.pendingPrompt = prompt;
@@ -110,10 +163,20 @@ export class ConversationContextEntity {
     this.touch();
   }
 
-  // ─── Recovery ─────────────────────────────────────────────────────────────
+  // ==================================================
+  // RECOVERY SYSTEM
+  // ==================================================
 
   markRecovery(fromState: ConversationState, reason: string): void {
-    this.recoveryMarker = { fromState, reason, timestamp: new Date() };
+    const retryCount = (this.recoveryMarker?.retryCount ?? 0) + 1;
+
+    this.recoveryMarker = {
+      fromState,
+      reason,
+      timestamp: new Date(),
+      retryCount,
+    };
+
     this.touch();
   }
 
@@ -122,9 +185,28 @@ export class ConversationContextEntity {
     this.touch();
   }
 
-  // ─── Internal ─────────────────────────────────────────────────────────────
+  isInRecovery(): boolean {
+    return this.recoveryMarker !== undefined;
+  }
 
-  private touch(): void {
+  // ==================================================
+  // LIFECYCLE
+  // ==================================================
+
+  isExpired(): boolean {
+    return Date.now() > this.expiresAt.getTime();
+  }
+
+  extendTtl(minutes = 60): void {
+    this.expiresAt = new Date(Date.now() + minutes * 60 * 1000);
+    this.touch();
+  }
+
+  // ==================================================
+  // INTERNAL
+  // ==================================================
+
+  touch(): void {
     this.updatedAt = new Date();
   }
 }

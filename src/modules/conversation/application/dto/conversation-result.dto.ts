@@ -1,7 +1,7 @@
 // FILE: src/modules/conversation/application/dto/conversation-result.dto.ts
 
-import { ConversationStateEnum } from '../../domain/enums/conversation-state.enum';
-import { ConversationIntentEnum } from '../../domain/enums/conversation-intent.enum';
+import { ConversationState } from '../../domain/enums/conversation-state.enum';
+import { ConversationIntent } from '../../domain/enums/conversation-intent.enum';
 
 /**
  * ConversationResultDTO
@@ -17,9 +17,9 @@ export class ConversationResultDTO {
 
   readonly response: string;
 
-  readonly state: ConversationStateEnum;
+  readonly state: ConversationState;
 
-  readonly intent: ConversationIntentEnum;
+  readonly intent: ConversationIntent;
 
   /**
    * Optional structured payload for channels
@@ -38,8 +38,8 @@ export class ConversationResultDTO {
     userId: string;
     tenantId: string;
     response: string;
-    state: ConversationStateEnum;
-    intent: ConversationIntentEnum;
+    state: ConversationState;
+    intent: ConversationIntent;
     metadata?: Record<string, any>;
     events?: Array<{
       name: string;

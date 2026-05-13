@@ -7,22 +7,21 @@ import { CONVERSATION_EVENTS } from '@core/events/event.constants';
 /**
  * EmitEventsUseCase
  * ------------------
- * PURE INTERACTION LAYER ONLY
+ * PURE CONVERSATION EVENT EMITTER
  *
- * ❌ MUST NOT emit:
- * - order.*
- * - checkout.*
- * - business logic events
- *
- * ✅ ONLY emits:
- * - conversation.*
- * - intent/state signals
+ * RULE:
+ * - ONLY emits conversation-level signals
+ * - NEVER triggers business workflows
  */
 
-const LOCKED_STATES = ['PAYMENT_PENDING', 'ORDER_CONFIRMED'];
+const LOCKED_STATES = [
+  'PAYMENT_PENDING',
+  'ORDER_CONFIRMED',
+];
 
 @Injectable()
 export class EmitEventsUseCase {
+
   constructor(private readonly eventBus: EventBus) {}
 
   async execute({
@@ -36,66 +35,71 @@ export class EmitEventsUseCase {
     transition: { nextState: string };
     context: any;
   }): Promise<string[]> {
+
     const emitted: string[] = [];
 
-    // ─────────────────────────────────────────────
-    // 🔒 HARD GUARD — no events in locked states
-    // ─────────────────────────────────────────────
+    // ==================================================
+    // 🔒 LOCKED STATES = NO SIDE EFFECTS
+    // ==================================================
     if (LOCKED_STATES.includes(context.state)) {
       return emitted;
     }
 
     const stateChanged = context.state !== transition.nextState;
 
-    // ─────────────────────────────────────────────
-    // 🛒 CART UPDATED (conversation-level only)
-    // ─────────────────────────────────────────────
-    if (intent === 'ADD_TO_CART') {
-      const event = CONVERSATION_EVENTS.CART_UPDATED;
+    // ==================================================
+    // 🧠 INTENT SIGNAL (PURE OBSERVABILITY)
+    // ==================================================
+    const intentEvent = CONVERSATION_EVENTS.INTENT_DETECTED;
 
-      this.eventBus.emit(event, {
+    this.eventBus.emit(intentEvent, {
+      tenantId: dto.tenantId,
+      userId: dto.userId,
+      intent,
+    });
+
+    emitted.push(intentEvent);
+
+    // ==================================================
+    // 💬 MESSAGE PROCESSED SIGNAL
+    // ==================================================
+    const messageEvent = CONVERSATION_EVENTS.MESSAGE_RECEIVED;
+
+    this.eventBus.emit(messageEvent, {
+      tenantId: dto.tenantId,
+      userId: dto.userId,
+      messageId: dto.messageId,
+    });
+
+    emitted.push(messageEvent);
+
+    // ==================================================
+    // 🔄 STATE CHANGE SIGNAL
+    // ==================================================
+    if (stateChanged) {
+      const stateEvent = CONVERSATION_EVENTS.STATE_CHANGED;
+
+      this.eventBus.emit(stateEvent, {
         tenantId: dto.tenantId,
         userId: dto.userId,
-        cartSize: context.cart?.length ?? 0,
+        from: context.state,
+        to: transition.nextState,
       });
 
-      emitted.push(event);
+      emitted.push(stateEvent);
     }
 
-    // ─────────────────────────────────────────────
-    // 🚀 CHECKOUT INTENT (signal only, NOT business logic)
-    // ─────────────────────────────────────────────
-    if (intent === 'CHECKOUT' && stateChanged) {
-      const event = CONVERSATION_EVENTS.CHECKOUT_STARTED;
+    // ==================================================
+    // 📤 RESPONSE READY SIGNAL
+    // ==================================================
+    const responseEvent = CONVERSATION_EVENTS.RESPONSE_READY;
 
-      this.eventBus.emit(event, {
-        tenantId: dto.tenantId,
-        userId: dto.userId,
-        source: 'conversation',
-      });
+    this.eventBus.emit(responseEvent, {
+      tenantId: dto.tenantId,
+      userId: dto.userId,
+    });
 
-      emitted.push(event);
-    }
-
-    // ─────────────────────────────────────────────
-    // 💳 ORDER REQUEST SIGNAL (NO ORDER CREATION HERE)
-    // ─────────────────────────────────────────────
-    if (
-      intent === 'CONFIRM_ORDER' &&
-      stateChanged &&
-      transition.nextState === 'PAYMENT_PENDING'
-    ) {
-      const event = CONVERSATION_EVENTS.ORDER_REQUESTED;
-
-      this.eventBus.emit(event, {
-        tenantId: dto.tenantId,
-        userId: dto.userId,
-        source: 'conversation',
-        cartSize: context.cart?.length ?? 0,
-      });
-
-      emitted.push(event);
-    }
+    emitted.push(responseEvent);
 
     return emitted;
   }

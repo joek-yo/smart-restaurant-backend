@@ -50,7 +50,7 @@ export class ConversationEntity {
   /**
    * Updates the activity timestamp
    */
-  private touch(): void {
+  touch(): void {
     this.lastMessageAt = new Date();
   }
 

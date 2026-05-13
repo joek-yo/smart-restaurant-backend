@@ -1,44 +1,122 @@
-// src/modules/sessions/sessions.module.ts
+// FILE: src/modules/sessions/sessions.module.ts
 
-import { Module } from '@nestjs/common';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import Redis from 'ioredis';
+import { Module, Global } from '@nestjs/common';
+import { Redis } from 'ioredis';
 
-import { SessionController } from './presentation/sessions.controller';
+// ==========================
+// DOMAIN
+// ==========================
+import { SessionEntity } from './domain/entities/session.entity';
+import { CartItemEntity } from './domain/entities/cart-item.entity';
+
+// ==========================
+// REPOSITORIES
+// ==========================
+import {
+  SessionRepository,
+  InMemorySessionRepository,
+} from './domain/repositories/session.repository';
+
+import {
+  CartItemRepository,
+  InMemoryCartItemRepository,
+} from './domain/repositories/cart-item.repository';
+
+import {
+  SessionCacheRepository,
+  RedisSessionCacheRepository,
+} from './domain/repositories/session-cache.repository';
+
+// ==========================
+// SERVICES (DOMAIN LOGIC)
+// ==========================
 import { SessionService } from './application/services/session.service';
+import { CartService } from './application/services/cart.service';
 
-import { AddToCartUseCase } from './application/use-cases/add-to-cart.use-case';
-import { RemoveFromCartUseCase } from './application/use-cases/remove-from-cart.use-case';
+// ==========================
+// USE CASES
+// ==========================
+import { AddCartItemUseCase } from './application/use-cases/add-cart-item.use-case';
+import { RemoveCartItemUseCase } from './application/use-cases/remove-cart-item.use-case';
 import { UpdateQuantityUseCase } from './application/use-cases/update-quantity.use-case';
-import { CheckoutUseCase } from './application/use-cases/checkout.use-case';
+import { ClearCartUseCase } from './application/use-cases/clear-cart.use-case';
+import { GetOrCreateSessionUseCase } from './application/use-cases/get-or-create-session.use-case';
 
-import { SessionRepository } from './domain/repositories/session.repository';
-import { RedisSessionRepository } from './infrastructure/repositories/session.redis.repository';
-import { CartItemRepository, InMemoryCartItemRepository } from './domain/repositories/cart-item.repository';
-import { SessionCacheRepository } from './domain/repositories/session-cache.repository';
-import { RedisSessionCacheRepository } from './infrastructure/repositories/session-cache.redis.repository';
-import { SessionIndexRepository } from './infrastructure/repositories/session-index.repository';
+// ==========================
+// FACTORIES / HELPERS
+// ==========================
 
+// ==========================
+// REDIS PROVIDER
+// ==========================
 const redisProvider = {
   provide: 'REDIS_CLIENT',
   useFactory: () => new Redis({ host: 'localhost', port: 6379 }),
 };
 
+// ==========================
+// MODULE
+// ==========================
+
+@Global()
 @Module({
-  imports: [EventEmitterModule.forRoot()],
-  controllers: [SessionController],
   providers: [
+    // --------------------------
+    // INFRASTRUCTURE
+    // --------------------------
     redisProvider,
+
+    {
+      provide: SessionRepository,
+      useClass: InMemorySessionRepository,
+    },
+
+    {
+      provide: CartItemRepository,
+      useClass: InMemoryCartItemRepository,
+    },
+
+    {
+      provide: SessionCacheRepository,
+      useClass: RedisSessionCacheRepository,
+    },
+
+    // --------------------------
+    // CORE SERVICES
+    // --------------------------
     SessionService,
-    AddToCartUseCase,
-    RemoveFromCartUseCase,
+    CartService,
+
+    // --------------------------
+    // USE CASES
+    // --------------------------
+    AddCartItemUseCase,
+    RemoveCartItemUseCase,
     UpdateQuantityUseCase,
-    CheckoutUseCase,
-    { provide: SessionRepository, useClass: RedisSessionRepository },
-    { provide: CartItemRepository, useClass: InMemoryCartItemRepository },
-    { provide: SessionCacheRepository, useClass: RedisSessionCacheRepository },
-    SessionIndexRepository,
+    ClearCartUseCase,
+    GetOrCreateSessionUseCase,
+
+    // --------------------------
+    // FACTORIES
+    // --------------------------
   ],
-  exports: [SessionService, SessionRepository, CartItemRepository, SessionCacheRepository, SessionIndexRepository, 'REDIS_CLIENT'],
+
+  exports: [
+    'REDIS_CLIENT',
+    // Core service
+    SessionService,
+
+    // Use cases (used by checkout + conversation)
+    AddCartItemUseCase,
+    RemoveCartItemUseCase,
+    UpdateQuantityUseCase,
+    ClearCartUseCase,
+    GetOrCreateSessionUseCase,
+
+    // Repositories (needed by checkout engine)
+    SessionRepository,
+    CartItemRepository,
+    SessionCacheRepository,
+  ],
 })
 export class SessionsModule {}

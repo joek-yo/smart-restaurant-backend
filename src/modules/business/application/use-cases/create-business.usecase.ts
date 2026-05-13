@@ -1,6 +1,7 @@
 // src/modules/business/application/use-cases/create-business.usecase.ts
 import { Injectable } from '@nestjs/common';
-import { EventBus, EVENTS } from '@core/events';
+import { EventBus } from '@core/events';
+import { BUSINESS_EVENTS } from '@core/events/event.constants';
 import { CreateBusinessDto } from '../dto/create-business.dto';
 import { BusinessService } from '../business.service';
 import { Business } from '@modules/business/infrastructure/schemas/business.schema';
@@ -18,7 +19,7 @@ export class CreateBusinessUseCase {
 
     const businessId = (saved as any)?._id?.toString?.();
 
-    this.eventBus.emit(EVENTS.BUSINESS_CREATED, {
+    this.eventBus.emit(BUSINESS_EVENTS.BUSINESS_CREATED, {
       businessId,
       name: saved.name,
     });

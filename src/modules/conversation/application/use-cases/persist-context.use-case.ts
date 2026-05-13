@@ -1,4 +1,5 @@
 // src/modules/conversation/application/use-cases/persist-context.use-case.ts
+
 import { Injectable } from '@nestjs/common';
 import { ConversationRedisRepository } from '../../infrastructure/redis/conversation.redis.repository';
 import { ConversationContextEntity } from '../../domain/entities/conversation-context.entity';
@@ -14,11 +15,16 @@ export class PersistContextUseCase {
     context,
     transition,
   }: {
-    dto: any;
     context: ConversationContextEntity;
     transition: { nextState: string };
   }): Promise<void> {
-    context.updateState(transition.nextState as ConversationState);
+    // 🔒 STRICT: conversation layer ONLY manages state memory
+    // No cart, no business logic, no enrichment
+
+    context.updateState(
+      transition.nextState as ConversationState,
+    );
+
     await this.redisRepo.saveContext(context);
   }
 }
