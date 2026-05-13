@@ -1,4 +1,4 @@
-// src/modules/whatsapp/application/services/whatsapp-delivery.service.ts
+// src/modules/channels/application/services/whatsapp-delivery.service.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 import { WhatsAppRetryService } from './whatsapp-retry.service';

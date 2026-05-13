@@ -1,4 +1,4 @@
-// FILE: src/modules/whatsapp/gateway/whatsapp.gateway.ts
+// FILE: src/modules/channels/gateway/whatsapp.gateway.ts
 // Transport only — routes WebSocket messages into conversation pipeline.
 
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';

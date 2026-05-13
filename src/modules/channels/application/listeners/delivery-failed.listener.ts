@@ -1,4 +1,4 @@
-// src/modules/whatsapp/application/listeners/delivery-failed.listener.ts
+// src/modules/channels/application/listeners/delivery-failed.listener.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 import { EventBus } from '@core/events';

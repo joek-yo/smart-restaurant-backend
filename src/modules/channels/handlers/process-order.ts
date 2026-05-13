@@ -1,4 +1,4 @@
-// src/modules/whatsapp/handlers/process-order.ts
+// src/modules/channels/handlers/process-order.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 import { CheckoutOrchestratorService } from '@modules/checkout/application/orchestrators/checkout-orchestrator.service';

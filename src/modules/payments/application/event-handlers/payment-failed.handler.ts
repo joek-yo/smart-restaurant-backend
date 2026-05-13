@@ -4,7 +4,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { EventBus } from '@core/events';
 import { PAYMENT_EVENTS, CHECKOUT_EVENTS } from '@core/events/event.constants';
 
-import { WhatsappGateway } from '@modules/whatsapp/gateway/whatsapp.gateway';
+import { WhatsappGateway } from '@modules/channels/gateway/whatsapp.gateway';
 import { PaymentRepository } from '../repositories/payment.repository';
 
 /**

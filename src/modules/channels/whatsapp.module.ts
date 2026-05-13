@@ -1,4 +1,4 @@
-// FILE: src/modules/whatsapp/whatsapp.module.ts
+// FILE: src/modules/channels/whatsapp.module.ts
 //
 // Phase 4 — WhatsApp is now TRANSPORT ONLY.
 // All logic lives in conversation/infrastructure/adapters/whatsapp/

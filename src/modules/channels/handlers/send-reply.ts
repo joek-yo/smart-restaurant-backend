@@ -1,4 +1,4 @@
-// src/modules/whatsapp/handlers/send-reply.ts
+// src/modules/channels/handlers/send-reply.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 import { WhatsAppDeliveryService } from '../application/services/whatsapp-delivery.service';

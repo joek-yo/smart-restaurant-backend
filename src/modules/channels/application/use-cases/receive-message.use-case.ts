@@ -1,4 +1,4 @@
-// src/modules/whatsapp/application/use-cases/receive-message.use-case.ts
+// src/modules/channels/application/use-cases/receive-message.use-case.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 import { WhatsAppMessageOrchestratorService } from '../orchestrators/whatsapp-message-orchestrator.service';

@@ -1,4 +1,4 @@
-// src/modules/whatsapp/application/orchestrators/whatsapp-message-orchestrator.service.ts
+// src/modules/channels/application/orchestrators/whatsapp-message-orchestrator.service.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 

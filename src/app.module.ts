@@ -23,7 +23,7 @@ import { CheckoutModule } from './modules/checkout/checkout.module'; // ✅ ADDE
 import { CustomersModule } from './modules/customers/customers.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { WhatsAppModule } from './modules/whatsapp/whatsapp.module';
+import { WhatsAppModule } from './modules/channels/whatsapp.module';
 import { AboutModule } from './modules/about/about.module';
 import { BlogModule } from './modules/blog/blog.module';
 import { ConversationModule } from './modules/conversation/conversation.module';

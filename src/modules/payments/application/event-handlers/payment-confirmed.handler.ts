@@ -5,7 +5,7 @@ import { EventBus } from '@core/events';
 import { PAYMENT_EVENTS, CHECKOUT_EVENTS } from '@core/events/event.constants';
 
 import { OrdersService } from '@modules/orders/orders.service';
-import { WhatsappGateway } from '@modules/whatsapp/gateway/whatsapp.gateway';
+import { WhatsappGateway } from '@modules/channels/gateway/whatsapp.gateway';
 import { OrderStatus } from '@modules/orders/domain/entities/order-status.enum';
 
 /**

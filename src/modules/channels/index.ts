@@ -1,3 +1,3 @@
-// src/modules/whatsapp/index.ts
+// src/modules/channels/index.ts
 
 export * from './whatsapp.module';
