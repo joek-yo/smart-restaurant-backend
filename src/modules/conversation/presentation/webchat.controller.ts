@@ -17,6 +17,7 @@ export class WebChatController {
       messageId: body.messageId ?? uuidv4(),
       metadata: { source: 'webchat', raw: body },
     });
+
     return { success: true, data: result };
   }
 }

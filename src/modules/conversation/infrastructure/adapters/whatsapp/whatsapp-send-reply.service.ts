@@ -18,22 +18,49 @@ export class WhatsAppSendReplyService {
     userId: string;
     phone: string;
     message: string;
-  }): Promise<{ success: boolean; messageId?: string; blocked?: boolean }> {
+  }): Promise<{
+    success: boolean;
+    messageId?: string;
+    blocked?: boolean;
+    reason?: string;
+  }> {
     const { tenantId, userId, phone, message } = params;
 
+    // ==================================================
+    // 🚦 RATE LIMIT PROTECTION ONLY
+    // ==================================================
+
     const allowed = await this.rateLimit.allow(tenantId, userId);
+
     if (!allowed) {
-      this.logger.warn(`[WhatsAppSendReply] rate limit exceeded user=${userId}`);
-      return { success: false, blocked: true };
+      this.logger.warn(
+        `[WhatsAppSendReply] rate limit exceeded user=${userId}`,
+      );
+
+      return {
+        success: false,
+        blocked: true,
+        reason: 'rate_limited',
+      };
     }
+
+    // ==================================================
+    // 📤 DELIVERY EXECUTION
+    // ==================================================
 
     const result = await this.delivery.send({
       to: phone,
       tenantId,
       message,
-      metadata: { userId, source: 'conversation-reply' },
+      metadata: {
+        userId,
+        source: 'conversation-reply',
+      },
     });
 
-    return { success: result.success, messageId: result.messageId };
+    return {
+      success: result.success,
+      messageId: result.messageId,
+    };
   }
 }

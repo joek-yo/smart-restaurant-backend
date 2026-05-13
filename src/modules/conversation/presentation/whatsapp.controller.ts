@@ -16,13 +16,16 @@ export class WhatsappController {
   @Post()
   @HttpCode(200)
   async handleIncomingMessage(@Body() payload: any) {
-    const hasMessage = payload?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+    const hasMessage =
+      payload?.entry?.[0]?.changes?.[0]?.value?.messages?.[0];
+
     if (!hasMessage) {
-      this.logger.debug('[WEBHOOK] Non-message event — acknowledged');
+      this.logger.debug('[WEBHOOK] Non-message event — ignored');
       return { status: 'ignored' };
     }
 
-    let normalized: ReturnType<WhatsAppAdapter['normalizeIncomingMessage']>;
+    let normalized: any;
+
     try {
       normalized = this.whatsappAdapter.normalizeIncomingMessage(payload);
     } catch (err: any) {
@@ -30,7 +33,13 @@ export class WhatsappController {
       return { status: 'ignored', reason: err.message };
     }
 
-    this.logger.log(`[WEBHOOK] Message from ${normalized.userId} | id: ${normalized.messageId}`);
+    this.logger.log(
+      `[WEBHOOK] Message received user=${normalized.userId} msgId=${normalized.messageId}`,
+    );
+
+    // ==================================================
+    // ROUTE (OPT-OUT HANDLED INSIDE ROUTER OR PIPELINE)
+    // ==================================================
 
     const result = await this.messageRouter.routeWhatsApp({
       userId: normalized.userId,
@@ -40,11 +49,21 @@ export class WhatsappController {
       metadata: normalized.metadata,
     });
 
+    // ==================================================
+    // SEND RESPONSE (IF ANY)
+    // ==================================================
+
     if (result?.response && normalized.metadata?.phone) {
-      await this.whatsappAdapter.sendMessage(normalized.metadata.phone, result.response);
+      await this.whatsappAdapter.sendMessage(
+        normalized.metadata.phone,
+        result.response,
+      );
     }
 
-    return { status: 'ok', idempotent: result?.idempotent ?? false };
+    return {
+      status: 'ok',
+      idempotent: result?.idempotent ?? false,
+    };
   }
 
   @Get('verify')
@@ -55,11 +74,14 @@ export class WhatsappController {
     @Query('hub.challenge') challenge: string,
   ) {
     const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'default_token';
+
     if (mode === 'subscribe' && token === VERIFY_TOKEN) {
       this.logger.log('[WEBHOOK] Verification successful');
       return parseInt(challenge, 10);
     }
+
     this.logger.warn('[WEBHOOK] Verification failed — token mismatch');
+
     return { status: 'forbidden' };
   }
 }
