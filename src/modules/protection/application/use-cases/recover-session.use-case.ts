@@ -134,8 +134,7 @@ export class RecoverSessionUseCase {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.log(
-      'RecoverSessionUseCase',
+    this.logger.log('info', 'RecoverSessionUseCase',
       'EXECUTED',
       {
         tenantId: input.tenantId,

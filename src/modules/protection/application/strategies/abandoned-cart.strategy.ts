@@ -123,7 +123,7 @@ export class AbandonedCartStrategy {
       userId: input.userId,
       workflowType: 'checkout',
       currentState: input.currentState,
-      targetState: restoredState,
+      recoveryReason: input.recoveryReason,
       metadata: {
         cartId: input.cartId,
         recoveryReason: input.recoveryReason,
@@ -134,12 +134,15 @@ export class AbandonedCartStrategy {
     // 💾 CACHE UPDATE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: 'checkout',
-      state: restoredState,
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:checkout`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: restoredState,
+        payload: {
         cartId: input.cartId,
         recovered: true,
         cartRestored,
@@ -169,8 +172,7 @@ export class AbandonedCartStrategy {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.warn(
-      'AbandonedCartStrategy',
+    this.logger.warn('AbandonedCartStrategy',
       'ABANDONED_CART_RECOVERED',
       {
         tenantId: input.tenantId,

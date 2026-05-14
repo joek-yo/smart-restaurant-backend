@@ -63,6 +63,8 @@ export interface WorkflowRepairResult {
 
   repairedState: string;
 
+  restoredState: string;
+
   workflowStatus: WorkflowStatus;
 
   protectionLevel: ProtectionLevel;
@@ -110,23 +112,26 @@ export class WorkflowRepairService {
       userId: input.userId,
       workflowType: input.workflowType,
       currentState: input.currentState,
-      targetState: repairedState,
       metadata: {
         workflowId: input.workflowId,
         anomalyType: input.anomalyType,
       },
+      recoveryReason: 'REPAIR' as any,
     });
 
     // ==================================================
     // 💾 UPDATE WORKFLOW CACHE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: input.workflowType,
-      state: repairedState,
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:${input.workflowType}`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: repairedState,
+        payload: {
         repaired: true,
         repairAction,
         repairedAt: new Date(),
@@ -187,6 +192,7 @@ export class WorkflowRepairService {
       repaired: true,
       previousState: input.currentState,
       repairedState,
+      restoredState: repairedState,
       workflowStatus: WorkflowStatus.REPAIRED,
       protectionLevel:
         ProtectionLevel.WARNING,
@@ -246,7 +252,7 @@ export class WorkflowRepairService {
       case WorkflowAnomalyType.DUPLICATE_PROCESSING:
         return 'REMOVE_DUPLICATE_EXECUTION';
 
-      case WorkflowAnomalyType.MISSING_STATE:
+      case WorkflowAnomalyType.MISSING_DATA:
         return 'RESTORE_MISSING_STATE';
 
       case WorkflowAnomalyType.CROSS_TENANT_ACCESS:

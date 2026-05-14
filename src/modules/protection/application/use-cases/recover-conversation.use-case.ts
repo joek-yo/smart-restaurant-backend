@@ -136,8 +136,7 @@ export class RecoverConversationUseCase {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.log(
-      'RecoverConversationUseCase',
+    this.logger.log('info', 'RecoverConversationUseCase',
       'EXECUTED',
       {
         tenantId: input.tenantId,

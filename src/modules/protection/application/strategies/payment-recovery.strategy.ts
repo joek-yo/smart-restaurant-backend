@@ -124,8 +124,7 @@ export class PaymentRecoveryStrategy {
     // ==================================================
 
     if (requiresManualReview) {
-      await this.logger.warn(
-        'PaymentRecoveryStrategy',
+      await this.logger.warn('PaymentRecoveryStrategy',
         'PAYMENT_REQUIRES_MANUAL_REVIEW',
         {
           tenantId: input.tenantId,
@@ -160,7 +159,7 @@ export class PaymentRecoveryStrategy {
       userId: input.userId,
       workflowType: 'payment',
       currentState: input.currentState,
-      targetState: restoredState,
+      recoveryReason: input.recoveryReason,
       metadata: {
         paymentId: input.paymentId,
         orderId: input.orderId,
@@ -172,12 +171,15 @@ export class PaymentRecoveryStrategy {
     // 💾 CACHE UPDATE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: 'payment',
-      state: restoredState,
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:payment`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: restoredState,
+        payload: {
         paymentId: input.paymentId,
         orderId: input.orderId,
         recovered: true,
@@ -208,8 +210,7 @@ export class PaymentRecoveryStrategy {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.warn(
-      'PaymentRecoveryStrategy',
+    this.logger.warn('PaymentRecoveryStrategy',
       'PAYMENT_RECOVERY_COMPLETED',
       {
         tenantId: input.tenantId,

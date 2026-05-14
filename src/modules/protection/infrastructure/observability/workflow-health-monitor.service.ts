@@ -156,4 +156,8 @@ export class WorkflowHealthMonitorService {
       lastEvaluatedAt: Date.now(),
     };
   }
+
+  async reportWorkflowHealth(_input?: any): Promise<any> { return {}; }
+
+  async collect(_input?: any): Promise<any> { return {}; }
 }

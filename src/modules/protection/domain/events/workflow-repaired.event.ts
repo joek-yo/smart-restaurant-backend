@@ -1,7 +1,7 @@
 // src/modules/protection/domain/events/workflow-repaired.event.ts
 
-import { WorkflowTraceId } from '../value-objects/workflow-trace-id.vo';
-import { TenantScope } from '../value-objects/tenant-scope.vo';
+import { WorkflowTraceIdVO } from '../value-objects/workflow-trace-id.vo';
+import { TenantScopeVO } from '../value-objects/tenant-scope.vo';
 import { WorkflowStatus } from '../enums/workflow-status.enum';
 import { WorkflowAnomalyType } from '../enums/workflow-anomaly-type.enum';
 import { ProtectionLevel } from '../enums/protection-level.enum';
@@ -20,10 +20,10 @@ export class WorkflowRepairedEvent {
 
   constructor(
     // Global workflow identifier
-    public readonly traceId: WorkflowTraceId,
+    public readonly traceId: WorkflowTraceIdVO,
 
     // Multi-tenant boundary context
-    public readonly scope: TenantScope,
+    public readonly scope: TenantScopeVO,
 
     // State before repair
     public readonly previousState: WorkflowStatus,

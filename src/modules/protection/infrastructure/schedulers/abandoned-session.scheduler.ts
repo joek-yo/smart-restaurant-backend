@@ -5,7 +5,7 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { RecoveryQueue } from '../queues/recovery.queue';
 
-import { RecoveryReason } from '../../application/use-cases/recovery.pipeline';
+import { RecoveryReason } from '../../domain/enums/recovery-reason.enum';
 import { ProtectionLoggerService } from '../../infrastructure/observability/protection-logger.service';
 
 // ✅ ADD THIS
@@ -56,7 +56,7 @@ export class AbandonedSessionScheduler {
 
   @Cron(CronExpression.EVERY_5_MINUTES)
   async scanAbandonedSessions(): Promise<void> {
-    this.logger.log('AbandonedSessionScheduler', 'SCAN_STARTED', {});
+    this.logger.log('info', 'AbandonedSessionScheduler', 'SCAN_STARTED', {});
 
     try {
       // NOTE: In real implementation, this would query DB/session store
@@ -69,14 +69,10 @@ export class AbandonedSessionScheduler {
         // ==================================================
 
         const suppression =
-          await this.optOutProtection.isOptedOut({
-            tenantId: session.tenantId,
-            userId: session.userId,
-          });
+          await this.optOutProtection.isOptedOut(session.userId, session.tenantId);
 
-        if (suppression.isOptedOut) {
-          this.logger.warn(
-            'AbandonedSessionScheduler',
+        if (suppression) {
+          this.logger.warn('AbandonedSessionScheduler',
             'OPT_OUT_SKIPPED',
             {
               tenantId: session.tenantId,
@@ -106,16 +102,14 @@ export class AbandonedSessionScheduler {
         });
       }
 
-      this.logger.log(
-        'AbandonedSessionScheduler',
+      this.logger.log('info', 'AbandonedSessionScheduler',
         'SCAN_COMPLETED',
         {
-          count: abandonedSessions.length,
+          metadata: { count: abandonedSessions.length },
         },
       );
     } catch (error: any) {
-      this.logger.warn(
-        'AbandonedSessionScheduler',
+      this.logger.warn('AbandonedSessionScheduler',
         'SCAN_FAILED',
         {
           error: error?.message,

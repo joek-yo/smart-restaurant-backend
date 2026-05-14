@@ -86,8 +86,7 @@ export class HandleDuplicateMessageUseCase {
     // ==================================================
 
     if (!isDuplicate) {
-      this.logger.log(
-        'HandleDuplicateMessageUseCase',
+      this.logger.log('info', 'HandleDuplicateMessageUseCase',
         'NOT_DUPLICATE_SKIPPED',
         {
           tenantId: input.tenantId,
@@ -124,6 +123,7 @@ export class HandleDuplicateMessageUseCase {
           workflowType: input.workflowType,
           currentState: input.currentState,
           recoveryReason: RecoveryReason.DUPLICATE_MESSAGE,
+          reason: RecoveryReason.DUPLICATE_MESSAGE,
           workflowId: input.workflowId,
         });
 
@@ -153,8 +153,7 @@ export class HandleDuplicateMessageUseCase {
       },
     });
 
-    this.logger.warn(
-      'HandleDuplicateMessageUseCase',
+    this.logger.warn('HandleDuplicateMessageUseCase',
       'DUPLICATE_IGNORED',
       {
         tenantId: input.tenantId,

@@ -24,12 +24,12 @@ export class OrderDomainService {
     current: OrderStatus,
     next: OrderStatus,
   ): boolean {
-    const rules: Record<OrderStatus, OrderStatus[]> = {
+    const rules: Partial<Record<OrderStatus, OrderStatus[]>> = {
       [OrderStatus.PENDING]: [
-        OrderStatus.PROCESSING,
+        OrderStatus.PREPARING,
         OrderStatus.CANCELLED,
       ],
-      [OrderStatus.PROCESSING]: [
+      [OrderStatus.PREPARING]: [
         OrderStatus.COMPLETED,
         OrderStatus.CANCELLED,
       ],
@@ -53,7 +53,7 @@ export class OrderDomainService {
   canCancel(order: Order): boolean {
     return (
       order.status === OrderStatus.PENDING ||
-      order.status === OrderStatus.PROCESSING
+      order.status === OrderStatus.PREPARING
     );
   }
 

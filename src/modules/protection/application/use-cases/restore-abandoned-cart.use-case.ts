@@ -141,8 +141,7 @@ export class RestoreAbandonedCartUseCase {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.log(
-      'RestoreAbandonedCartUseCase',
+    this.logger.log('info', 'RestoreAbandonedCartUseCase',
       'EXECUTED',
       {
         tenantId: input.tenantId,

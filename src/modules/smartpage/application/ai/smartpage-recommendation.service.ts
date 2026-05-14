@@ -57,7 +57,7 @@ export interface PersonalizedDecision {
 }
 
 @Injectable()
-export class SmartpagePersonalizationService {
+export class SmartpageRecommendationService {
   /**
    * Applies user-level personalization decisions
    * on top of recommendation + strategy.

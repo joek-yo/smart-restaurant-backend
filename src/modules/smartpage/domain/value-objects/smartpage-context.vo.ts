@@ -39,6 +39,7 @@ export interface SmartPageCheckoutState {
 }
 
 export interface SmartPageSessionState {
+  cart?: Record<string, any>;
   sessionId?: string;
   hasCart: boolean;
   cartItemCount: number;
@@ -74,6 +75,14 @@ export interface SmartPageContextProps {
 }
 
 export class SmartPageContextVO {
+  [key: string]: any;
+
+  // ➕ Extended context fields
+  cart?: Record<string, any>;
+  user?: Record<string, any>;
+  conversation?: Record<string, any>;
+  business?: Record<string, any>;
+
   public readonly tenantId: string;
   public readonly userId: string;
 
@@ -113,15 +122,15 @@ export class SmartPageContextVO {
   // ==================================================
 
   get hasCart(): boolean {
-    return this.session.hasCart;
+    return this.session?.hasCart ?? false;
   }
 
   get isCheckoutActive(): boolean {
-    return this.checkout.active;
+    return this.checkout?.active ?? false;
   }
 
   get cartItemCount(): number {
-    return this.session.cartItemCount;
+    return this.session?.cartItemCount ?? 0;
   }
 
   get isGuest(): boolean {

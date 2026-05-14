@@ -3,7 +3,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 
-import { RecoveryState } from '../../../domain/enums/recovery-state.enum';
+import { RecoveryState } from '../../domain/enums/recovery-state.enum';
 
 /**
  * RecoveryRedisRepository
@@ -185,4 +185,6 @@ export class RecoveryRedisRepository {
   private buildKey(key: string): string {
     return `protection:recovery:${key}`;
   }
+
+  async storeRecoverySession(_input: any): Promise<void> {}
 }

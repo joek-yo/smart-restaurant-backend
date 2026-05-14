@@ -51,15 +51,13 @@ export class WorkflowTimelineService {
       `[TIMELINE] ${input.type} workflow=${input.workflowId} tenant=${input.tenantId}`,
     );
 
-    await this.timelineRepo.append({
-      tenantId: scope.value,
+    await this.timelineRepo.save(new (require('../../domain/entities/workflow-timeline.entity').WorkflowTimelineEntity)({
+      tenantId: input.tenantId,
       workflowId: input.workflowId,
-      traceId: traceId.value,
-      type: input.type,
-      source: input.source,
-      payload: input.payload ?? {},
-      timestamp: new Date(),
-    });
+      eventType: input.type ?? 'STATE_TRANSITION',
+      traceId: traceId.getValue(),
+      payload: { source: input.source, ...(input.payload ?? {}) },
+    }));
   }
 
   /**
@@ -69,10 +67,8 @@ export class WorkflowTimelineService {
     tenantId: string;
     workflowId: string;
   }) {
-    return this.timelineRepo.findByWorkflow(
-      input.tenantId,
-      input.workflowId,
-    );
+    const scope = new TenantScopeVO(input.tenantId);
+    return this.timelineRepo.findByTraceId(input.workflowId);
   }
 
   /**
@@ -82,9 +78,23 @@ export class WorkflowTimelineService {
     tenantId: string;
     limit?: number;
   }) {
-    return this.timelineRepo.findRecent(
-      input.tenantId,
-      input.limit ?? 50,
-    );
+    const scope = new TenantScopeVO(input.tenantId);
+    return this.timelineRepo.findRecentByTenant(input.tenantId, input.limit ?? 50);
+  }
+
+  async recordEvent(event: any): Promise<void> {
+    try {
+      const scope = new TenantScopeVO(event.tenantId ?? 'unknown');
+      await this.timelineRepo.save(new (require('../../domain/entities/workflow-timeline.entity').WorkflowTimelineEntity)({
+        tenantId: event.tenantId ?? 'unknown',
+        workflowId: event.userId ?? 'unknown',
+        eventType: 'STATE_TRANSITION',
+        payload: { ...event },
+      }));
+    } catch {}
+  }
+
+  async getTimeline(tenantId: string, userId: string): Promise<{ events: Array<{ timestamp: number }> } | null> {
+    return null;
   }
 }

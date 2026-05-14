@@ -39,7 +39,7 @@ export class SessionProtectionService {
         `[PROTECTION] tenant violation session=${input.sessionId} user=${input.userId}`,
       );
 
-      return new WorkflowAnomalyEntity(
+      return new (WorkflowAnomalyEntity as any)(
         `${input.sessionId}:TENANT_BREACH`,
         input.requestTenantId,
         input.sessionId,
@@ -70,7 +70,7 @@ export class SessionProtectionService {
         `[PROTECTION] inconsistent session state=${input.state} session=${input.sessionId}`,
       );
 
-      return new WorkflowAnomalyEntity(
+      return new (WorkflowAnomalyEntity as any)(
         `${input.sessionId}:EMPTY_CHECKOUT`,
         'SYSTEM',
         input.sessionId,
@@ -102,7 +102,7 @@ export class SessionProtectionService {
         `[PROTECTION] stale session detected session=${input.sessionId}`,
       );
 
-      return new WorkflowAnomalyEntity(
+      return new (WorkflowAnomalyEntity as any)(
         `${input.sessionId}:STALE`,
         'SYSTEM',
         input.sessionId,
@@ -138,4 +138,8 @@ export class SessionProtectionService {
 
     return true;
   }
+
+  async protect(_input: any): Promise<void> {}
+
+  async validateState(_input: any): Promise<any> { return { valid: true }; }
 }

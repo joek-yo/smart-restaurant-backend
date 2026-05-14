@@ -4,10 +4,10 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { v4 as uuidv4 } from 'uuid';
 
-import { WorkflowLockRepository } from '../../../domain/repositories/workflow-lock.repository';
-import { WorkflowLockEntity } from '../../../domain/entities/workflow-lock.entity';
-import { WorkflowLockId } from '../../../domain/value-objects/workflow-lock-id.vo';
-import { TenantScope } from '../../../domain/value-objects/tenant-scope.vo';
+import { WorkflowLockRepository } from '../../domain/repositories/workflow-lock.repository';
+import { WorkflowLockEntity } from '../../domain/entities/workflow-lock.entity';
+import { WorkflowLockId } from '../../domain/value-objects/workflow-lock-id.vo';
+import { TenantScopeVO } from '../../domain/value-objects/tenant-scope.vo';
 
 /**
  * WorkflowLockRedisRepository
@@ -35,10 +35,10 @@ export class WorkflowLockRedisRepository implements WorkflowLockRepository {
   // SAVE LOCK
   // ==================================================
   async save(lock: WorkflowLockEntity): Promise<void> {
-    const key = this.buildKey(lock.lockId.value);
+    const key = this.buildKey(lock.lockId.getValue());
 
     const payload = {
-      lockId: lock.lockId.value,
+      lockId: lock.lockId.getValue(),
       traceId: lock.traceId,
       tenantId: lock.tenant.tenantId,
       userId: lock.tenant.userId,
@@ -56,14 +56,14 @@ export class WorkflowLockRedisRepository implements WorkflowLockRepository {
       lock.ttlSeconds ?? 60,
     );
 
-    this.logger.debug(`[LOCK_SAVED] ${lock.lockId.value}`);
+    this.logger.debug(`[LOCK_SAVED] ${lock.lockId.getValue()}`);
   }
 
   // ==================================================
   // FIND LOCK BY ID
   // ==================================================
   async findById(lockId: WorkflowLockId): Promise<WorkflowLockEntity | null> {
-    const raw = await this.redis.get(this.buildKey(lockId.value));
+    const raw = await this.redis.get(this.buildKey(lockId.getValue()));
 
     if (!raw) return null;
 
@@ -73,7 +73,7 @@ export class WorkflowLockRedisRepository implements WorkflowLockRepository {
       return new WorkflowLockEntity({
         lockId: new WorkflowLockId(data.lockId),
         traceId: data.traceId,
-        tenant: new TenantScope(data.tenantId, data.userId),
+        tenant: new TenantScopeVO(data.tenantId, data.userId),
         resource: data.resource,
         owner: data.owner,
         status: data.status,
@@ -81,7 +81,7 @@ export class WorkflowLockRedisRepository implements WorkflowLockRepository {
         expiresAt: new Date(data.expiresAt),
       });
     } catch (err) {
-      this.logger.error(`[LOCK_PARSE_ERROR] ${lockId.value}`);
+      this.logger.error(`[LOCK_PARSE_ERROR] ${lockId.getValue()}`);
       return null;
     }
   }
@@ -90,15 +90,15 @@ export class WorkflowLockRedisRepository implements WorkflowLockRepository {
   // DELETE LOCK
   // ==================================================
   async delete(lockId: WorkflowLockId): Promise<void> {
-    await this.redis.del(this.buildKey(lockId.value));
-    this.logger.debug(`[LOCK_DELETED] ${lockId.value}`);
+    await this.redis.del(this.buildKey(lockId.getValue()));
+    this.logger.debug(`[LOCK_DELETED] ${lockId.getValue()}`);
   }
 
   // ==================================================
   // CHECK LOCK EXISTS
   // ==================================================
   async exists(lockId: WorkflowLockId): Promise<boolean> {
-    const val = await this.redis.exists(this.buildKey(lockId.value));
+    const val = await this.redis.exists(this.buildKey(lockId.getValue()));
     return val === 1;
   }
 
@@ -123,7 +123,7 @@ export class WorkflowLockRedisRepository implements WorkflowLockRepository {
             new WorkflowLockEntity({
               lockId: new WorkflowLockId(data.lockId),
               traceId: data.traceId,
-              tenant: new TenantScope(data.tenantId, data.userId),
+              tenant: new TenantScopeVO(data.tenantId, data.userId),
               resource: data.resource,
               owner: data.owner,
               status: data.status,

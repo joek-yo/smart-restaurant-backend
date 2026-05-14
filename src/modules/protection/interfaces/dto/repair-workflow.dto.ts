@@ -31,16 +31,16 @@ export enum WorkflowRepairSeverity {
 
 export class RepairWorkflowDto {
   @IsString()
-  tenantId: string;
+  tenantId!: string;
 
   @IsString()
-  userId: string;
+  userId!: string;
 
   @IsString()
-  workflowId: string;
+  workflowId!: string;
 
   @IsString()
-  currentState: string;
+  currentState!: string;
 
   @IsOptional()
   @IsString()

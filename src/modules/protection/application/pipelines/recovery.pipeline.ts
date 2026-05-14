@@ -105,8 +105,7 @@ export class RecoveryPipeline {
       });
 
     if (!validation.safeToProceed) {
-      this.logger.warn(
-        'RecoveryPipeline',
+      this.logger.warn('RecoveryPipeline',
         'BLOCKED_INCONSISTENT_WORKFLOW',
         {
           tenantId: input.tenantId,
@@ -236,7 +235,7 @@ export class RecoveryPipeline {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.log('RecoveryPipeline', 'EXECUTED', {
+    this.logger.log('info', 'RecoveryPipeline', 'EXECUTED', {
       tenantId: input.tenantId,
       userId: input.userId,
       metadata: {
@@ -282,6 +281,6 @@ export class RecoveryPipeline {
     )
       return 'cart';
 
-    return input.workflowType;
+    return input.workflowType as any;
   }
 }

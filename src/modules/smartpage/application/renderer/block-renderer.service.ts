@@ -2,8 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { SmartPageBlock } from '../../domain/entities/smartpage-block.entity';
-import { RenderContext } from '../../domain/value-objects/render-context.vo';
+import { SmartPageBlockEntity as SmartPageBlock } from '../../domain/entities/smartpage-block.entity';
+import { RenderContextVO as RenderContext } from '../../domain/value-objects/render-context.vo';
 
 /**
  * BlockRendererService
@@ -108,7 +108,7 @@ export class BlockRendererService {
 
     return {
       type: 'PRODUCT',
-      items: products.map((p) => ({
+      items: products.map((p: any) => ({
         id: p.id,
         name: p.name,
         price: p.price,
@@ -159,10 +159,10 @@ export class BlockRendererService {
   ) {
     return {
       type: 'CHECKOUT',
-      mode: context.resolved.checkoutMode,
+      mode: context.resolved?.checkoutMode,
 
       isActive:
-        context.resolved.checkoutMode === 'ACTIVE',
+        context.resolved?.checkoutMode === 'ACTIVE',
 
       style: this.resolveStyle(block, context),
     };
@@ -179,7 +179,7 @@ export class BlockRendererService {
       type: 'RECOMMENDATION',
       items: context.user?.recommendations ?? [],
 
-      intentSignals: context.resolved.intentSignals,
+      intentSignals: context.resolved?.intentSignals,
 
       style: this.resolveStyle(block, context),
     };

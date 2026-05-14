@@ -36,9 +36,9 @@ export class OrderLockService {
   }): Promise<boolean> {
     const lockId = this.buildLockId(input);
 
-    this.logger.debug(`[LOCK] acquiring order lock=${lockId.value}`);
+    this.logger.debug(`[LOCK] acquiring order lock=${lockId.getValue()}`);
 
-    return this.redisLock.acquire(lockId.value, this.TTL_SECONDS);
+    return this.redisLock.acquire(lockId.getValue(), this.TTL_SECONDS);
   }
 
   /**
@@ -51,9 +51,9 @@ export class OrderLockService {
   }): Promise<void> {
     const lockId = this.buildLockId(input);
 
-    this.logger.debug(`[LOCK] releasing order lock=${lockId.value}`);
+    this.logger.debug(`[LOCK] releasing order lock=${lockId.getValue()}`);
 
-    await this.redisLock.release(lockId.value);
+    await this.redisLock.release(lockId.getValue());
   }
 
   /**
@@ -66,7 +66,7 @@ export class OrderLockService {
   }): Promise<boolean> {
     const lockId = this.buildLockId(input);
 
-    return this.redisLock.isLocked(lockId.value);
+    return this.redisLock.isLocked(lockId.getValue());
   }
 
   // ─────────────────────────────────────────────

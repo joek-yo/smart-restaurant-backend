@@ -133,4 +133,8 @@ export class RecoveryTracerService {
       .filter(t => t.tenantId === tenantId)
       .slice(-limit);
   }
+
+  async addSpan(_input?: any): Promise<void> {}
+
+  async completeTrace(_input?: any): Promise<void> {}
 }

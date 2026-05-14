@@ -159,4 +159,14 @@ export class WorkflowMetricsService {
   clear(): void {
     this.events.length = 0;
   }
+
+  async recordProtectionExecution(_input?: any): Promise<void> {}
+
+  async recordRecoveryExecution(_input?: any): Promise<void> {}
+
+  async recordWorkflowAbandonment(_input?: any): Promise<void> {}
+
+  async recordStaleWorkflow(_input?: any): Promise<void> {}
+
+  async recordWorkflowRepair(_input?: any): Promise<void> {}
 }

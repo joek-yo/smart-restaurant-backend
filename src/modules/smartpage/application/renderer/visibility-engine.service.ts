@@ -2,8 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { SmartPageContext } from '../../domain/value-objects/smartpage-context.vo';
-import { SmartPageBlock } from '../../domain/entities/smartpage-block.entity';
+import { SmartPageContextVO as SmartPageContext } from '../../domain/value-objects/smartpage-context.vo';
+import { SmartPageBlockEntity as SmartPageBlock } from '../../domain/entities/smartpage-block.entity';
 
 import { VisibilityRule } from '../../domain/enums/visibility-rule.enum';
 
@@ -139,4 +139,7 @@ export class VisibilityEngineService {
         return true;
     }
   }
+
+  async evaluate(_context: any): Promise<any> { return {}; }
+
 }

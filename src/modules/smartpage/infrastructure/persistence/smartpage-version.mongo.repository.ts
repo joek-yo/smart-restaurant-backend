@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { SmartPageVersionRepository } from '../../domain/repositories/smartpage-version.repository';
-import { SmartPageVersion } from '../../domain/entities/smartpage-version.entity';
+import { SmartPageVersionEntity as SmartPageVersion } from '../../domain/entities/smartpage-version.entity';
 
 import { SmartPageVersionDocument } from '../schemas/smartpage-version.schema';
 
@@ -25,6 +25,8 @@ import { SmartPageVersionDocument } from '../schemas/smartpage-version.schema';
 export class SmartPageVersionMongoRepository
   implements SmartPageVersionRepository
 {
+  async save(version: any): Promise<any> { return this.create(version); }
+
   private readonly logger = new Logger(
     SmartPageVersionMongoRepository.name,
   );
@@ -38,7 +40,7 @@ export class SmartPageVersionMongoRepository
   // CREATE VERSION SNAPSHOT
   // ==================================================
   async create(version: SmartPageVersion): Promise<SmartPageVersion> {
-    const created = await this.versionModel.create(version);
+    const created: any = await this.versionModel.create(version as any);
 
     this.logger.log(
       `[SmartPageVersionRepo] created version id=${created._id}`,
@@ -140,7 +142,7 @@ export class SmartPageVersionMongoRepository
       versionNumber: doc.versionNumber,
       status: doc.status,
       snapshot: doc.snapshot,
-      changelog: doc.changelog,
+      metadata: doc.metadata ?? {},
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,
     });

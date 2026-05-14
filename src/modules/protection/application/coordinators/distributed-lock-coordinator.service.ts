@@ -37,23 +37,15 @@ export class DistributedLockCoordinatorService {
     ownerId: string;
     ttlMs?: number;
   }): Promise<boolean> {
-    const lockId = new WorkflowLockIdVO(
-      input.tenantId,
-      input.workflowType,
-      input.resourceId,
-    );
+    const lockId = new WorkflowLockIdVO(`${input.tenantId}:${input.workflowType}:${input.resourceId}`);
 
-    const key = lockId.value();
+    const key = lockId.getValue();
 
     this.logger.debug(
       `[LOCK] acquiring key=${key} owner=${input.ownerId}`,
     );
 
-    const acquired = await this.redisLock.acquire({
-      key,
-      owner: input.ownerId,
-      ttlMs: input.ttlMs ?? 10_000,
-    });
+    const acquired = await this.redisLock.acquire(key, Math.ceil((input.ttlMs ?? 10_000) / 1000));
 
     if (!acquired) {
       this.logger.warn(
@@ -73,20 +65,14 @@ export class DistributedLockCoordinatorService {
     resourceId: string;
     ownerId: string;
   }): Promise<boolean> {
-    const key = new WorkflowLockIdVO(
-      input.tenantId,
-      input.workflowType,
-      input.resourceId,
-    ).value();
+    const key = new WorkflowLockIdVO(`${input.tenantId}:${input.workflowType}:${input.resourceId}`).getValue();
 
     this.logger.debug(
       `[LOCK] releasing key=${key} owner=${input.ownerId}`,
     );
 
-    return this.redisLock.release({
-      key,
-      owner: input.ownerId,
-    });
+    await this.redisLock.release(key);
+    return true;
   }
 
   // ==================================================
@@ -99,21 +85,13 @@ export class DistributedLockCoordinatorService {
     ownerId: string;
     ttlMs?: number;
   }): Promise<boolean> {
-    const key = new WorkflowLockIdVO(
-      input.tenantId,
-      input.workflowType,
-      input.resourceId,
-    ).value();
+    const key = new WorkflowLockIdVO(`${input.tenantId}:${input.workflowType}:${input.resourceId}`).getValue();
 
     this.logger.debug(
       `[LOCK] extending key=${key} owner=${input.ownerId}`,
     );
 
-    return this.redisLock.extend({
-      key,
-      owner: input.ownerId,
-      ttlMs: input.ttlMs ?? 10_000,
-    });
+    return this.redisLock.extend(key, Math.ceil((input.ttlMs ?? 10_000) / 1000));
   }
 
   // ==================================================
@@ -124,11 +102,7 @@ export class DistributedLockCoordinatorService {
     workflowType: 'checkout' | 'payment' | 'conversation' | 'order' | 'session';
     resourceId: string;
   }): Promise<boolean> {
-    const key = new WorkflowLockIdVO(
-      input.tenantId,
-      input.workflowType,
-      input.resourceId,
-    ).value();
+    const key = new WorkflowLockIdVO(`${input.tenantId}:${input.workflowType}:${input.resourceId}`).getValue();
 
     return this.redisLock.exists(key);
   }
@@ -142,11 +116,7 @@ export class DistributedLockCoordinatorService {
     resourceId: string;
     reason: string;
   }): Promise<void> {
-    const key = new WorkflowLockIdVO(
-      input.tenantId,
-      input.workflowType,
-      input.resourceId,
-    ).value();
+    const key = new WorkflowLockIdVO(`${input.tenantId}:${input.workflowType}:${input.resourceId}`).getValue();
 
     this.logger.warn(
       `[LOCK] FORCE RELEASE key=${key} reason=${input.reason}`,
@@ -180,4 +150,5 @@ export class DistributedLockCoordinatorService {
 
     return true;
   }
+
 }

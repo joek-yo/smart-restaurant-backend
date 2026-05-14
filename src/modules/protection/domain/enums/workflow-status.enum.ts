@@ -255,4 +255,9 @@ export enum WorkflowStatus {
    * Workflow archived/closed.
    */
   CLOSED = 'CLOSED',
+
+  // ➕ ADDITIONAL STATES (referenced by services)
+  HEALTHY    = 'HEALTHY',
+  CORRUPTED  = 'CORRUPTED',
+  ABANDONED  = 'ABANDONED',
 }

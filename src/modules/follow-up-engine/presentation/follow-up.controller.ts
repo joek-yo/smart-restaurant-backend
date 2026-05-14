@@ -68,8 +68,9 @@ export class FollowUpController {
     this.logger.warn(`[ADMIN] cancel follow-up id=${id}`);
 
     await this.cancelService.cancel({
-      followUpId: id,
-      reason: 'ADMIN_CANCEL',
+      tenantId: 'ADMIN',
+      userId: id,
+      reason: 'MANUAL_CANCELLATION',
     });
 
     return {
@@ -86,16 +87,17 @@ export class FollowUpController {
     @Param('id') id: string,
     @Body()
     body: {
-      newScheduledAt: string;
+      scheduledAt: string;
     },
   ) {
     this.logger.log(
-      `[ADMIN] reschedule follow-up id=${id} → ${body.newScheduledAt}`,
+      `[ADMIN] reschedule follow-up id=${id} → ${body.scheduledAt}`,
     );
 
     await this.rescheduleService.reschedule({
       followUpId: id,
-      newScheduledAt: new Date(body.newScheduledAt),
+      scheduledAt: new Date(body.scheduledAt),
+      reason: "MANUAL_RESCHEDULE",
     });
 
     return {
@@ -111,6 +113,6 @@ export class FollowUpController {
   async failedJobs(@Query('tenantId') tenantId: string) {
     this.logger.error(`[ADMIN] inspect failed jobs tenant=${tenantId}`);
 
-    return this.repository.findFailedJobs(tenantId);
+    return this.repository.findByUser(tenantId, "");
   }
 }

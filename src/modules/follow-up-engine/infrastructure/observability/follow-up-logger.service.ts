@@ -25,6 +25,12 @@ import {
  */
 
 export interface FollowUpLogContext {
+  type?: string;
+  messageId?: string;
+  error?: string;
+  durationMs?: number;
+
+  jobId?: string;
   tenantId?: string;
 
   userId?: string;

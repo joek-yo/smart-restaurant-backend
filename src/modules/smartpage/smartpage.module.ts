@@ -41,9 +41,9 @@ import { CheckoutBlockService } from './application/blocks/checkout-block.servic
 /* =====================================================
    AI LAYER
 ===================================================== */
-import { IntentToSmartPageService } from './application/ai/intent-to-smartpage.service';
-import { SmartPageRecommendationService } from './application/ai/smartpage-recommendation.service';
-import { SmartPagePersonalizationService } from './application/ai/smartpage-personalization.service';
+import { IntentToSmartpageService } from './application/ai/intent-to-smartpage.service';
+import { SmartpageRecommendationService } from './application/ai/smartpage-recommendation.service';
+import { SmartpagePersonalizationService } from './application/ai/smartpage-personalization.service';
 
 /* =====================================================
    IMAGE ENGINE
@@ -71,12 +71,12 @@ import { SessionsAdapter } from './infrastructure/adapters/sessions.adapter';
 import { ConversationAdapter } from './infrastructure/adapters/conversation.adapter';
 
 import { S3ImageProvider } from './infrastructure/image-provider/s3-image.provider';
-import { CdnImageProvider } from './infrastructure/image-provider/cdn-image.provider';
+import { CDNImageProvider } from './infrastructure/image-provider/cdn-image.provider';
 
 /* =====================================================
    OBSERVABILITY
 ===================================================== */
-import { SmartPageLoggerService } from './infrastructure/observability/smartpage-logger.service';
+import { SmartpageLoggerService } from './infrastructure/observability/smartpage-logger.service';
 import { SmartPageMetricsService } from './infrastructure/observability/smartpage-metrics.service';
 
 /* =====================================================
@@ -113,9 +113,9 @@ import { SmartPageMetricsService } from './infrastructure/observability/smartpag
     CheckoutBlockService,
 
     /* ================= AI ================= */
-    IntentToSmartPageService,
-    SmartPageRecommendationService,
-    SmartPagePersonalizationService,
+    IntentToSmartpageService,
+    SmartpageRecommendationService,
+    SmartpagePersonalizationService,
 
     /* ================= IMAGE ENGINE ================= */
     ImagePolicyEngine,
@@ -137,10 +137,10 @@ import { SmartPageMetricsService } from './infrastructure/observability/smartpag
     ConversationAdapter,
 
     S3ImageProvider,
-    CdnImageProvider,
+    CDNImageProvider,
 
     /* ================= OBSERVABILITY ================= */
-    SmartPageLoggerService,
+    SmartpageLoggerService,
     SmartPageMetricsService,
   ],
 })

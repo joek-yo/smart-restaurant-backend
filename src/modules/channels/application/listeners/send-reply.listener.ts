@@ -115,12 +115,9 @@ export class SendReplyListener {
       // ==================================================
 
       const suppression =
-        await this.optOutProtection.isOptedOut({
-          tenantId: payload.tenantId,
-          userId: payload.userId,
-        });
+        await this.optOutProtection.isOptedOut(payload.userId, payload.tenantId);
 
-      if (suppression.isOptedOut) {
+      if (suppression) {
         this.logger.warn(
           `[WHATSAPP REPLY BLOCKED] opted-out user=${payload.userId}`,
         );

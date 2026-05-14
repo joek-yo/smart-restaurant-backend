@@ -1,7 +1,7 @@
 // src/modules/protection/domain/events/duplicate-message-detected.event.ts
 
-import { WorkflowTraceId } from '../value-objects/workflow-trace-id.vo';
-import { TenantScope } from '../value-objects/tenant-scope.vo';
+import { WorkflowTraceIdVO } from '../value-objects/workflow-trace-id.vo';
+import { TenantScopeVO } from '../value-objects/tenant-scope.vo';
 import { ProtectionLevel } from '../enums/protection-level.enum';
 
 /**
@@ -19,10 +19,10 @@ export class DuplicateMessageDetectedEvent {
 
   constructor(
     // Trace of the workflow this message belongs to
-    public readonly traceId: WorkflowTraceId,
+    public readonly traceId: WorkflowTraceIdVO,
 
     // Tenant isolation scope
-    public readonly scope: TenantScope,
+    public readonly scope: TenantScopeVO,
 
     // Unique message identifier (external or internal)
     public readonly messageId: string,

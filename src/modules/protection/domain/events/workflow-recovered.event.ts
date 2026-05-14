@@ -1,9 +1,9 @@
 // src/modules/protection/domain/events/workflow-recovered.event.ts
 
-import { WorkflowTraceId } from '../value-objects/workflow-trace-id.vo';
+import { WorkflowTraceIdVO } from '../value-objects/workflow-trace-id.vo';
 import { RecoveryReason } from '../enums/recovery-reason.enum';
 import { WorkflowStatus } from '../enums/workflow-status.enum';
-import { TenantScope } from '../value-objects/tenant-scope.vo';
+import { TenantScopeVO } from '../value-objects/tenant-scope.vo';
 
 /**
  * WorkflowRecoveredEvent
@@ -20,10 +20,10 @@ export class WorkflowRecoveredEvent {
 
   constructor(
     // Unique workflow identifier across all systems
-    public readonly traceId: WorkflowTraceId,
+    public readonly traceId: WorkflowTraceIdVO,
 
     // Multi-tenant isolation context
-    public readonly scope: TenantScope,
+    public readonly scope: TenantScopeVO,
 
     // Previous broken state (before recovery)
     public readonly previousState: WorkflowStatus,

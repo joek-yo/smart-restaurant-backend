@@ -4,8 +4,8 @@ import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { RecoverySessionRepository } from '../../../domain/repositories/recovery-session.repository';
-import { RecoverySessionEntity } from '../../../domain/entities/recovery-session.entity';
+import { RecoverySessionRepository } from '../../domain/repositories/recovery-session.repository';
+import { RecoverySessionEntity } from '../../domain/entities/recovery-session.entity';
 
 /**
  * RecoverySessionMongoRepository

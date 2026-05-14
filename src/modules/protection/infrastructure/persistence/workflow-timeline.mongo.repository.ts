@@ -1,8 +1,8 @@
 // FILE: src/modules/protection/infrastructure/persistence/workflow-timeline.mongo.repository.ts
 
 import { Injectable } from '@nestjs/common';
-import { WorkflowTimelineRepository } from '../../../domain/repositories/workflow-timeline.repository';
-import { WorkflowTimelineEntity } from '../../../domain/entities/workflow-timeline.entity';
+import { WorkflowTimelineRepository } from '../../domain/repositories/workflow-timeline.repository';
+import { WorkflowTimelineEntity } from '../../domain/entities/workflow-timeline.entity';
 
 /**
  * MongoDB-backed durable workflow timeline storage

@@ -6,7 +6,7 @@ import { SmartPageRuntimeEntity } from '../../domain/entities/smartpage-runtime.
 import { SmartPageContextVO } from '../../domain/value-objects/smartpage-context.vo';
 
 import { CartContextMapper } from './cart-context.mapper';
-import { SmartPageRendererService } from '../orchestration/smartpage-renderer.service';
+// import { SmartPageRendererService } from '../orchestration/smartpage-renderer.service'; // missing file
 
 /**
  * CartSyncService
@@ -28,7 +28,7 @@ export class CartSyncService {
 
   constructor(
     private readonly cartMapper: CartContextMapper,
-    private readonly renderer: SmartPageRendererService,
+    private readonly renderer: any,
   ) {}
 
   /**
@@ -55,10 +55,11 @@ export class CartSyncService {
     // ======================================================
     // 2. MERGE INTO SMARTPAGE CONTEXT
     // ======================================================
-    const updatedContext: SmartPageContextVO = {
+    const updatedContext = {
       ...baseContext,
       ...cartContext,
-    };
+      hasCart: !!(cartContext as any)?.session?.hasCart || !!(baseContext as any)?.hasCart,
+    } as SmartPageContextVO;
 
     // ======================================================
     // 3. TRIGGER RE-RENDER PIPELINE

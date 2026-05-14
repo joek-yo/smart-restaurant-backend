@@ -42,7 +42,7 @@ export interface BlockRecommendation {
 }
 
 @Injectable()
-export class SmartpageRecommendationService {
+export class SmartpagePersonalizationService {
   /**
    * Core decision engine:
    * Strategy + context → optimal blocks

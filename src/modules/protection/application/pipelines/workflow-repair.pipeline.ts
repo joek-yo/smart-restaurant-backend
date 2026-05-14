@@ -109,8 +109,7 @@ export class WorkflowRepairPipeline {
     // ==================================================
 
     if (result.repaired) {
-      this.logger.warn(
-        'WorkflowRepairPipeline',
+      this.logger.warn('WorkflowRepairPipeline',
         'WORKFLOW_REPAIRED',
         {
           tenantId: input.tenantId,
@@ -124,8 +123,7 @@ export class WorkflowRepairPipeline {
         },
       );
     } else {
-      this.logger.log(
-        'WorkflowRepairPipeline',
+      this.logger.log('info', 'WorkflowRepairPipeline',
         'WORKFLOW_REPAIR_FAILED',
         {
           tenantId: input.tenantId,

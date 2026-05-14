@@ -145,7 +145,7 @@ export class ProtectionCoordinatorService {
     const idempotent =
       await this.idempotencyProtection.isDuplicate({
         tenantId: input.tenantId,
-        userId: input.userId,
+        ownerId: input.userId,
         operation: input.operation,
         workflowType: input.workflowType,
       });
@@ -180,14 +180,14 @@ export class ProtectionCoordinatorService {
     // ==================================================
 
     const lock =
-      await this.lockCoordinator.acquire({
+      await this.lockCoordinator.acquireLock({
         tenantId: input.tenantId,
-        userId: input.userId,
         workflowType: input.workflowType,
-        workflowId: input.workflowId,
+        resourceId: input.workflowId ?? input.userId,
+        ownerId: input.userId,
       });
 
-    if (!lock.acquired) {
+    if (!lock) {
       this.logger.warn(
         'ProtectionCoordinatorService',
         'LOCK_ACQUISITION_FAILED',
@@ -286,11 +286,11 @@ export class ProtectionCoordinatorService {
       // 🔓 ALWAYS RELEASE LOCK
       // ==================================================
 
-      await this.lockCoordinator.release({
+      await this.lockCoordinator.releaseLock({
         tenantId: input.tenantId,
-        userId: input.userId,
+        resourceId: input.workflowId ?? input.userId ?? '',
+        ownerId: input.userId,
         workflowType: input.workflowType,
-        workflowId: input.workflowId,
       });
     }
   }

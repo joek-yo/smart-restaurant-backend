@@ -44,7 +44,7 @@ export class RecoveryWorker {
   ): Promise<any> {
     const input = job.data;
 
-    this.logger.log('RecoveryWorker', 'JOB_STARTED', {
+    this.logger.log('info', 'RecoveryWorker', 'JOB_STARTED', {
       tenantId: input.tenantId,
       userId: input.userId,
       metadata: {
@@ -77,7 +77,7 @@ export class RecoveryWorker {
         },
       });
 
-      this.logger.log('RecoveryWorker', 'JOB_SUCCESS', {
+      this.logger.log('info', 'RecoveryWorker', 'JOB_SUCCESS', {
         tenantId: input.tenantId,
         userId: input.userId,
         metadata: {

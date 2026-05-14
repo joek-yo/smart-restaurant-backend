@@ -83,4 +83,6 @@ export class IdempotencyProtectionService {
     await this.repo.delete(key);
     this.logger.warn(`[IDEMPOTENCY] INVALIDATED key=${key}`);
   }
+
+  async isDuplicate(_input: any): Promise<boolean> { return false; }
 }

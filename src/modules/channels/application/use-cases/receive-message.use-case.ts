@@ -104,12 +104,9 @@ export class ReceiveMessageUseCase {
     // 🚫 GLOBAL SUPPRESSION CHECK
     // ─────────────────────────────────────────────
 
-    const suppression = await this.optOutProtection.isOptedOut({
-      tenantId,
-      userId,
-    });
+    const suppression = await this.optOutProtection.isOptedOut(userId, tenantId);
 
-    if (suppression.isOptedOut) {
+    if (suppression) {
       this.logger.warn(
         `[WHATSAPP BLOCKED] opted-out user=${userId}`,
       );

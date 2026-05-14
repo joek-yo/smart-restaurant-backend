@@ -62,12 +62,9 @@ export class TimeoutQueue {
     // ==================================================
 
     const suppression =
-      await this.optOutProtection.isOptedOut({
-        tenantId: job.payload.tenantId,
-        userId: job.payload.userId,
-      });
+      await this.optOutProtection.isOptedOut(job.payload.userId, job.payload.tenantId);
 
-    if (suppression.isOptedOut) {
+    if (suppression) {
       this.logger.warn(
         `[TimeoutQueue] BLOCKED timeout job for opted-out user=${job.payload.userId}`,
       );

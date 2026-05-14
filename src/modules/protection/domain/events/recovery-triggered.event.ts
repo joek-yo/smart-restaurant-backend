@@ -1,7 +1,7 @@
 // src/modules/protection/domain/events/recovery-triggered.event.ts
 
-import { WorkflowTraceId } from '../value-objects/workflow-trace-id.vo';
-import { TenantScope } from '../value-objects/tenant-scope.vo';
+import { WorkflowTraceIdVO } from '../value-objects/workflow-trace-id.vo';
+import { TenantScopeVO } from '../value-objects/tenant-scope.vo';
 import { RecoveryReason } from '../enums/recovery-reason.enum';
 import { RecoveryState } from '../enums/recovery-state.enum';
 import { WorkflowStatus } from '../enums/workflow-status.enum';
@@ -22,10 +22,10 @@ export class RecoveryTriggeredEvent {
 
   constructor(
     // Unique workflow identifier across system
-    public readonly traceId: WorkflowTraceId,
+    public readonly traceId: WorkflowTraceIdVO,
 
     // Tenant isolation context
-    public readonly scope: TenantScope,
+    public readonly scope: TenantScopeVO,
 
     // State before recovery begins
     public readonly previousState: WorkflowStatus,

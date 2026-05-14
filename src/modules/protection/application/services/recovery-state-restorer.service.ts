@@ -123,12 +123,9 @@ export class RecoveryStateRestorerService {
       // ▶️ MARK RUNNING
       // ==================================================
 
-      recoverySession.state = RecoveryState.RUNNING;
+      recoverySession.state = RecoveryState.IN_PROGRESS;
 
-      await this.recoveryRepository.update(
-        recoverySession.id,
-        recoverySession,
-      );
+      await this.recoveryRepository.create(recoverySession);
 
       // ==================================================
       // 🔄 RESTORE TARGET STATE
@@ -142,12 +139,9 @@ export class RecoveryStateRestorerService {
       // ==================================================
 
       recoverySession.state = RecoveryState.COMPLETED;
-      recoverySession.completedAt = new Date();
+      (recoverySession as any).completedAt = new Date();
 
-      await this.recoveryRepository.update(
-        recoverySession.id,
-        recoverySession,
-      );
+      await this.recoveryRepository.create(recoverySession);
 
       // ==================================================
       // 📝 TIMELINE EVENT
@@ -197,12 +191,9 @@ export class RecoveryStateRestorerService {
       // ==================================================
 
       recoverySession.state = RecoveryState.FAILED;
-      recoverySession.completedAt = new Date();
+      (recoverySession as any).completedAt = new Date();
 
-      await this.recoveryRepository.update(
-        recoverySession.id,
-        recoverySession,
-      );
+      await this.recoveryRepository.create(recoverySession);
 
       // ==================================================
       // 🚨 OBSERVABILITY
@@ -387,7 +378,8 @@ export class RecoveryStateRestorerService {
   private async createRecoverySession(
     input: RestoreWorkflowInput,
   ): Promise<RecoverySessionEntity> {
-    const session = new RecoverySessionEntity({
+    const session = new RecoverySessionEntity({} as any);
+    Object.assign(session, {
       tenantId: input.tenantId,
       userId: input.userId,
 
@@ -403,7 +395,9 @@ export class RecoveryStateRestorerService {
 
       startedAt: new Date(),
     });
+    // end Object.assign
 
-    return this.recoveryRepository.create(session);
+    await this.recoveryRepository.create(session);
+    return session;
   }
 }

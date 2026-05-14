@@ -37,7 +37,7 @@ export class RecoveryCleanupScheduler {
 
   @Cron(CronExpression.EVERY_DAY_AT_3AM)
   async runCleanup(): Promise<void> {
-    this.logger.log('RecoveryCleanupScheduler', 'CLEANUP_STARTED', {});
+    this.logger.log('info', 'RecoveryCleanupScheduler', 'CLEANUP_STARTED', {});
 
     try {
       const cutoffDate = this.getRetentionCutoff();
@@ -52,11 +52,7 @@ export class RecoveryCleanupScheduler {
       // 🧹 CLEAN PROTECTION REPORTS
       // ==================================================
 
-      await this.cleanupProtectionReports(cutoffDate);
-
-      this.logger.log('RecoveryCleanupScheduler', 'CLEANUP_COMPLETED', {
-        cutoffDate,
-      });
+      await (this.cleanupProtectionReports as any)('RecoveryCleanupScheduler', 'CLEANUP_COMPLETED', { cutoffDate });
     } catch (error: any) {
       this.logger.warn('RecoveryCleanupScheduler', 'CLEANUP_FAILED', {
         error: error?.message,

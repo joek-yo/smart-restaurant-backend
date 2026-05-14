@@ -112,6 +112,11 @@ export enum VisibilityRule {
   // ==================================================
 
   ALWAYS = 'ALWAYS',
-
-  NEVER = 'NEVER',
+  // ➕ Additional values referenced by services
+  IS_BROWSING              = 'IS_BROWSING',
+  NO_RECOMMENDATIONS       = 'NO_RECOMMENDATIONS',
+  IS_ABANDONED_SESSION     = 'IS_ABANDONED_SESSION',
+  IS_RECOVERED_SESSION     = 'IS_RECOVERED_SESSION',
+  IS_BUSINESS_ACTIVE       = 'IS_BUSINESS_ACTIVE',
+  IS_PREMIUM_BUSINESS      = 'IS_PREMIUM_BUSINESS',
 }

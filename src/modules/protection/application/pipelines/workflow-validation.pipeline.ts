@@ -105,8 +105,7 @@ export class WorkflowValidationPipeline {
     // ==================================================
 
     if (blocked) {
-      this.logger.warn(
-        'WorkflowValidationPipeline',
+      this.logger.warn('WorkflowValidationPipeline',
         'WORKFLOW_BLOCKED',
         {
           tenantId: input.tenantId,
@@ -119,8 +118,7 @@ export class WorkflowValidationPipeline {
         },
       );
     } else {
-      this.logger.log(
-        'WorkflowValidationPipeline',
+      this.logger.log('info', 'WorkflowValidationPipeline',
         'WORKFLOW_VALIDATED',
         {
           tenantId: input.tenantId,

@@ -140,12 +140,15 @@ export class StaleWorkflowDetectorService {
     // 💾 CACHE STALE STATUS
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: input.workflowType,
-      state: 'STALE',
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:${input.workflowType}`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: 'STALE',
+        payload: {
         workflowId: input.workflowId,
         staleDurationMs,
         detectedAt: new Date(),

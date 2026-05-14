@@ -100,7 +100,7 @@ export class CatalogAdapter {
       name: product.name,
       price: product.price,
       description: product.description,
-      image: product.options?.[0]?.image ?? null,
+      image: (product.options?.[0] as any)?.image ?? null,
       isAvailable: product.status === 'ACTIVE',
       categoryId: product.categoryId,
     };

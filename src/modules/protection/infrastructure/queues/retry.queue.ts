@@ -64,12 +64,9 @@ export class RetryQueue {
     // ==================================================
 
     const suppression =
-      await this.optOutProtection.isOptedOut({
-        tenantId: job.tenantId,
-        userId: job.userId,
-      });
+      await this.optOutProtection.isOptedOut(job.userId, job.tenantId);
 
-    if (suppression.isOptedOut) {
+    if (suppression) {
       this.logger.warn(
         `[RetryQueue] BLOCKED retry job for opted-out user=${job.userId}`,
       );

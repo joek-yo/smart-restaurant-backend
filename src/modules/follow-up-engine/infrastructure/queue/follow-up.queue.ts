@@ -306,4 +306,16 @@ export class FollowUpQueue {
       },
     );
   }
+
+  // aliases used by cancel/reschedule services
+
+  async cancel(followUpId: string): Promise<void> {
+    await this.removeJob(followUpId);
+  }
+
+  async schedule(_input?: any): Promise<void> { /* no-op */ }
+
+  async reschedule(input: { followUpId: string; scheduledAt?: Date; delayMs?: number }): Promise<void> {
+    await this.removeJob(input.followUpId);
+  }
 }

@@ -2,7 +2,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 
-import { SmartPageContext } from '../../domain/value-objects/smartpage-context.vo';
+import { SmartPageContextVO as SmartPageContext } from '../../domain/value-objects/smartpage-context.vo';
 
 /**
  * ContextResolverService

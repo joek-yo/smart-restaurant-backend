@@ -20,19 +20,19 @@ export enum SessionRecoveryReason {
 
 export class RecoverSessionDto {
   @IsString()
-  tenantId: string;
+  tenantId!: string;
 
   @IsString()
-  userId: string;
+  userId!: string;
 
   @IsString()
-  sessionId: string;
+  sessionId!: string;
 
   @IsString()
-  currentState: string;
+  currentState!: string;
 
   @IsEnum(SessionRecoveryReason)
-  reason: SessionRecoveryReason;
+  reason!: SessionRecoveryReason;
 
   @IsOptional()
   @IsString()

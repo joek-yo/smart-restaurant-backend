@@ -34,6 +34,9 @@ import { ProtectionLoggerService } from '../../infrastructure/observability/prot
  */
 
 export interface WorkflowConsistencyInput {
+  workflowType?: string;
+  workflowId?: string;
+  currentState?: string;
   tenantId: string;
   userId: string;
 
@@ -50,6 +53,8 @@ export interface WorkflowConsistencyResult {
   valid: boolean;
   anomalies: WorkflowAnomalyEntity[];
   workflowStatus: WorkflowStatus;
+  anomalyDetected: boolean;
+  anomalyType?: WorkflowAnomalyType;
 }
 
 @Injectable()
@@ -148,6 +153,7 @@ export class WorkflowConsistencyService {
       valid,
       anomalies,
       workflowStatus,
+      anomalyDetected: anomalies.length > 0,
     };
   }
 

@@ -138,9 +138,7 @@ export class SmartPageBlockEntity extends BaseEntity {
 
     this.payload = Object.freeze({ ...props.payload });
 
-    this.visibilityRules = Object.freeze(
-      [...(props.visibilityRules ?? [])],
-    );
+    this.visibilityRules = Object.freeze([...(props.visibilityRules ?? [])]) as unknown as VisibilityRule[];
 
     this.priority = props.priority ?? 0;
 

@@ -59,12 +59,9 @@ export class RecoveryQueue {
     // ==================================================
 
     const suppression =
-      await this.optOutProtection.isOptedOut({
-        tenantId: job.payload.tenantId,
-        userId: job.payload.userId,
-      });
+      await this.optOutProtection.isOptedOut(job.payload.userId, job.payload.tenantId);
 
-    if (suppression.isOptedOut) {
+    if (suppression) {
       this.logger.warn(
         `[RecoveryQueue] BLOCKED opted-out recovery job user=${job.payload.userId}`,
       );

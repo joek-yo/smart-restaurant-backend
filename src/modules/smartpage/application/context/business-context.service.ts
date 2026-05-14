@@ -35,8 +35,8 @@ export class BusinessContextService {
       return null;
     }
 
-    const storefront = business.storefront ?? {};
-    const features = business.features ?? {};
+    const storefront = (business as any).storefront ?? {};
+    const features = (business as any).features ?? {};
 
     return {
       // ===============================
@@ -44,8 +44,8 @@ export class BusinessContextService {
       // ===============================
       tenantId: business.id,
       name: business.name,
-      slug: business.slug,
-      businessType: business.businessType,
+      slug: (business as any).slug,
+      businessType: (business as any).businessType,
 
       // ===============================
       // BRANDING
@@ -90,7 +90,7 @@ export class BusinessContextService {
       // ===============================
       // BUSINESS OPERATIONS
       // ===============================
-      operatingHours: business.businessHours,
+      operatingHours: (business as any).businessHours,
       isActive: business.isActive,
       subscriptionPlan: business.subscriptionPlan,
 

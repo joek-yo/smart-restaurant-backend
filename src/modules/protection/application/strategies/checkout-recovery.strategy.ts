@@ -126,7 +126,7 @@ export class CheckoutRecoveryStrategy {
       userId: input.userId,
       workflowType: 'checkout',
       currentState: input.currentState,
-      targetState: restoredState,
+      recoveryReason: input.recoveryReason,
       metadata: {
         checkoutId: input.checkoutId,
         cartId: input.cartId,
@@ -139,12 +139,15 @@ export class CheckoutRecoveryStrategy {
     // 💾 UPDATE CACHE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: 'checkout',
-      state: restoredState,
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:checkout`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: restoredState,
+        payload: {
         checkoutId: input.checkoutId,
         cartId: input.cartId,
         recovered: true,
@@ -178,8 +181,7 @@ export class CheckoutRecoveryStrategy {
     // 📝 OBSERVABILITY
     // ==================================================
 
-    this.logger.warn(
-      'CheckoutRecoveryStrategy',
+    this.logger.warn('CheckoutRecoveryStrategy',
       'CHECKOUT_RECOVERY_SUCCESS',
       {
         tenantId: input.tenantId,

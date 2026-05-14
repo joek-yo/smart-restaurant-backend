@@ -91,6 +91,7 @@ export class AbandonmentFollowUpTrigger {
           trigger:
             FollowUpTriggerVO.create(
               {
+                type: 'WORKFLOW_ABANDONED',
                 trigger:
                   'WORKFLOW_ABANDONED',
 
@@ -136,6 +137,7 @@ export class AbandonmentFollowUpTrigger {
           trigger:
             FollowUpTriggerVO.create(
               {
+                type: 'WORKFLOW_ABANDONED',
                 trigger:
                   'WORKFLOW_ABANDONED',
 
@@ -188,6 +190,7 @@ export class AbandonmentFollowUpTrigger {
           trigger:
             FollowUpTriggerVO.create(
               {
+                type: 'WORKFLOW_ABANDONED',
                 trigger:
                   'WORKFLOW_ABANDONED',
 

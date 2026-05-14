@@ -81,6 +81,7 @@ export class HandleTimeoutUseCase {
           workflowType: input.workflowType,
           currentState: input.currentState,
           recoveryReason: RecoveryReason.TIMEOUT,
+          reason: RecoveryReason.TIMEOUT,
           workflowId: input.workflowId,
         });
 
@@ -96,8 +97,7 @@ export class HandleTimeoutUseCase {
         },
       });
 
-      this.logger.warn(
-        'HandleTimeoutUseCase',
+      this.logger.warn('HandleTimeoutUseCase',
         'TIMEOUT_ESCALATED',
         {
           tenantId: input.tenantId,
@@ -136,8 +136,7 @@ export class HandleTimeoutUseCase {
       },
     });
 
-    this.logger.log(
-      'HandleTimeoutUseCase',
+    this.logger.log('info', 'HandleTimeoutUseCase',
       'TIMEOUT_HANDLED',
       {
         tenantId: input.tenantId,

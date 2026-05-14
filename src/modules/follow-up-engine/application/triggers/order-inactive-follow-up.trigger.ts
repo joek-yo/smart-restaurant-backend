@@ -79,6 +79,7 @@ export class OrderInactiveFollowUpTrigger {
         trigger:
           FollowUpTriggerVO.create(
             {
+              type: 'ORDER_INACTIVE',
               trigger:
                 'ORDER_INACTIVE',
 
@@ -127,6 +128,7 @@ export class OrderInactiveFollowUpTrigger {
         trigger:
           FollowUpTriggerVO.create(
             {
+              type: 'ORDER_INACTIVE',
               trigger:
                 'ORDER_INACTIVE',
 

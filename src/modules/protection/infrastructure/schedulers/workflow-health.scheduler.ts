@@ -65,7 +65,7 @@ export class WorkflowHealthScheduler {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   async runHealthAnalysis(): Promise<void> {
-    this.logger.log('WorkflowHealthScheduler', 'HEALTH_SCAN_STARTED', {});
+    this.logger.log('info', 'WorkflowHealthScheduler', 'HEALTH_SCAN_STARTED', {});
 
     try {
       // ==================================================
@@ -87,19 +87,15 @@ export class WorkflowHealthScheduler {
 
       for (const anomaly of anomalies) {
         const suppression =
-          await this.optOutProtection.isOptedOut({
-            tenantId: anomaly.tenantId,
-            userId: anomaly.userId,
-          });
+          await this.optOutProtection.isOptedOut(anomaly.metadata?.userId ?? '', anomaly.tenantId);
 
-        if (suppression.isOptedOut) {
-          this.logger.warn(
-            'WorkflowHealthScheduler',
+        if (suppression) {
+          this.logger.warn('WorkflowHealthScheduler',
             'OPT_OUT_SKIPPED',
             {
               tenantId: anomaly.tenantId,
-              userId: anomaly.userId,
-              workflowId: anomaly.workflowId,
+              userId: anomaly.metadata?.userId ?? '',
+              workflowId: anomaly.workflow,
             },
           );
 
@@ -109,21 +105,20 @@ export class WorkflowHealthScheduler {
         await this.recoveryQueue.addJob({
           payload: {
             tenantId: anomaly.tenantId,
-            userId: anomaly.userId,
-            workflowType: anomaly.workflowType,
-            workflowId: anomaly.workflowId,
-            currentState: anomaly.currentState,
+            userId: anomaly.metadata?.userId ?? '',
+            workflowType: anomaly.workflow as 'conversation' | 'session' | 'checkout' | 'payment' | 'order',
+            workflowId: anomaly.workflow,
+            currentState: anomaly.metadata?.currentState ?? '',
             recoveryReason: RecoveryReason.TIMEOUT,
           },
-          priority: this.calculatePriority(anomaly.healthScore),
+          priority: this.calculatePriority(anomaly.metadata?.healthScore ?? 50),
         });
       }
 
-      this.logger.log(
-        'WorkflowHealthScheduler',
+      this.logger.log('info', 'WorkflowHealthScheduler',
         'HEALTH_SCAN_COMPLETED',
         {
-          anomaliesDetected: anomalies.length,
+          metadata: { anomaliesDetected: anomalies.length },
         },
       );
     } catch (error: any) {

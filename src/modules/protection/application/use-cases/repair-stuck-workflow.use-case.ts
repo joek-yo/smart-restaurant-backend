@@ -1,3 +1,4 @@
+import { WorkflowAnomalyType } from '../../domain/enums/workflow-anomaly-type.enum';
 // FILE: src/modules/protection/application/use-cases/repair-stuck-workflow.use-case.ts
 
 import { Injectable } from '@nestjs/common';
@@ -89,6 +90,7 @@ export class RepairStuckWorkflowUseCase {
           workflowType: input.workflowType,
           currentState: input.currentState,
           recoveryReason: RecoveryReason.ABANDONED,
+          reason: RecoveryReason.ABANDONED,
           workflowId: input.workflowId,
         });
 
@@ -113,8 +115,7 @@ export class RepairStuckWorkflowUseCase {
         workflowType: input.workflowType,
         workflowId: input.workflowId,
         currentState: input.currentState,
-        anomalyType: input.anomalyType,
-        severity: input.severity,
+        anomalyType: (input.anomalyType as WorkflowAnomalyType) ?? WorkflowAnomalyType.UNKNOWN,
       });
 
     // ==================================================
@@ -126,11 +127,10 @@ export class RepairStuckWorkflowUseCase {
       userId: input.userId,
       workflowType: input.workflowType,
       event: 'WORKFLOW_REPAIRED',
-      state: result.restoredState,
+      state: result.repairedState,
       metadata: {
         workflowId: input.workflowId,
-        anomalyType: input.anomalyType,
-        severity: input.severity,
+        anomalyType: (input.anomalyType as WorkflowAnomalyType) ?? WorkflowAnomalyType.UNKNOWN,
       },
     });
 
@@ -138,8 +138,7 @@ export class RepairStuckWorkflowUseCase {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.warn(
-      'RepairStuckWorkflowUseCase',
+    this.logger.warn('RepairStuckWorkflowUseCase',
       'EXECUTED',
       {
         tenantId: input.tenantId,
@@ -147,16 +146,15 @@ export class RepairStuckWorkflowUseCase {
         metadata: {
           workflowType: input.workflowType,
           workflowId: input.workflowId,
-          restoredState: result.restoredState,
-          severity: input.severity,
-        },
+          restoredState: result.repairedState,
+          },
       },
     );
 
     return {
       success: result.repaired,
       repaired: result.repaired,
-      restoredState: result.restoredState,
+      restoredState: result.repairedState,
       repairedAt: result.repairedAt,
       workflowStatus: WorkflowStatus.RECOVERED,
       usedStrategy: 'repair',

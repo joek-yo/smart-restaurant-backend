@@ -55,7 +55,8 @@ export interface RecoveryExecutionInput {
 
   currentState: string;
 
-  recoveryReason: RecoveryReason;
+  reason?: RecoveryReason;
+  recoveryReason?: RecoveryReason;
 
   metadata?: Record<string, any>;
 }
@@ -73,7 +74,7 @@ export interface RecoveryExecutionResult {
 
   recoverySessionId: string;
 
-  recoveryReason: RecoveryReason;
+  reason?: RecoveryReason;
 
   finalState: string;
 
@@ -114,24 +115,22 @@ export class RecoveryCoordinatorService {
     const startedAt = new Date();
 
     const recoverySession =
-      RecoverySessionEntity.create({
+      new RecoverySessionEntity({
         tenantId: input.tenantId,
         userId: input.userId,
-        workflowId: input.workflowId,
-        workflowType: input.workflowType,
-        recoveryReason: input.recoveryReason,
-      });
+        workflow: input.workflowType,
+        });
 
     // ==================================================
     // 🛰️ TRACE START
     // ==================================================
 
     await this.recoveryTracer.startTrace({
-      recoverySessionId:
-        recoverySession.id,
-      workflowType: input.workflowType,
-      recoveryReason:
-        input.recoveryReason,
+      tenantId: recoverySession.tenantId,
+      userId: recoverySession.userId,
+      workflow: recoverySession.id,
+      reason:
+        (input.recoveryReason ?? input.reason),
     });
 
     // ==================================================
@@ -153,9 +152,8 @@ export class RecoveryCoordinatorService {
       event: 'RECOVERY_TRIGGERED',
       state: input.currentState,
       metadata: {
-        workflowId: input.workflowId,
-        recoveryReason:
-          input.recoveryReason,
+        reason:
+          (input.recoveryReason ?? input.reason),
         recoverySessionId:
           recoverySession.id,
       },
@@ -169,7 +167,6 @@ export class RecoveryCoordinatorService {
       await this.staleWorkflowDetector.detect({
         tenantId: input.tenantId,
         userId: input.userId,
-        workflowId: input.workflowId,
         workflowType: input.workflowType,
         currentState: input.currentState,
         lastTransitionAt:
@@ -186,7 +183,6 @@ export class RecoveryCoordinatorService {
       await this.workflowRepair.repair({
         tenantId: input.tenantId,
         userId: input.userId,
-        workflowId: input.workflowId,
         workflowType: input.workflowType,
         currentState: input.currentState,
         anomalyType:
@@ -210,31 +206,32 @@ export class RecoveryCoordinatorService {
       userId: input.userId,
       workflowType: input.workflowType,
       currentState: input.currentState,
-      targetState: restoredState,
       metadata: {
-        recoveryReason:
-          input.recoveryReason,
+        reason:
+          (input.recoveryReason ?? input.reason),
         repaired,
       },
-    });
+      recoveryReason: (input.recoveryReason ?? input.reason) as any,
+        });
 
     // ==================================================
     // 💾 UPDATE CACHE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: input.workflowType,
-      state: restoredState,
-      metadata: {
-        recovered: true,
-        recoveryReason:
-          input.recoveryReason,
-        recoverySessionId:
-          recoverySession.id,
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:${input.workflowType}`,
+      {
+        traceId: recoverySession.id,
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: restoredState,
+        payload: {
+          recovered: true,
+              recoverySessionId: recoverySession.id,
+        },
       },
-    });
+    );
 
     // ==================================================
     // 📊 METRICS
@@ -243,8 +240,8 @@ export class RecoveryCoordinatorService {
     await this.metricsService.recordRecoveryExecution(
       {
         workflowType: input.workflowType,
-        recoveryReason:
-          input.recoveryReason,
+        reason:
+          (input.recoveryReason ?? input.reason),
         repaired,
       },
     );
@@ -254,8 +251,7 @@ export class RecoveryCoordinatorService {
     // ==================================================
 
     await this.recoveryTracer.completeTrace({
-      recoverySessionId:
-        recoverySession.id,
+      recoverySessionId: recoverySession.id,
       successful: true,
     });
 
@@ -263,8 +259,7 @@ export class RecoveryCoordinatorService {
     // 📝 LOGGING
     // ==================================================
 
-    this.logger.log(
-      'RecoveryCoordinatorService',
+    this.logger.log('info', 'RecoveryCoordinatorService',
       'WORKFLOW_RECOVERED',
       {
         tenantId: input.tenantId,
@@ -274,8 +269,8 @@ export class RecoveryCoordinatorService {
             input.workflowType,
           workflowId:
             input.workflowId,
-          recoveryReason:
-            input.recoveryReason,
+          reason:
+            (input.recoveryReason ?? input.reason),
           repaired,
           restoredState,
         },
@@ -283,6 +278,7 @@ export class RecoveryCoordinatorService {
     );
 
     return {
+      recoverySessionId: recoverySession?.id ?? "",
       success: true,
       workflowStatus:
         WorkflowStatus.RECOVERED,
@@ -290,10 +286,9 @@ export class RecoveryCoordinatorService {
         ProtectionLevel.WARNING,
       repaired,
       restored: true,
-      recoverySessionId:
-        recoverySession.id,
-      recoveryReason:
-        input.recoveryReason,
+      // sessionId: recoverySession.id,
+      reason:
+        (input.recoveryReason ?? input.reason),
       finalState: restoredState,
       executedAt: new Date(),
     };

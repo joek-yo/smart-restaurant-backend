@@ -47,7 +47,7 @@ export class FollowUpWorkerProcessor extends WorkerHost {
   async process(job: Job<FollowUpJobEntity>): Promise<any> {
     const data = job.data;
 
-    this.followUpLogger.log('FOLLOW_UP_EXECUTION_START', {
+    this.followUpLogger.info('FollowUpWorker', 'FOLLOW_UP_EXECUTION_START', {
       jobId: job.id,
       type: data.type,
       userId: data.userId,
@@ -74,12 +74,12 @@ export class FollowUpWorkerProcessor extends WorkerHost {
         return;
       }
 
-      if (latestJob.status === FollowUpStatus.COMPLETED) {
+      if (latestJob.status === 'COMPLETED') {
         this.logger.warn(`[FOLLOW_UP] already completed: ${data.id}`);
         return;
       }
 
-      if (latestJob.scheduledAt > new Date()) {
+      if (latestJob.schedule.scheduledAt > new Date()) {
         this.logger.warn(`[FOLLOW_UP] not due yet: ${data.id}`);
         return;
       }
@@ -92,17 +92,17 @@ export class FollowUpWorkerProcessor extends WorkerHost {
       // ==================================================
       // 4. MARK COMPLETED
       // ==================================================
-      latestJob.status = FollowUpStatus.COMPLETED;
-      latestJob.completedAt = new Date();
+      latestJob.markCompleted();
+      
 
-      await this.repository.update(latestJob.id, latestJob);
+      await this.repository.update(latestJob);
 
       // ==================================================
       // 5. METRICS
       // ==================================================
-      await this.metrics.incrementSent(latestJob.type);
+      await this.metrics.recordSent({ followUpType: latestJob.type });
 
-      this.followUpLogger.log('FOLLOW_UP_EXECUTION_SUCCESS', {
+      this.followUpLogger.info('FollowUpWorker', 'FOLLOW_UP_EXECUTION_SUCCESS', {
         jobId: latestJob.id,
         type: latestJob.type,
       });
@@ -118,9 +118,9 @@ export class FollowUpWorkerProcessor extends WorkerHost {
         error as any,
       );
 
-      await this.metrics.incrementFailed(data.type);
+      await this.metrics.recordFailed({ followUpType: data.type });
 
-      await this.followUpLogger.log('FOLLOW_UP_EXECUTION_FAILED', {
+      await this.followUpLogger.info('FollowUpWorker', 'FOLLOW_UP_EXECUTION_FAILED', {
         jobId: data.id,
         error: error instanceof Error ? error.message : 'unknown',
       });

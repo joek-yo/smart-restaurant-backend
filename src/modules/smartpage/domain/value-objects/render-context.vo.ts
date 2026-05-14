@@ -120,6 +120,17 @@ export interface RenderContextProps {
 }
 
 export class RenderContextVO {
+  [key: string]: any;
+
+  // ➕ Extended render context fields
+  catalog?: Record<string, any>;
+  session?: Record<string, any>;
+  resolved?: Record<string, any>;
+  user?: Record<string, any>;
+  business?: Record<string, any>;
+  cart?: Record<string, any>;
+  checkout?: Record<string, any>;
+
   public readonly tenantId: string;
   public readonly userId: string;
 
@@ -139,7 +150,7 @@ export class RenderContextVO {
 
     this.sourceContext = props.sourceContext;
 
-    this.blocks = Object.freeze(props.blocks.map(b => ({ ...b })));
+    this.blocks = Object.freeze(props.blocks.map(b => ({ ...b }))) as unknown as RenderedBlock[];
 
     this.meta = Object.freeze({ ...props.meta });
 

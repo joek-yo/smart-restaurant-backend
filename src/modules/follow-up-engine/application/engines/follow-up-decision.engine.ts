@@ -129,11 +129,11 @@ export class FollowUpDecisionEngine {
     // ==================================================
 
     const activeExists =
-      await this.repository.existsActiveFollowUp(
-        input.tenantId,
-        input.userId,
-        input.followUpType,
-      );
+      await this.repository.existsActiveFollowUp({
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: input.followUpType,
+      });
 
     if (activeExists) {
       return this.reject(

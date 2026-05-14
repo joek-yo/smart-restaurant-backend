@@ -1,7 +1,7 @@
 // src/modules/protection/domain/events/workflow-timeout.event.ts
 
-import { WorkflowTraceId } from '../value-objects/workflow-trace-id.vo';
-import { TenantScope } from '../value-objects/tenant-scope.vo';
+import { WorkflowTraceIdVO } from '../value-objects/workflow-trace-id.vo';
+import { TenantScopeVO } from '../value-objects/tenant-scope.vo';
 import { WorkflowStatus } from '../enums/workflow-status.enum';
 import { RecoveryReason } from '../enums/recovery-reason.enum';
 import { ProtectionLevel } from '../enums/protection-level.enum';
@@ -20,10 +20,10 @@ export class WorkflowTimeoutEvent {
 
   constructor(
     // Unique workflow identifier
-    public readonly traceId: WorkflowTraceId,
+    public readonly traceId: WorkflowTraceIdVO,
 
     // Tenant isolation context
-    public readonly scope: TenantScope,
+    public readonly scope: TenantScopeVO,
 
     // Workflow state at timeout moment
     public readonly currentState: WorkflowStatus,

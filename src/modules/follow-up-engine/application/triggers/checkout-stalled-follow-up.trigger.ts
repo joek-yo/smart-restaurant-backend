@@ -79,6 +79,7 @@ export class CheckoutStalledFollowUpTrigger {
         trigger:
           FollowUpTriggerVO.create(
             {
+              type: 'CHECKOUT_STALLED',
               trigger:
                 'CHECKOUT_STALLED',
 
@@ -127,6 +128,7 @@ export class CheckoutStalledFollowUpTrigger {
         trigger:
           FollowUpTriggerVO.create(
             {
+              type: 'CHECKOUT_STALLED',
               trigger:
                 'CHECKOUT_STALLED',
 

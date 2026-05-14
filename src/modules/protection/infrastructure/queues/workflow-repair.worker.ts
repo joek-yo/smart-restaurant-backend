@@ -44,7 +44,7 @@ export class WorkflowRepairWorker {
   ): Promise<any> {
     const input = job.data;
 
-    this.logger.log('WorkflowRepairWorker', 'JOB_STARTED', {
+    this.logger.log('info', 'WorkflowRepairWorker', 'JOB_STARTED', {
       tenantId: input.tenantId,
       userId: input.userId,
       metadata: {
@@ -78,7 +78,7 @@ export class WorkflowRepairWorker {
         },
       });
 
-      this.logger.log('WorkflowRepairWorker', 'JOB_SUCCESS', {
+      this.logger.log('info', 'WorkflowRepairWorker', 'JOB_SUCCESS', {
         tenantId: input.tenantId,
         userId: input.userId,
         metadata: {

@@ -1,7 +1,7 @@
 // src/modules/protection/domain/entities/workflow-anomaly.entity.ts
 
-import { WorkflowTraceId } from '../value-objects/workflow-trace-id.vo';
-import { TenantScope } from '../value-objects/tenant-scope.vo';
+import { WorkflowTraceIdVO } from '../value-objects/workflow-trace-id.vo';
+import { TenantScopeVO } from '../value-objects/tenant-scope.vo';
 import { WorkflowAnomalyType } from '../enums/workflow-anomaly-type.enum';
 import { ProtectionLevel } from '../enums/protection-level.enum';
 import { WorkflowStatus } from '../enums/workflow-status.enum';
@@ -16,6 +16,8 @@ import { WorkflowStatus } from '../enums/workflow-status.enum';
  * This is a STRUCTURAL INTEGRITY VIOLATION record.
  */
 export class WorkflowAnomalyEntity {
+  tenantId?: string;
+
   constructor(init?: Partial<WorkflowAnomalyEntity>) {
     Object.assign(this, init);
   }
@@ -26,9 +28,9 @@ export class WorkflowAnomalyEntity {
 
   id!: string;
 
-  traceId!: WorkflowTraceId;
+  traceId!: WorkflowTraceIdVO;
 
-  tenantScope!: TenantScope;
+  tenantScope!: TenantScopeVO;
 
   workflowId!: string;
 
@@ -57,6 +59,8 @@ export class WorkflowAnomalyEntity {
   message!: string;
 
   stackTrace?: string;
+
+  reason?: string;
 
   metadata?: Record<string, any>;
 

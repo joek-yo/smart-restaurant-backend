@@ -22,7 +22,7 @@ export enum WorkflowHealthScope {
 
 export class WorkflowHealthDto {
   @IsString()
-  tenantId: string;
+  tenantId!: string;
 
   @IsOptional()
   @IsString()
@@ -33,7 +33,7 @@ export class WorkflowHealthDto {
   workflowId?: string;
 
   @IsEnum(WorkflowHealthScope)
-  scope: WorkflowHealthScope;
+  scope!: WorkflowHealthScope;
 
   @IsOptional()
   @IsString()

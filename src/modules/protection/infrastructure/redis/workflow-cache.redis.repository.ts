@@ -33,7 +33,7 @@ export class WorkflowCacheRedisRepository {
   // ==================================================
   async setWorkflowState(
     key: string,
-    state: {
+    state?: {
       traceId: string;
       tenantId: string;
       userId: string;
@@ -47,7 +47,7 @@ export class WorkflowCacheRedisRepository {
 
     const payload = {
       ...state,
-      updatedAt: state.updatedAt ?? new Date(),
+      updatedAt: state?.updatedAt ?? new Date(),
     };
 
     await this.redis.set(
@@ -57,7 +57,7 @@ export class WorkflowCacheRedisRepository {
       this.TTL_SECONDS,
     );
 
-    this.logger.debug(`[WORKFLOW_CACHE_SET] key=${key} type=${state.type}`);
+    this.logger.debug(`[WORKFLOW_CACHE_SET] key=${key} type=${state?.type}`);
   }
 
   // ==================================================

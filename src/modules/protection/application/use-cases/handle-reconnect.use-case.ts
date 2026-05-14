@@ -131,8 +131,7 @@ export class HandleReconnectUseCase {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.log(
-      'HandleReconnectUseCase',
+    this.logger.log('info', 'HandleReconnectUseCase',
       'EXECUTED',
       {
         tenantId: input.tenantId,

@@ -119,7 +119,7 @@ export class ConversationRecoveryStrategy {
       userId: input.userId,
       workflowType: 'conversation',
       currentState: input.currentState,
-      targetState: restoredState,
+      recoveryReason: input.recoveryReason,
       metadata: {
         conversationId:
           input.conversationId,
@@ -134,12 +134,15 @@ export class ConversationRecoveryStrategy {
     // 💾 UPDATE CACHE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: 'conversation',
-      state: restoredState,
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:conversation`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: restoredState,
+        payload: {
         recovered: true,
         resumedFromCheckpoint,
         lastKnownIntent:
@@ -171,8 +174,7 @@ export class ConversationRecoveryStrategy {
     // 📝 OBSERVABILITY
     // ==================================================
 
-    this.logger.log(
-      'ConversationRecoveryStrategy',
+    this.logger.log('info', 'ConversationRecoveryStrategy',
       'CONVERSATION_RECOVERY_SUCCESS',
       {
         tenantId: input.tenantId,

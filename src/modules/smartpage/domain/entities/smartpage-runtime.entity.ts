@@ -137,16 +137,9 @@ export class SmartPageRuntimeEntity extends BaseEntity {
     this.renderStartedAt = props.renderStartedAt;
     this.renderCompletedAt = props.renderCompletedAt;
 
-    this.blocks = Object.freeze(
-      props.blocks.map(b => ({
-        ...b,
-        images: b.images ? [...b.images] : undefined,
-      })),
-    );
+    this.blocks = Object.freeze(props.blocks.map(b => ({ ...b, images: b.images ? [...b.images] : undefined }))) as unknown as typeof this.blocks;
 
-    this.personalizationDecisions = Object.freeze(
-      props.personalizationDecisions.map(d => ({ ...d })),
-    );
+    this.personalizationDecisions = Object.freeze(props.personalizationDecisions.map(d => ({ ...d }))) as unknown as typeof this.personalizationDecisions;
 
     this.featureFlags = Object.freeze({ ...props.featureFlags });
 

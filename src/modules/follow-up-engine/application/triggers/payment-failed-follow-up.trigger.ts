@@ -86,6 +86,7 @@ export class PaymentFailedFollowUpTrigger {
         trigger:
           FollowUpTriggerVO.create(
             {
+              type: 'PAYMENT_FAILED',
               trigger:
                 'PAYMENT_FAILED',
 
@@ -149,6 +150,7 @@ export class PaymentFailedFollowUpTrigger {
         trigger:
           FollowUpTriggerVO.create(
             {
+              type: 'PAYMENT_FAILED',
               trigger:
                 'PAYMENT_FAILED',
 

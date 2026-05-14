@@ -119,7 +119,7 @@ export class SessionRecoveryStrategy {
       userId: input.userId,
       workflowType: 'session',
       currentState: input.currentState,
-      targetState: restoredState,
+      recoveryReason: input.recoveryReason,
       metadata: {
         sessionId: input.sessionId,
         recoveryReason:
@@ -132,12 +132,15 @@ export class SessionRecoveryStrategy {
     // 💾 UPDATE CACHE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: 'session',
-      state: restoredState,
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:session`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: restoredState,
+        payload: {
         sessionId: input.sessionId,
         recovered: true,
         sessionRehydrated,
@@ -169,8 +172,7 @@ export class SessionRecoveryStrategy {
     // 📝 OBSERVABILITY
     // ==================================================
 
-    this.logger.log(
-      'SessionRecoveryStrategy',
+    this.logger.log('info', 'SessionRecoveryStrategy',
       'SESSION_RECOVERY_SUCCESS',
       {
         tenantId: input.tenantId,

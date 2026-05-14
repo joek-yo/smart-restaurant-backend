@@ -53,7 +53,7 @@ export class WhatsAppFollowUpStrategy {
   async execute(job: FollowUpJobEntity): Promise<void> {
     const start = Date.now();
 
-    this.loggerService.log('WHATSAPP_FOLLOWUP_START', {
+    this.loggerService.info('WhatsappFollowUpStrategy', 'WHATSAPP_FOLLOWUP_START', {
       jobId: job.id,
       userId: job.userId,
       type: job.type,
@@ -90,9 +90,9 @@ export class WhatsAppFollowUpStrategy {
       // ==================================================
       // 4. METRICS SUCCESS
       // ==================================================
-      await this.metrics.incrementDelivered(job.type);
+      await this.metrics.recordSent({ followUpType: job.type });
 
-      this.loggerService.log('WHATSAPP_FOLLOWUP_SUCCESS', {
+      this.loggerService.info('WhatsappFollowUpStrategy', 'WHATSAPP_FOLLOWUP_SUCCESS', {
         jobId: job.id,
         messageId: result.messageId,
         durationMs: Date.now() - start,
@@ -101,9 +101,9 @@ export class WhatsAppFollowUpStrategy {
       // ==================================================
       // FAILURE TRACKING
       // ==================================================
-      await this.metrics.incrementFailed(job.type);
+      await this.metrics.recordFailed({ followUpType: job.type });
 
-      this.loggerService.log('WHATSAPP_FOLLOWUP_FAILED', {
+      this.loggerService.info('WhatsappFollowUpStrategy', 'WHATSAPP_FOLLOWUP_FAILED', {
         jobId: job.id,
         error: error instanceof Error ? error.message : 'unknown',
       });

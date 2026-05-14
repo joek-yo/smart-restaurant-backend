@@ -133,8 +133,7 @@ export class RecoverCheckoutUseCase {
         },
       });
 
-      this.logger.log(
-        'RecoverCheckoutUseCase',
+      this.logger.log('info', 'RecoverCheckoutUseCase',
         'CART_RECOVERY_EXECUTED',
         {
           tenantId: input.tenantId,
@@ -170,7 +169,7 @@ export class RecoverCheckoutUseCase {
         recoveryReason: input.recoveryReason,
         cartItemsCount: input.cartItemsCount,
         cartValue: input.cartValue,
-        gatewayStatus: input.gatewayStatus,
+        metadata: { ...((input as any).gatewayStatus ? { gatewayStatus: (input as any).gatewayStatus } : {}) },
       });
 
     await this.timeline.recordEvent({
@@ -186,8 +185,7 @@ export class RecoverCheckoutUseCase {
       },
     });
 
-    this.logger.log(
-      'RecoverCheckoutUseCase',
+    this.logger.log('info', 'RecoverCheckoutUseCase',
       'CHECKOUT_RECOVERY_EXECUTED',
       {
         tenantId: input.tenantId,

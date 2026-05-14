@@ -37,9 +37,9 @@ export class ConversationLockService {
   }): Promise<boolean> {
     const lockId = this.buildLockId(input);
 
-    this.logger.debug(`[LOCK] acquiring conversation lock=${lockId.value}`);
+    this.logger.debug(`[LOCK] acquiring conversation lock=${lockId.getValue()}`);
 
-    return this.redisLock.acquire(lockId.value, this.TTL_SECONDS);
+    return this.redisLock.acquire(lockId.getValue(), this.TTL_SECONDS);
   }
 
   /**
@@ -53,9 +53,9 @@ export class ConversationLockService {
   }): Promise<void> {
     const lockId = this.buildLockId(input);
 
-    this.logger.debug(`[LOCK] releasing conversation lock=${lockId.value}`);
+    this.logger.debug(`[LOCK] releasing conversation lock=${lockId.getValue()}`);
 
-    await this.redisLock.release(lockId.value);
+    await this.redisLock.release(lockId.getValue());
   }
 
   /**
@@ -69,7 +69,7 @@ export class ConversationLockService {
   }): Promise<boolean> {
     const lockId = this.buildLockId(input);
 
-    return this.redisLock.isLocked(lockId.value);
+    return this.redisLock.isLocked(lockId.getValue());
   }
 
   // ─────────────────────────────────────────────

@@ -5,8 +5,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { UserContextService } from './user-context.service';
 import { BusinessContextService } from './business-context.service';
 
-import { ConversationContextRepository } from '@modules/conversation/domain/repositories/conversation-context.repository';
-import { SessionRepository } from '@modules/session/domain/repositories/session.repository';
+// import { ConversationContextRepository } from '@modules/conversation/domain/repositories/conversation-context.repository'; // missing
+// import { SessionRepository } from '@modules/session/domain/repositories/session.repository'; // missing
 
 /**
  * SmartPageContextBuilder
@@ -22,8 +22,8 @@ export class SmartPageContextBuilder {
   constructor(
     private readonly userContextService: UserContextService,
     private readonly businessContextService: BusinessContextService,
-    private readonly conversationRepo: ConversationContextRepository,
-    private readonly sessionRepo: SessionRepository,
+    private readonly conversationRepo: any,
+    private readonly sessionRepo: any,
   ) {}
 
   /**
@@ -47,7 +47,7 @@ export class SmartPageContextBuilder {
     // 2. LOAD USER CONTEXT (BEHAVIORAL BRAIN)
     // ==================================================
     const userContext =
-      await this.userContextService.buildUserContext({
+      await (this.userContextService as any).buildUserContext?.({
         tenantId: input.tenantId,
         userId: input.userId,
       });

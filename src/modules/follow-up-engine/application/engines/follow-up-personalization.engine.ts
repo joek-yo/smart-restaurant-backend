@@ -158,7 +158,7 @@ export class FollowUpPersonalizationEngine {
       metadata: {
         type: input.type,
         trigger:
-          input.trigger.trigger,
+          input.trigger.type,
 
         generatedAt:
           new Date().toISOString(),
@@ -202,7 +202,7 @@ export class FollowUpPersonalizationEngine {
       metadata: {
         type: input.type,
         trigger:
-          input.trigger.trigger,
+          input.trigger.type,
 
         generatedAt:
           new Date().toISOString(),
@@ -240,7 +240,7 @@ export class FollowUpPersonalizationEngine {
       metadata: {
         type: input.type,
         trigger:
-          input.trigger.trigger,
+          input.trigger.type,
 
         generatedAt:
           new Date().toISOString(),
@@ -281,7 +281,7 @@ export class FollowUpPersonalizationEngine {
       metadata: {
         type: input.type,
         trigger:
-          input.trigger.trigger,
+          input.trigger.type,
 
         generatedAt:
           new Date().toISOString(),
@@ -316,7 +316,7 @@ export class FollowUpPersonalizationEngine {
       metadata: {
         type: input.type,
         trigger:
-          input.trigger.trigger,
+          input.trigger.type,
 
         generatedAt:
           new Date().toISOString(),
@@ -345,7 +345,7 @@ export class FollowUpPersonalizationEngine {
       metadata: {
         type: input.type,
         trigger:
-          input.trigger.trigger,
+          input.trigger.type,
 
         generatedAt:
           new Date().toISOString(),

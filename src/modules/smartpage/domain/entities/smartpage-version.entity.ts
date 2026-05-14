@@ -108,7 +108,7 @@ export class SmartPageVersionEntity extends BaseEntity {
     this.snapshot = Object.freeze({
       ...props.snapshot,
       blocks: Object.freeze(props.snapshot.blocks ?? []),
-    });
+    }) as unknown as typeof this.snapshot;
 
     this.metadata = Object.freeze({ ...props.metadata });
   }

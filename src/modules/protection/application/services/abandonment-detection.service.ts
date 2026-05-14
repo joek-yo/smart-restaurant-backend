@@ -136,16 +136,10 @@ export class AbandonmentDetectionService {
     // 💾 CACHE ABANDONMENT STATE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: input.workflowType,
-      state: 'ABANDONED',
-      metadata: {
-        inactiveDurationMs,
-        detectedAt: new Date(),
-      },
-    });
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:${input.workflowType}`,
+      { traceId: Date.now().toString(), tenantId: input.tenantId, userId: input.userId, type: 'SESSION', state: 'ABANDONED', payload: { inactiveDurationMs } },
+    );
 
     // ==================================================
     // 📝 RECORD TIMELINE EVENT

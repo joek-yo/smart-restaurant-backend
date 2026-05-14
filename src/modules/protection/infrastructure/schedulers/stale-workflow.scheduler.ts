@@ -57,9 +57,9 @@ export class StaleWorkflowScheduler {
   // ⏰ RUN EVERY 2 MINUTES (HIGH FREQUENCY CHECK)
   // ==================================================
 
-  @Cron(CronExpression.EVERY_2_MINUTES)
+  @Cron(CronExpression.EVERY_5_MINUTES)
   async scanStaleWorkflows(): Promise<void> {
-    this.logger.log('StaleWorkflowScheduler', 'SCAN_STARTED', {});
+    this.logger.log('info', 'StaleWorkflowScheduler', 'SCAN_STARTED', {});
 
     try {
       const staleWorkflows = await this.findStaleWorkflows();
@@ -70,14 +70,10 @@ export class StaleWorkflowScheduler {
         // ==================================================
 
         const suppression =
-          await this.optOutProtection.isOptedOut({
-            tenantId: workflow.tenantId,
-            userId: workflow.userId,
-          });
+          await this.optOutProtection.isOptedOut(workflow.userId, workflow.tenantId);
 
-        if (suppression.isOptedOut) {
-          this.logger.warn(
-            'StaleWorkflowScheduler',
+        if (suppression) {
+          this.logger.warn('StaleWorkflowScheduler',
             'OPT_OUT_SKIPPED',
             {
               tenantId: workflow.tenantId,
@@ -106,8 +102,8 @@ export class StaleWorkflowScheduler {
         });
       }
 
-      this.logger.log('StaleWorkflowScheduler', 'SCAN_COMPLETED', {
-        count: staleWorkflows.length,
+      this.logger.log('info', 'StaleWorkflowScheduler', 'SCAN_COMPLETED', {
+        metadata: { count: staleWorkflows.length },
       });
     } catch (error: any) {
       this.logger.warn('StaleWorkflowScheduler', 'SCAN_FAILED', {

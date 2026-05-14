@@ -1,103 +1,48 @@
-// src/modules/protection/domain/entities/workflow-lock.entity.ts
+import { WorkflowLockId } from '../value-objects/workflow-lock-id.vo';
 
-import { WorkflowLockIdVO } from '../value-objects/workflow-lock-id.vo';
-import { TenantScopeVO } from '../value-objects/tenant-scope.vo';
-import { WorkflowTraceIdVO } from '../value-objects/workflow-trace-id.vo';
+export interface WorkflowLockProps {
+  tenantId?: string;
+  workflowId?: string;
+  ownerId?: string;
+  expiresAt?: Date;
+  lockId?: WorkflowLockId;
+  traceId?: string;
+  resource?: string;
+  status?: string;
+  ttlSeconds?: number;
+  createdAt?: Date;
+  tenant?: { tenantId: string; userId?: string };
+  owner?: string;
+}
 
-/**
- * WorkflowLockEntity
- * -------------------
- * Represents distributed lock ownership for a workflow.
- *
- * RULES:
- * - Only ONE active owner per lockId at any time
- * - Must always be tenant-scoped
- * - Must be traceable for debugging/recovery
- */
 export class WorkflowLockEntity {
-  constructor(
-    public readonly lockId: WorkflowLockIdVO,
-    public readonly tenantScope: TenantScopeVO,
-    public readonly traceId: WorkflowTraceIdVO,
+  id: string;
+  tenantId?: string;
+  workflowId?: string;
+  ownerId?: string;
+  expiresAt?: Date;
+  lockId: WorkflowLockId;
+  traceId?: string;
+  resource?: string;
+  status?: string;
+  ttlSeconds?: number;
+  createdAt: Date;
+  tenant: { tenantId: string; userId?: string };
+  owner?: string;
 
-    public readonly ownerId: string, // worker/service instance id
-
-    public readonly acquiredAt: Date = new Date(),
-    public expiresAt: Date,
-
-    public readonly metadata: Record<string, any> = {},
-  ) {}
-
-  // ─────────────────────────────────────────────
-  // 🔐 LOCK STATE
-  // ─────────────────────────────────────────────
-
-  isExpired(): boolean {
-    return Date.now() > this.expiresAt.getTime();
-  }
-
-  isOwnedBy(ownerId: string): boolean {
-    return this.ownerId === ownerId;
-  }
-
-  isActive(): boolean {
-    return !this.isExpired();
-  }
-
-  // ─────────────────────────────────────────────
-  // 🔄 EXTENSION (RENEW LOCK)
-  // ─────────────────────────────────────────────
-
-  renew(extensionMs: number): WorkflowLockEntity {
-    return new WorkflowLockEntity(
-      this.lockId,
-      this.tenantScope,
-      this.traceId,
-      this.ownerId,
-      this.acquiredAt,
-      new Date(Date.now() + extensionMs),
-      this.metadata,
-    );
-  }
-
-  // ─────────────────────────────────────────────
-  // 🧠 FACTORY
-  // ─────────────────────────────────────────────
-
-  static create(params: {
-    lockId: WorkflowLockIdVO;
-    tenantScope: TenantScopeVO;
-    traceId: WorkflowTraceIdVO;
-    ownerId: string;
-    ttlMs: number;
-    metadata?: Record<string, any>;
-  }): WorkflowLockEntity {
-    return new WorkflowLockEntity(
-      params.lockId,
-      params.tenantScope,
-      params.traceId,
-      params.ownerId,
-      new Date(),
-      new Date(Date.now() + params.ttlMs),
-      params.metadata ?? {},
-    );
-  }
-
-  // ─────────────────────────────────────────────
-  // 🔒 SAFETY CHECKS
-  // ─────────────────────────────────────────────
-
-  assertOwnership(ownerId: string): void {
-    if (this.ownerId !== ownerId) {
-      throw new Error(
-        `LOCK_OWNERSHIP_VIOLATION: expected=${this.ownerId} got=${ownerId}`,
-      );
-    }
-  }
-
-  assertValid(): void {
-    if (this.isExpired()) {
-      throw new Error(`LOCK_EXPIRED: ${this.lockId.getValue()}`);
-    }
+  constructor(props: WorkflowLockProps) {
+    this.id = Math.random().toString(36).slice(2);
+    this.tenantId = props.tenantId ?? (props.tenant as any)?.tenantId ?? '';
+    this.workflowId = props.workflowId ?? props.resource ?? '';
+    this.ownerId = props.ownerId ?? props.owner ?? '';
+    this.owner = props.owner ?? props.ownerId;
+    this.expiresAt = props.expiresAt;
+    this.lockId = props.lockId ?? WorkflowLockId.generate();
+    this.traceId = props.traceId;
+    this.resource = props.resource ?? props.workflowId;
+    this.status = props.status ?? 'ACTIVE';
+    this.ttlSeconds = props.ttlSeconds ?? 60;
+    this.createdAt = props.createdAt ?? new Date();
+    this.tenant = props.tenant ?? { tenantId: props.tenantId ?? "" };
   }
 }

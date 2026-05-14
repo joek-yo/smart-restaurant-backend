@@ -4,8 +4,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { ProtectionReportRepository } from '../../../domain/repositories/protection-report.repository';
-import { ProtectionReportEntity } from '../../../domain/entities/protection-report.entity';
+import { ProtectionReportRepository } from '../../domain/repositories/protection-report.repository';
+import { ProtectionReportEntity } from '../../domain/entities/protection-report.entity';
 
 /**
  * ProtectionReportMongoRepository

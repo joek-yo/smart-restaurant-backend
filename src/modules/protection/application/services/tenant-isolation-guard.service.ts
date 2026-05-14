@@ -34,9 +34,9 @@ export class TenantIsolationGuardService {
     const requestScope = new TenantScopeVO(requestTenantId);
     const resourceScope = new TenantScopeVO(resourceTenantId);
 
-    if (requestScope.value !== resourceScope.value) {
+    if (requestScope.getValue() !== resourceScope.getValue()) {
       this.logger.error(
-        `[TENANT_VIOLATION] requestTenant=${requestScope.value} resourceTenant=${resourceScope.value} ` +
+        `[TENANT_VIOLATION] requestTenant=${requestScope.getValue()} resourceTenant=${resourceScope.getValue()} ` +
         `user=${context?.userId ?? 'unknown'} action=${context?.action ?? 'unknown'} trace=${context?.traceId ?? 'none'}`,
       );
 
@@ -92,4 +92,12 @@ export class TenantIsolationGuardService {
 
     return safe;
   }
+
+  private async checkIsolation(input: any): Promise<void> {
+    if (input?.requestTenantId && input?.tenantId) {
+      this.assertTenantAccess(input.requestTenantId, input.tenantId, { userId: input.userId });
+    }
+  }
+
+  async validate(_input: any): Promise<void> { await this.checkIsolation(_input); }
 }

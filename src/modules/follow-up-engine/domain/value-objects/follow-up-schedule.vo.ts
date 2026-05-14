@@ -52,6 +52,10 @@ export class FollowUpScheduleVO {
   // 🏗️ FACTORY — CREATE FROM DELAY
   // ==================================================
 
+  static create(props: FollowUpScheduleProps): FollowUpScheduleVO {
+    return new FollowUpScheduleVO(props);
+  }
+
   static fromDelay(
     delayMs: number,
     retryWindowMs?: number,

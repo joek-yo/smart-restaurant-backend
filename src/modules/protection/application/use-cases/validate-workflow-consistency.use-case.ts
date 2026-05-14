@@ -100,8 +100,7 @@ export class ValidateWorkflowConsistencyUseCase {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.log(
-      'ValidateWorkflowConsistencyUseCase',
+    this.logger.log('info', 'ValidateWorkflowConsistencyUseCase',
       'EXECUTED',
       {
         tenantId: input.tenantId,

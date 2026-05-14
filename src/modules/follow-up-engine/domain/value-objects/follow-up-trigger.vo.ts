@@ -27,6 +27,7 @@ export type FollowUpTriggerType =
   | 'MANUAL_TRIGGER';
 
 export interface FollowUpTriggerProps {
+  trigger?: string;
   type: FollowUpTriggerType;
 
   source: string;
@@ -39,6 +40,10 @@ export interface FollowUpTriggerProps {
 }
 
 export class FollowUpTriggerVO {
+  static create(props: FollowUpTriggerProps): FollowUpTriggerVO {
+    return new FollowUpTriggerVO(props);
+  }
+
   readonly type: FollowUpTriggerType;
 
   readonly source: string;

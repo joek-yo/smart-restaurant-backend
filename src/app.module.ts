@@ -24,8 +24,6 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { WhatsAppModule } from './modules/channels/whatsapp.module';
-import { AboutModule } from './modules/about/about.module';
-import { BlogModule } from './modules/blog/blog.module';
 import { ConversationModule } from './modules/conversation/conversation.module';
 
 @Module({
@@ -44,8 +42,6 @@ import { ConversationModule } from './modules/conversation/conversation.module';
     NotificationsModule,
     AuthModule,
     WhatsAppModule,
-    AboutModule,
-    BlogModule,
     ConversationModule,
   ],
 })

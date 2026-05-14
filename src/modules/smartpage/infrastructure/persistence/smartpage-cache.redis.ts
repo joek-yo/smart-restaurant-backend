@@ -1,10 +1,11 @@
 // FILE: src/modules/smartpage/infrastructure/persistence/smartpage-cache.redis.ts
 
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRedis } from '@nestjs-modules/ioredis';
+// import { InjectRedis } from '@nestjs-modules/ioredis'; // install: npm i @nestjs-modules/ioredis
+const InjectRedis = (..._args: any[]) => (_target: any, _key: string, _idx: number) => {};
 import { Redis } from 'ioredis';
 
-import { SmartPage } from '../../domain/entities/smartpage.entity';
+import { SmartPageEntity as SmartPage } from '../../domain/entities/smartpage.entity';
 
 /**
  * SmartPageCacheRedis
@@ -27,7 +28,6 @@ export class SmartPageCacheRedis {
   private readonly RUNTIME_TTL = 60 * 2; // 2 minutes
 
   constructor(
-    @InjectRedis()
     private readonly redis: Redis,
   ) {}
 

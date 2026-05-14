@@ -2,7 +2,6 @@
 
 import { Injectable } from '@nestjs/common';
 
-import { RedisService } from '@core/redis/redis.service';
 
 import {
   FollowUpRepository,
@@ -12,11 +11,7 @@ import {
   CancelFollowUpInput,
 } from '../../domain/repositories/follow-up.repository';
 
-import {
-  FollowUpJobEntity,
-  FollowUpChannel,
-  FollowUpJobStatus,
-} from '../../domain/entities/follow-up-job.entity';
+  import { FollowUpJobEntity, FollowUpChannel, FollowUpJobStatus } from '../../domain/entities/follow-up-job.entity';
 
 import { FollowUpType } from '../../domain/enums/follow-up-type.enum';
 
@@ -58,7 +53,7 @@ export class FollowUpRedisRepository
     'followup:user';
 
   constructor(
-    private readonly redis: RedisService,
+    private readonly redis: any,
   ) {}
 
   // ==================================================
@@ -189,7 +184,7 @@ export class FollowUpRedisRepository
     );
 
     const jobs = await Promise.all(
-      ids.map((id) =>
+      ids.map((id: string) =>
         this.findById(id),
       ),
     );
@@ -280,14 +275,14 @@ export class FollowUpRedisRepository
     }
 
     const rows = await Promise.all(
-      keys.map((key) =>
+      keys.map((key: string) =>
         this.redis.get(key),
       ),
     );
 
     return rows
       .filter(Boolean)
-      .map((row) =>
+      .map((row: any) =>
         this.deserialize(row as string),
       );
   }
@@ -390,7 +385,7 @@ export class FollowUpRedisRepository
             parsed.trigger.reason,
 
           triggeredAt: new Date(
-            parsed.trigger.triggeredAt,
+            parsed.trigger.typeedAt,
           ),
 
           metadata:

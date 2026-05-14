@@ -118,7 +118,7 @@ export class ReconnectRecoveryStrategy {
       userId: input.userId,
       workflowType: input.workflowType,
       currentState: input.currentState,
-      targetState: restoredState,
+      recoveryReason: input.recoveryReason,
       metadata: {
         recoveryReason: input.recoveryReason,
         resumed,
@@ -130,12 +130,15 @@ export class ReconnectRecoveryStrategy {
     // 💾 CACHE UPDATE
     // ==================================================
 
-    await this.workflowCache.setWorkflowState({
-      tenantId: input.tenantId,
-      userId: input.userId,
-      workflowType: input.workflowType,
-      state: restoredState,
-      metadata: {
+    await this.workflowCache.setWorkflowState(
+      `${input.tenantId}:${input.userId}:${input.workflowType}`,
+      {
+        traceId: Date.now().toString(),
+        tenantId: input.tenantId,
+        userId: input.userId,
+        type: 'SESSION',
+        state: restoredState,
+        payload: {
         recovered: true,
         resumed,
         lastKnownState: input.lastKnownState,
@@ -164,8 +167,7 @@ export class ReconnectRecoveryStrategy {
     // 🧾 LOGGING
     // ==================================================
 
-    this.logger.log(
-      'ReconnectRecoveryStrategy',
+    this.logger.log('info', 'ReconnectRecoveryStrategy',
       'RECONNECT_RECOVERY_SUCCESS',
       {
         tenantId: input.tenantId,
