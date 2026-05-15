@@ -1,6 +1,7 @@
 // FILE: src/modules/sessions/sessions.module.ts
 
 import { Module, Global } from '@nestjs/common';
+import { CoreEventModule } from '../../core/events/core-event.module';
 import { Redis } from 'ioredis';
 
 // ==========================
@@ -60,6 +61,7 @@ const redisProvider = {
 
 @Global()
 @Module({
+  imports: [CoreEventModule],
   providers: [
     // --------------------------
     // INFRASTRUCTURE

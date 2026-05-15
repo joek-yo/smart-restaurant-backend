@@ -45,15 +45,15 @@ export class DistributedLockCoordinatorService {
       `[LOCK] acquiring key=${key} owner=${input.ownerId}`,
     );
 
-    const acquired = await this.redisLock.acquire(key, Math.ceil((input.ttlMs ?? 10_000) / 1000));
+    const result = await this.redisLock.acquire(key, Math.ceil((input.ttlMs ?? 10_000) / 1000));
 
-    if (!acquired) {
+    if (!result.acquired) {
       this.logger.warn(
         `[LOCK] failed key=${key} owner=${input.ownerId}`,
       );
     }
 
-    return acquired;
+    return result.acquired;
   }
 
   // ==================================================
@@ -71,7 +71,7 @@ export class DistributedLockCoordinatorService {
       `[LOCK] releasing key=${key} owner=${input.ownerId}`,
     );
 
-    await this.redisLock.release(key);
+    await this.redisLock.release(key, input.ownerId);
     return true;
   }
 
@@ -91,7 +91,7 @@ export class DistributedLockCoordinatorService {
       `[LOCK] extending key=${key} owner=${input.ownerId}`,
     );
 
-    return this.redisLock.extend(key, Math.ceil((input.ttlMs ?? 10_000) / 1000));
+    return this.redisLock.extend(key, input.ownerId, Math.ceil((input.ttlMs ?? 10_000) / 1000));
   }
 
   // ==================================================
@@ -104,7 +104,7 @@ export class DistributedLockCoordinatorService {
   }): Promise<boolean> {
     const key = new WorkflowLockIdVO(`${input.tenantId}:${input.workflowType}:${input.resourceId}`).getValue();
 
-    return this.redisLock.exists(key);
+    return this.redisLock.isLocked(key);
   }
 
   // ==================================================

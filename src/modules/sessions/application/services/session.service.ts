@@ -9,6 +9,9 @@ import { SessionRepository } from '../../domain/repositories/session.repository'
 import { CartItemRepository } from '../../domain/repositories/cart-item.repository';
 import { SessionCacheRepository } from '../../domain/repositories/session-cache.repository';
 
+// 🔥 NEW: Event Bus
+import { EventBus } from '@core/events';
+
 @Injectable()
 export class SessionService {
   constructor(
@@ -20,6 +23,8 @@ export class SessionService {
 
     @Inject(SessionCacheRepository)
     private readonly cacheRepo: SessionCacheRepository,
+
+    private readonly eventBus: EventBus,
   ) {}
 
   // ==================================================
@@ -31,7 +36,11 @@ export class SessionService {
     tenantId: string,
     branchId?: string,
   ): Promise<SessionEntity> {
-    const match = await this.sessionRepo.findActiveByUser({ tenantId, userId, branchId });
+    const match = await this.sessionRepo.findActiveByUser({
+      tenantId,
+      userId,
+      branchId,
+    });
 
     if (match) {
       return this.hydrate(match);
@@ -46,6 +55,11 @@ export class SessionService {
 
     const saved = await this.sessionRepo.save(session);
     await this.cacheRepo.set(saved);
+
+    // 🔥 optional but useful for Truth Engine tracking
+    this.eventBus.emit('session.created', {
+      session: saved.toSnapshot(),
+    });
 
     return saved;
   }
@@ -65,7 +79,10 @@ export class SessionService {
   // 🛒 CART OPERATIONS (ONLY SOURCE OF TRUTH)
   // ==================================================
 
-  async addItem(sessionId: string, item: CartItemEntity): Promise<SessionEntity> {
+  async addItem(
+    sessionId: string,
+    item: CartItemEntity,
+  ): Promise<SessionEntity> {
     const session = await this.getOrFail(sessionId);
 
     session.addItem(item);
@@ -73,16 +90,39 @@ export class SessionService {
     await this.sessionRepo.update(sessionId, session);
     await this.cacheRepo.set(session);
 
+    // 🔥 EVENTS
+    this.eventBus.emit('session.cart.item.added', {
+      sessionId,
+      item: item.toSnapshot?.() ?? item,
+    });
+
+    this.eventBus.emit('session.updated', {
+      session: session.toSnapshot(),
+    });
+
     return session;
   }
 
-  async removeItem(sessionId: string, productId: string): Promise<SessionEntity> {
+  async removeItem(
+    sessionId: string,
+    productId: string,
+  ): Promise<SessionEntity> {
     const session = await this.getOrFail(sessionId);
 
     session.removeItem(productId);
 
     await this.sessionRepo.update(sessionId, session);
     await this.cacheRepo.set(session);
+
+    // 🔥 EVENTS
+    this.eventBus.emit('session.cart.item.removed', {
+      sessionId,
+      productId,
+    });
+
+    this.eventBus.emit('session.updated', {
+      session: session.toSnapshot(),
+    });
 
     return session;
   }
@@ -99,6 +139,17 @@ export class SessionService {
     await this.sessionRepo.update(sessionId, session);
     await this.cacheRepo.set(session);
 
+    // 🔥 EVENTS (treat as update)
+    this.eventBus.emit('session.cart.item.updated', {
+      sessionId,
+      productId,
+      quantity,
+    });
+
+    this.eventBus.emit('session.updated', {
+      session: session.toSnapshot(),
+    });
+
     return session;
   }
 
@@ -109,6 +160,15 @@ export class SessionService {
 
     await this.sessionRepo.update(sessionId, session);
     await this.cacheRepo.set(session);
+
+    // 🔥 EVENTS
+    this.eventBus.emit('session.cart.cleared', {
+      sessionId,
+    });
+
+    this.eventBus.emit('session.updated', {
+      session: session.toSnapshot(),
+    });
 
     return session;
   }
@@ -124,6 +184,15 @@ export class SessionService {
 
     await this.sessionRepo.update(sessionId, session);
     await this.cacheRepo.set(session);
+
+    // 🔥 EVENTS
+    this.eventBus.emit('session.checkout.started', {
+      sessionId,
+    });
+
+    this.eventBus.emit('session.updated', {
+      session: session.toSnapshot(),
+    });
 
     return session;
   }
@@ -141,7 +210,9 @@ export class SessionService {
   // 🧠 INTERNAL HELPERS
   // ==================================================
 
-  private async getOrFail(sessionId: string): Promise<SessionEntity> {
+  private async getOrFail(
+    sessionId: string,
+  ): Promise<SessionEntity> {
     const session = await this.getById(sessionId);
 
     if (!session) {
@@ -151,8 +222,9 @@ export class SessionService {
     return session;
   }
 
-  private async hydrate(session: SessionEntity): Promise<SessionEntity> {
-    // Load cart items if needed (future DB optimization hook)
+  private async hydrate(
+    session: SessionEntity,
+  ): Promise<SessionEntity> {
     const items = await this.cartRepo.findBySession(session.id!);
 
     session.items = items;

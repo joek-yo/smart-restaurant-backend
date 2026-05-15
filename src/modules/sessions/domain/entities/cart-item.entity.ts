@@ -234,6 +234,23 @@ export class CartItemEntity extends BaseEntity {
   // Internal
   // ─────────────────────────────────────────────
 
+  toSnapshot(): Record<string, any> {
+    return {
+      id: this.id,
+      sessionId: this.sessionId,
+      businessId: this.businessId,
+      branchId: this.branchId,
+      productId: this.productId,
+      name: this.name,
+      quantity: this.quantity,
+      price: this.price,
+      total: this.total,
+      options: this.options,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+    };
+  }
+
   touch(): void {
     this.updatedAt = new Date();
   }

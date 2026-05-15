@@ -36,7 +36,13 @@ export class TenantMiddleware implements NestMiddleware {
     let business: BusinessDocument | null = null;
 
     if (tenantId) {
-      business = await this.businessModel.findById(tenantId).exec();
+      // Guard against non-ObjectId strings (e.g. slug-style test IDs)
+      const isObjectId = /^[a-f\d]{24}$/i.test(tenantId);
+      if (isObjectId) {
+        business = await this.businessModel.findById(tenantId).exec();
+      } else {
+        business = await this.businessModel.findOne({ slug: tenantId, isActive: true }).exec();
+      }
     } else if (tenantSlug) {
       business = await this.businessModel
         .findOne({ slug: tenantSlug, isActive: true })

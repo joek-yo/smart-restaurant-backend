@@ -78,6 +78,8 @@ export const SESSION_EVENTS = {
   CART_ITEM_ADDED: 'session.cart.item.added',
   CART_ITEM_REMOVED: 'session.cart.item.removed',
   CART_CLEARED: 'session.cart.cleared',
+  CART_ITEM_UPDATED: 'session.cart.item.updated',
+  CHECKOUT_STARTED: 'session.checkout.started',
 } as const;
 
 /**
@@ -89,6 +91,7 @@ export const SESSION_EVENTS = {
 export const BUSINESS_EVENTS = {
   BUSINESS_CREATED: 'business.created',
   BUSINESS_UPDATED: 'business.updated',
+  BUSINESS_DELETED: 'business.deleted',
 
   RESTAURANT_SETTINGS_UPDATED: 'restaurant.settings.updated',
 } as const;
@@ -107,6 +110,7 @@ export const CATALOG_EVENTS = {
   CATEGORY_CREATED: 'category.created',
   CATEGORY_UPDATED: 'category.updated',
   CATEGORY_DELETED: 'category.deleted',
+  CATALOG_CHANGED: 'catalog.changed',
 } as const;
 
 /**

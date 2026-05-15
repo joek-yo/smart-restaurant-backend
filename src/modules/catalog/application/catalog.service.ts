@@ -1,4 +1,4 @@
-// 📁 File: src/domains/menu/catalog.service.ts
+// 📁 File: src/modules/catalog/application/catalog.service.ts
 
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,7 +16,7 @@ import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
-// ✅ Core Event Bus (NEW ARCHITECTURE)
+// ✅ Core Event Bus
 import { EventBus } from '@core/events';
 
 @Injectable()
@@ -52,8 +52,15 @@ export class CatalogService {
         : businessId,
     });
 
+    // 🔥 FIX: standardized event naming for Truth Engine
     this.eventBus.emit('category.created', {
       category: category.toObject(),
+      businessId,
+    });
+
+    // 🔥 IMPORTANT: also trigger catalog-wide invalidation
+    this.eventBus.emit('catalog.changed', {
+      type: 'category.created',
       businessId,
     });
 
@@ -78,6 +85,11 @@ export class CatalogService {
       category: category.toObject(),
     });
 
+    this.eventBus.emit('catalog.changed', {
+      type: 'category.updated',
+      id,
+    });
+
     return category;
   }
 
@@ -86,6 +98,11 @@ export class CatalogService {
     if (!category) return null;
 
     this.eventBus.emit('category.deleted', { id });
+
+    this.eventBus.emit('catalog.changed', {
+      type: 'category.deleted',
+      id,
+    });
 
     return category;
   }
@@ -109,6 +126,12 @@ export class CatalogService {
 
     this.eventBus.emit('product.created', {
       product: product.toObject(),
+      businessId,
+    });
+
+    // 🔥 FIX: unified invalidation signal
+    this.eventBus.emit('catalog.changed', {
+      type: 'product.created',
       businessId,
     });
 
@@ -147,6 +170,11 @@ export class CatalogService {
       id,
     });
 
+    this.eventBus.emit('catalog.changed', {
+      type: 'product.updated',
+      id,
+    });
+
     return product;
   }
 
@@ -155,6 +183,11 @@ export class CatalogService {
     if (!product) return null;
 
     this.eventBus.emit('product.deleted', { id });
+
+    this.eventBus.emit('catalog.changed', {
+      type: 'product.deleted',
+      id,
+    });
 
     return product;
   }
@@ -191,6 +224,11 @@ export class CatalogService {
 
     this.eventBus.emit('restaurant.settings.updated', {
       settings: settings.toObject(),
+      businessId,
+    });
+
+    this.eventBus.emit('catalog.changed', {
+      type: 'settings.updated',
       businessId,
     });
 

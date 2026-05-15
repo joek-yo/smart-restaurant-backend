@@ -1,0 +1,799 @@
+
+[1;33m━━━ STARTING SERVER ━━━[0m
+Server PID: 20707
+Waiting for server to be ready...
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +27ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDatabaseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCustomersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNotificationsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCoreEventModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTenantModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventEmitterModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventEmitterModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> conversation.response.ready[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> checkout.started[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> order.created[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> order.cancelled[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> whatsapp.delivery.failed[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSessionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:17 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWhatsAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+  still waiting... (2s)
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseCoreModule dependencies initialized[39m[38;5;3m +2064ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseModule dependencies initialized[39m[38;5;3m +10ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMongooseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBusinessModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCatalogModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOrdersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCheckoutModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConversationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[WebSocketsController] [39m[32mWhatsappGateway subscribed to the "incomingMessage" message[39m[38;5;3m +12ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mBusinessController {/businesses}:[39m[38;5;3m +4ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses, POST} route[39m[38;5;3m +2ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses/slug/:slug, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses/domain/:domain, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses/:id/storefront, GET} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/businesses/:id/storefront, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCatalogController {/catalog}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/categories, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/categories, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/categories/:id, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/categories/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/settings, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/settings, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/products, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mProductController {/catalog/products}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/products, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/products, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/products/category/:categoryId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/products/:id, PATCH} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/catalog/products/:id, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mOrdersController {/orders}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders/:id, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/orders/:id/status, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mCheckoutController {/checkout}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/checkout/cart/add, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/checkout/cart/update, PATCH} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/checkout/cart/remove, DELETE} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/checkout/start, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/checkout/confirm, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/checkout/cancel, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mWebChatController {/api/conversation/webchat}:[39m[38;5;3m +1ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversation/webchat/message, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mApiController {/api/conversation}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/conversation/message, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mWhatsappController {/webhook/whatsapp}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/webhook/whatsapp, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/webhook/whatsapp/verify, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> order.created[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> order.status.updated[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ResolverRegistry] [39m[32m[ResolverRegistry] registered: keyword[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ResolverRegistry] [39m[32m[ResolverRegistry] registered: commerce[39m
+[33m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [33m   WARN[39m [38;5;3m[AiResolver] [39m[33m[AiResolver] ANTHROPIC_API_KEY not set — disabled[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ResolverRegistry] [39m[32m[ResolverRegistry] registered: ai[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ResolverRegistry] [39m[32m[ResolverRegistry] registered: fallback[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: add-to-cart[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: checkout[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: view-cart[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: view-products[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: send-message[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: cancel-order[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: handover[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] Registered action: start-flow[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[FlowRegistry] [39m[32m[FlowRegistry] registered: onboarding[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[FlowRegistry] [39m[32m[FlowRegistry] registered: abandoned-cart[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[FlowRegistry] [39m[32m[FlowRegistry] registered: reorder[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[FlowRegistry] [39m[32m[FlowRegistry] registered: escalation[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> payment.confirmed[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> payment.failed[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> checkout.confirmed[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> order.created[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> order.completed[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[EventBus] [39m[32m[EventBus] listener registered -> conversation.state.changed[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ActionRegistry] [39m[32m[ActionRegistry] 8 actions registered: add-to-cart, checkout, view-cart, view-products, send-message, cancel-order, handover, start-flow[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[ResolverRegistry] [39m[32m[ResolverRegistry] 4 resolvers ready: keyword(p=10), commerce(p=20), ai(p=50), fallback(p=100)[39m
+[32m[Nest] 20707  - [39m05/15/2026, 3:10:20 AM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +0ms[39m
+🚀 Server running on http://localhost:5000
+Server is up!
+
+[1;33m━━━ 1. HEALTH ━━━[0m
+[0;32m✅ PASS[0m — Server responding (HTTP 404)
+
+[1;33m━━━ 2. AUTH — Register + Login ━━━[0m
+Register: {"message":["slug must be a string","phone must be a string","timezone must be a string","currency must be a string"],"error":"Bad Request","statusCode":400}
+[0;31m❌ FAIL[0m — Auth - Register | Response: {"message":["slug must be a string","phone must be a string","timezone must be a string","currency must be a string"],"error":"Bad Request","statusCode":400}
+Login: {"message":"Invalid credentials","error":"Unauthorized","statusCode":401}
+[0;31m❌ FAIL[0m — Auth - Login (no token) | Response: {"message":"Invalid credentials","error":"Unauthorized","statusCode":401}
+
+[1;33m━━━ 3. BUSINESS — Create + Get ━━━[0m
+Create business: {"statusCode":500,"message":"Internal server error"}
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;31m❌ FAIL[0m — Business - Create | Response: {"statusCode":500,"message":"Internal server error"}
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;31m❌ FAIL[0m — Business - Get | Response: {"statusCode":500,"message":"Internal server error"}
+
+[1;33m━━━ 4. CATALOG — Category + Product ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Create category: {"statusCode":500,"message":"Internal server error"}
+[0;31m❌ FAIL[0m — Catalog - Create Category | Response: {"statusCode":500,"message":"Internal server error"}
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Create product: {"statusCode":500,"message":"Internal server error"}
+[0;31m❌ FAIL[0m — Catalog - Create Product | Response: {"statusCode":500,"message":"Internal server error"}
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;31m❌ FAIL[0m — Catalog - List Products | Response: {"statusCode":500,"message":"Internal server error"}
+
+[1;33m━━━ 5. SESSIONS — Create + Cart ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Create session: {"statusCode":500,"message":"Internal server error"}
+[0;31m❌ FAIL[0m — Session - Create | Response: {"statusCode":500,"message":"Internal server error"}
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Add to cart: {"statusCode":500,"message":"Internal server error"}
+[0;31m❌ FAIL[0m — Session - Add to Cart | Response: {"statusCode":500,"message":"Internal server error"}
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;31m❌ FAIL[0m — Session - Get | Response: {"statusCode":500,"message":"Internal server error"}
+
+[1;33m━━━ 6. CHECKOUT — Start + Summary ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Start checkout: {"statusCode":500,"message":"Internal server error"}
+[0;32m✅ PASS[0m — Checkout - Start
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;31m❌ FAIL[0m — Checkout - Summary | Response: {"statusCode":500,"message":"Internal server error"}
+
+[1;33m━━━ 7. ORDERS — Create + Status ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Create order: {"statusCode":500,"message":"Internal server error"}
+[0;32m✅ PASS[0m — Orders - Create
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;32m✅ PASS[0m — Orders - List
+
+[1;33m━━━ 8. PAYMENTS — Initiate ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Initiate payment: {"statusCode":500,"message":"Internal server error"}
+[0;32m✅ PASS[0m — Payments - Initiate
+
+[1;33m━━━ 9. CONVERSATION — Process Message ━━━[0m
+Conversation message: {"statusCode":500,"message":"Internal server error"}
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;32m✅ PASS[0m — Conversation - Process Message
+
+[1;33m━━━ 10. PROTECTION — Workflow Health ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Protection health: {"statusCode":500,"message":"Internal server error"}
+[0;32m✅ PASS[0m — Protection - Health
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;32m✅ PASS[0m — Protection - Workflow Health Alt
+
+[1;33m━━━ 11. RECOVERY — Trigger Session Recovery ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Recovery: {"statusCode":500,"message":"Internal server error"}
+[0;32m✅ PASS[0m — Recovery - Session
+
+[1;33m━━━ 12. SMARTPAGE — Create + Render ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Create smartpage: {"statusCode":500,"message":"Internal server error"}
+[0;32m✅ PASS[0m — SmartPage - Create
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;32m✅ PASS[0m — SmartPage - Render
+
+[1;33m━━━ 13. FOLLOW-UP ENGINE ━━━[0m
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+Follow-up trigger: {"statusCode":500,"message":"Internal server error"}
+[0;32m✅ PASS[0m — Follow-up - Trigger
+[31m[Nest] 20707  - [39m05/15/2026, 3:10:24 AM [31m  ERROR[39m [38;5;3m[ExceptionsHandler] [39mCastError: Cast to ObjectId failed for value "tenant-test-001" (type string) at path "_id" for model "Business"
+    at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:253:11[90m)[39m
+    at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+    at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+    at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+    at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+    at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+    at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+    at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async TenantMiddleware.use [90m(/home/joe/backend-clean/[39mdist/main.js:389:24[90m)[39m {
+  stringValue: [32m'"tenant-test-001"'[39m,
+  messageFormat: [90mundefined[39m,
+  kind: [32m'ObjectId'[39m,
+  value: [32m'tenant-test-001'[39m,
+  path: [32m'_id'[39m,
+  reason: BSONError: input must be a 24 character hex string, 12 byte Uint8Array, or an integer
+      at new ObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mbson[24m/lib/bson.cjs:2636:23[90m)[39m
+      at castObjectId [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast/objectid.js:25:12[90m)[39m
+      at SchemaObjectId.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schema/objectId.js:251:12[90m)[39m
+      at SchemaType.applySetters [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1287:12[90m)[39m
+      at SchemaType.castForQuery [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/schemaType.js:1713:17[90m)[39m
+      at cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/cast.js:386:32[90m)[39m
+      at Query.cast [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:5127:12[90m)[39m
+      at Query._castConditions [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2376:10[90m)[39m
+      at model.Query._findOne [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:2716:8[90m)[39m
+      at model.Query.exec [90m(/home/joe/backend-clean/[39mnode_modules/[4mmongoose[24m/lib/query.js:4726:80[90m)[39m,
+  valueType: [32m'string'[39m
+}
+[0;32m✅ PASS[0m — Follow-up - Status
+
+═══════════════════════════════════════
+  [0;32mPASSED: 13[0m   [0;31mFAILED: 11[0m
+═══════════════════════════════════════
+
+[1;33m━━━ STOPPING SERVER ━━━[0m
+Server stopped.

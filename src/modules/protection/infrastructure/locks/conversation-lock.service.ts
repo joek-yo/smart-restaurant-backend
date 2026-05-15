@@ -39,7 +39,7 @@ export class ConversationLockService {
 
     this.logger.debug(`[LOCK] acquiring conversation lock=${lockId.getValue()}`);
 
-    return this.redisLock.acquire(lockId.getValue(), this.TTL_SECONDS);
+    return (await this.redisLock.acquire(lockId.getValue(), this.TTL_SECONDS)).acquired;
   }
 
   /**
@@ -55,7 +55,7 @@ export class ConversationLockService {
 
     this.logger.debug(`[LOCK] releasing conversation lock=${lockId.getValue()}`);
 
-    await this.redisLock.release(lockId.getValue());
+    await this.redisLock.release(lockId.getValue(), '');
   }
 
   /**

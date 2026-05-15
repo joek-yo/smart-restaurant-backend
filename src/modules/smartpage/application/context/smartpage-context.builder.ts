@@ -1,19 +1,25 @@
-// src/modules/smartpage/application/context/smartpage-context.builder.ts
+// FILE: src/modules/smartpage/application/context/smartpage-context.builder.ts
 
 import { Injectable, Logger } from '@nestjs/common';
 
 import { UserContextService } from './user-context.service';
 import { BusinessContextService } from './business-context.service';
 
-// import { ConversationContextRepository } from '@modules/conversation/domain/repositories/conversation-context.repository'; // missing
-// import { SessionRepository } from '@modules/session/domain/repositories/session.repository'; // missing
+// ✅ NEW: single source of truth
+import { TruthEngineService } from '@modules/truth-engine/application/truth-engine.service';
 
 /**
  * SmartPageContextBuilder
  * -----------------------
- * Builds ONE unified context for rendering SmartPages.
+ * Now a PURE renderer input builder.
  *
- * This is the "brain input layer" of the SmartPage engine.
+ * BEFORE:
+ * - multiple repos (session, conversation, business fragments)
+ *
+ * AFTER:
+ * - ONE SNAPSHOT (TruthEngine)
+ *
+ * This makes SmartPage deterministic + cacheable + fast.
  */
 @Injectable()
 export class SmartPageContextBuilder {
@@ -22,8 +28,9 @@ export class SmartPageContextBuilder {
   constructor(
     private readonly userContextService: UserContextService,
     private readonly businessContextService: BusinessContextService,
-    private readonly conversationRepo: any,
-    private readonly sessionRepo: any,
+
+    // ✅ SINGLE DEPENDENCY NOW
+    private readonly truthEngine: TruthEngineService,
   ) {}
 
   /**
@@ -36,7 +43,7 @@ export class SmartPageContextBuilder {
     channel: string;
   }) {
     // ==================================================
-    // 1. LOAD BUSINESS CONTEXT (TENANT BRAIN)
+    // 1. LOAD BUSINESS CONTEXT (STATIC UI BRAIN)
     // ==================================================
     const businessContext =
       await this.businessContextService.buildBusinessContext({
@@ -44,7 +51,7 @@ export class SmartPageContextBuilder {
       });
 
     // ==================================================
-    // 2. LOAD USER CONTEXT (BEHAVIORAL BRAIN)
+    // 2. LOAD USER CONTEXT (BEHAVIORAL LAYER)
     // ==================================================
     const userContext =
       await (this.userContextService as any).buildUserContext?.({
@@ -53,23 +60,16 @@ export class SmartPageContextBuilder {
       });
 
     // ==================================================
-    // 3. LOAD CONVERSATION CONTEXT (STATE MACHINE BRAIN)
+    // 3. LOAD TRUTH SNAPSHOT (THE ONLY DYNAMIC SYSTEM STATE)
     // ==================================================
-    const conversation =
-      await this.conversationRepo.findByUser(
-        input.tenantId,
-        input.userId,
-      );
+    const truth = await this.truthEngine.getSnapshot({
+      tenantId: input.tenantId,
+      userId: input.userId,
+      sessionId: input.sessionId,
+    });
 
     // ==================================================
-    // 4. LOAD SESSION CONTEXT (SESSION + CART STATE)
-    // ==================================================
-    const session = await this.sessionRepo.findById(
-      input.sessionId,
-    );
-
-    // ==================================================
-    // 5. BUILD CANONICAL SMARTPAGE CONTEXT
+    // 4. BUILD CANONICAL SMARTPAGE CONTEXT
     // ==================================================
     const smartpageContext = {
       // ------------------------------
@@ -91,51 +91,28 @@ export class SmartPageContextBuilder {
       user: userContext,
 
       // ------------------------------
-      // CONVERSATION BRAIN
+      // TRUTH ENGINE (SOURCE OF ALL DYNAMIC STATE)
       // ------------------------------
-      conversation: conversation
-        ? {
-            state: conversation.state,
-            memory: conversation.memory,
-            pendingPrompt: conversation.pendingPrompt,
-            recoveryMarker: conversation.recoveryMarker,
-          }
-        : null,
+      truth,
 
       // ------------------------------
-      // SESSION BRAIN
-      // ------------------------------
-      session: session
-        ? {
-            id: session.id,
-            cart: session.cart,
-            metadata: session.metadata,
-            lastActivity: session.updatedAt,
-          }
-        : null,
-
-      // ------------------------------
-      // DEVICE CONTEXT (DERIVED)
+      // DEVICE CONTEXT (DERIVED ONLY FROM INPUT)
       // ------------------------------
       device: this.resolveDevice(input.channel),
 
       // ------------------------------
-      // RAW DEBUG PAYLOAD (OPTIONAL)
+      // DEBUG / OBSERVABILITY
       // ------------------------------
       _meta: {
         builtAt: new Date(),
-        hasConversation: !!conversation,
-        hasSession: !!session,
+        hasTruth: !!truth,
         hasUserContext: !!userContext,
         hasBusinessContext: !!businessContext,
       },
     };
 
-    // ==================================================
-    // LOG CONTEXT BUILD (DEBUG + OBSERVABILITY)
-    // ==================================================
     this.logger.log(
-      `[SmartPageContext] built tenant=${input.tenantId} user=${input.userId}`,
+      `[SmartPageContext] built via TruthEngine tenant=${input.tenantId}`,
     );
 
     return smartpageContext;

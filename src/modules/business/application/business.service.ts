@@ -1,4 +1,5 @@
 // src/modules/business/application/business.service.ts
+
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -8,21 +9,41 @@ import {
   BusinessDocument,
   StorefrontConfig,
 } from '@modules/business/infrastructure/schemas/business.schema';
+
 import { CreateBusinessDto } from '@modules/business/application/dto/create-business.dto';
 import { UpdateBusinessDto } from '@modules/business/application/dto/update-business.dto';
+
+// 🔥 NEW: Event Bus
+import { EventBus } from '@core/events';
 
 @Injectable()
 export class BusinessService {
   constructor(
     @InjectModel(Business.name)
     private readonly businessModel: Model<BusinessDocument>,
+
+    private readonly eventBus: EventBus,
   ) {}
 
-  // ── Write ──────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────
+  // WRITE OPERATIONS
+  // ─────────────────────────────────────────────────────────────
 
   async create(dto: CreateBusinessDto): Promise<Business> {
     const business = new this.businessModel(dto);
-    return business.save();
+    const saved = await business.save();
+
+    // 🔥 EVENTS
+    this.eventBus.emit('business.created', {
+      business: saved.toObject(),
+    });
+
+    this.eventBus.emit('business.updated', {
+      business: saved.toObject(),
+      type: 'created',
+    });
+
+    return saved;
   }
 
   async update(id: string, dto: UpdateBusinessDto): Promise<Business> {
@@ -31,6 +52,14 @@ export class BusinessService {
       .exec();
 
     if (!business) throw new NotFoundException('Business not found');
+
+    // 🔥 EVENTS
+    this.eventBus.emit('business.updated', {
+      business: business.toObject(),
+      id,
+      type: 'general_update',
+    });
+
     return business;
   }
 
@@ -38,8 +67,8 @@ export class BusinessService {
     id: string,
     config: Partial<StorefrontConfig>,
   ): Promise<Business> {
-    // $set with dot notation so partial updates don't wipe the whole sub-doc
     const updates: Record<string, any> = {};
+
     for (const [key, value] of Object.entries(config)) {
       updates[`storefront.${key}`] = value;
     }
@@ -49,15 +78,41 @@ export class BusinessService {
       .exec();
 
     if (!business) throw new NotFoundException('Business not found');
+
+    // 🔥 EVENTS (IMPORTANT FOR SMARTPAGE + CACHE)
+    this.eventBus.emit('restaurant.settings.updated', {
+      businessId: id,
+      storefront: business.storefront,
+    });
+
+    this.eventBus.emit('business.updated', {
+      business: business.toObject(),
+      id,
+      type: 'storefront_update',
+    });
+
     return business;
   }
 
   async remove(id: string): Promise<void> {
     const result = await this.businessModel.findByIdAndDelete(id).exec();
+
     if (!result) throw new NotFoundException('Business not found');
+
+    // 🔥 EVENTS
+    this.eventBus.emit('business.deleted', {
+      id,
+    });
+
+    this.eventBus.emit('business.updated', {
+      id,
+      type: 'deleted',
+    });
   }
 
-  // ── Read ───────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────
+  // READ OPERATIONS
+  // ─────────────────────────────────────────────────────────────
 
   async findAll(): Promise<Business[]> {
     return this.businessModel.find({ isActive: true }).exec();
@@ -65,33 +120,33 @@ export class BusinessService {
 
   async findOne(id: string): Promise<Business> {
     const business = await this.businessModel.findById(id).exec();
+
     if (!business) throw new NotFoundException('Business not found');
     return business;
   }
 
-  // Used by Next.js middleware for subdomain/path resolution
-  // e.g. slug = "pdk" from pdk.yourapp.com
   async findBySlug(slug: string): Promise<Business> {
     const business = await this.businessModel
       .findOne({ slug: slug.toLowerCase().trim(), isActive: true })
       .exec();
 
-    if (!business) throw new NotFoundException(`Business "${slug}" not found`);
+    if (!business)
+      throw new NotFoundException(`Business "${slug}" not found`);
+
     return business;
   }
 
-  // Used by Next.js middleware for custom domain resolution
-  // e.g. domain = "shop.primedeals.co.ke"
   async findByDomain(domain: string): Promise<Business> {
     const business = await this.businessModel
       .findOne({ domain: domain.toLowerCase().trim(), isActive: true })
       .exec();
 
-    if (!business) throw new NotFoundException(`Domain "${domain}" not found`);
+    if (!business)
+      throw new NotFoundException(`Domain "${domain}" not found`);
+
     return business;
   }
 
-  // Returns only the storefront config — lightweight call for the frontend
   async getStorefront(id: string): Promise<StorefrontConfig> {
     const business = await this.businessModel
       .findById(id)
@@ -99,6 +154,7 @@ export class BusinessService {
       .exec();
 
     if (!business) throw new NotFoundException('Business not found');
+
     return business.storefront;
   }
 }
