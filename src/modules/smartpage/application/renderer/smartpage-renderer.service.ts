@@ -1,6 +1,6 @@
 // FILE: src/modules/smartpage/application/orchestration/smartpage-renderer.service.ts
 
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 
 import { SmartPageContextVO } from '../../domain/value-objects/smartpage-context.vo';
 import { RenderContextVO } from '../../domain/value-objects/render-context.vo';
@@ -10,7 +10,7 @@ import { ContextResolverService } from '../renderer/context-resolver.service';
 import { BlockRendererService } from '../renderer/block-renderer.service';
 import { ImageSelectionService } from '../image-engine/image-selection.service';
 
-import { SmartPageRepository } from '../../domain/repositories/smartpage.repository';
+import { SmartPageRepository, SMARTPAGE_REPOSITORY } from '../../domain/repositories/smartpage.repository';
 
 import { SmartPageRuntimeEntity } from '../../domain/entities/smartpage-runtime.entity';
 import { SmartPageEntity } from '../../domain/entities/smartpage.entity';
@@ -20,7 +20,7 @@ export class SmartPageRendererService {
   private readonly logger = new Logger(SmartPageRendererService.name);
 
   constructor(
-    private readonly smartPageRepository: SmartPageRepository,
+    @Inject(SMARTPAGE_REPOSITORY) private readonly smartPageRepository: SmartPageRepository,
 
     private readonly contextResolver: ContextResolverService,
     private readonly visibilityEngine: VisibilityEngineService,

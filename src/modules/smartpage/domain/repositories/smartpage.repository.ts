@@ -107,3 +107,4 @@ export interface SmartPageRepository {
 
   setDraft(pageId: string): Promise<SmartPageEntity>;
 }
+export const SMARTPAGE_REPOSITORY = 'SMARTPAGE_REPOSITORY';
