@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "busivra-core",
   "version": "0.0.1",
-  "description": "SmartRestaurant Backend",
+  "description": "Busivra — The Business Operating System",
   "author": "Joseph Kihiu",
   "private": true,
   "license": "UNLICENSED",
