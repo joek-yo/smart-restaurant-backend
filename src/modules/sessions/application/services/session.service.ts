@@ -222,6 +222,13 @@ export class SessionService {
     return session;
   }
 
+  async restore(
+    session: SessionEntity,
+  ): Promise<SessionEntity> {
+    await this.sessionRepo.save(session);
+    return session;
+  }
+
   private async hydrate(
     session: SessionEntity,
   ): Promise<SessionEntity> {
