@@ -43,9 +43,9 @@ export class ResolveIntentUseCase {
     // 🛍️ BROWSING
     // =========================
     if (
-      text === 'menu' ||
+      text === 'menu' || text === 'catalog' ||
       text === 'products' ||
-      text === 'show menu' ||
+      text === 'show menu' || text === 'browse' || text === 'show products' ||
       text.includes('what do you have') ||
       text.includes('what can i order')
     ) {

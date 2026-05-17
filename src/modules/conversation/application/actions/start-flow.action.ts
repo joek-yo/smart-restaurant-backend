@@ -30,7 +30,7 @@ export class StartFlowAction extends BaseAction implements OnModuleInit {
 
     if (!this.flowRegistry.has(flowName)) {
       this.logger.warn(`[StartFlowAction] Flow "${flowName}" not found`);
-      ctx.output = { response: "I'm not sure how to help with that. Type *menu* to see options." };
+      ctx.output = { response: "I'm not sure how to help with that. Type *catalog* to see options." };
       return;
     }
 

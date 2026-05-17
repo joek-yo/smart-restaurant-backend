@@ -3,8 +3,8 @@ import { CheckoutSessionPort, CHECKOUT_SESSION_PORT } from '../ports/checkout-se
 import { SessionState } from '@modules/sessions/domain/value-objects/session-state.vo';
 
 @Injectable()
-export class RecoverCheckoutUseCase {
-  private readonly logger = new Logger(RecoverCheckoutUseCase.name);
+export class RecoverCheckoutSessionUseCase {
+  private readonly logger = new Logger(RecoverCheckoutSessionUseCase.name);
 
   constructor(
     @Inject(CHECKOUT_SESSION_PORT)

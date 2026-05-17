@@ -1,15 +1,12 @@
 // src/modules/sessions/presentation/sessions.controller.ts
-
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { IsString, IsNumber, IsOptional, Min } from 'class-validator';
-import { AddToCartUseCase } from '../application/use-cases/add-to-cart.use-case';
-import { RemoveFromCartUseCase } from '../application/use-cases/remove-from-cart.use-case';
+import { AddCartItemUseCase } from '../application/use-cases/add-cart-item.use-case';
+import { RemoveCartItemUseCase } from '../application/use-cases/remove-cart-item.use-case';
 import { UpdateQuantityUseCase } from '../application/use-cases/update-quantity.use-case';
-import { CheckoutUseCase } from '../application/use-cases/checkout.use-case';
-import { CartItemEntity } from '../domain/entities/cart-item.entity';
+import { GetOrCreateSessionUseCase } from '../application/use-cases/get-or-create-session.use-case';
 
-// ── Inline DTOs (session module is legacy path, not worth a separate file) ──
-
+// ── Inline DTOs ──────────────────────────────────────────────────────────────
 class AddToCartDto {
   @IsString() userId!: string;
   @IsString() tenantId!: string;
@@ -19,36 +16,23 @@ class AddToCartDto {
   @IsNumber() price!: number;
   @IsNumber() @Min(1) quantity!: number;
 }
-
 class RemoveFromCartDto {
-  @IsString() userId!: string;
-  @IsString() tenantId!: string;
-  @IsOptional() @IsString() branchId?: string;
+  @IsString() sessionId!: string;
   @IsString() productId!: string;
 }
-
 class UpdateQuantityDto {
-  @IsString() userId!: string;
-  @IsString() tenantId!: string;
-  @IsOptional() @IsString() branchId?: string;
+  @IsString() sessionId!: string;
   @IsString() productId!: string;
   @IsNumber() @Min(1) quantity!: number;
-}
-
-class SessionCheckoutDto {
-  @IsString() userId!: string;
-  @IsString() tenantId!: string;
-  @IsOptional() @IsString() branchId?: string;
-  @IsOptional() @IsString() channel?: string;
 }
 
 @Controller('sessions')
 export class SessionController {
   constructor(
-    private readonly addToCartUseCase: AddToCartUseCase,
-    private readonly removeFromCartUseCase: RemoveFromCartUseCase,
-    private readonly updateQuantityUseCase: UpdateQuantityUseCase,
-    private readonly checkoutUseCase: CheckoutUseCase,
+    private readonly addCartItem: AddCartItemUseCase,
+    private readonly removeCartItem: RemoveCartItemUseCase,
+    private readonly updateQuantityUC: UpdateQuantityUseCase,
+    private readonly getOrCreateSession: GetOrCreateSessionUseCase,
   ) {}
 
   @Get()
@@ -58,35 +42,35 @@ export class SessionController {
 
   @Post('cart')
   async addToCart(@Body() body: AddToCartDto) {
-    const { userId, tenantId, branchId, productId, name, price, quantity } = body;
-    const item = new CartItemEntity({ productId, name, price, quantity });
-    await this.addToCartUseCase.execute(userId, item, tenantId, branchId);
-    return { success: true, message: 'Item added to cart' };
+    const session = await this.addCartItem.execute({
+      userId: body.userId,
+      tenantId: body.tenantId,
+      branchId: body.branchId,
+      productId: body.productId,
+      name: body.name,
+      price: body.price,
+      quantity: body.quantity,
+    });
+    return { success: true, session };
   }
 
   @Post('cart/remove')
   async remove(@Body() body: RemoveFromCartDto) {
-    const { userId, tenantId, branchId, productId } = body;
-    await this.removeFromCartUseCase.execute(userId, productId, tenantId, branchId);
-    return { success: true, message: 'Item removed from cart' };
+    const session = await this.removeCartItem.execute({
+      sessionId: body.sessionId,
+      productId: body.productId,
+    });
+    return { success: true, session };
   }
 
   @Post('cart/quantity')
   async updateQuantity(@Body() body: UpdateQuantityDto) {
-    const { userId, tenantId, branchId, productId, quantity } = body;
-    await this.updateQuantityUseCase.execute(userId, productId, quantity);
-    return { success: true, message: 'Quantity updated' };
-  }
-
-  @Post('checkout')
-  async checkout(@Body() body: SessionCheckoutDto) {
-    const { userId, tenantId, branchId, channel } = body;
-    const result = await this.checkoutUseCase.execute({
-      userId,
-      tenantId,
-      branchId,
-      channel: channel ?? 'api',
-    });
-    return { success: true, ...result };
+    await this.updateQuantityUC.execute(
+      body.sessionId,
+      body.productId,
+      body.quantity,
+    );
+    return { success: true };
   }
 }
+// NOTE: POST /sessions/checkout removed — use POST /checkout/start instead

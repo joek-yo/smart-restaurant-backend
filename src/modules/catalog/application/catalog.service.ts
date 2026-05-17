@@ -222,7 +222,7 @@ export class CatalogService {
 
     if (!settings) return null;
 
-    this.eventBus.emit('restaurant.settings.updated', {
+    this.eventBus.emit('catalog.settings.updated', {
       settings: settings.toObject(),
       businessId,
     });

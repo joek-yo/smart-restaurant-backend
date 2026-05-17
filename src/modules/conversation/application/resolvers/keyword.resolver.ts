@@ -8,6 +8,7 @@ export class KeywordResolver implements IntentResolver, OnModuleInit {
   readonly priority = 10;
 
   private readonly map: Record<string, ConversationIntent> = {
+    catalog: ConversationIntent.VIEW_PRODUCTS,
     menu: ConversationIntent.VIEW_PRODUCTS,
     products: ConversationIntent.VIEW_PRODUCTS,
     order: ConversationIntent.ADD_TO_CART,

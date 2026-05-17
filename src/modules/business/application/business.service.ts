@@ -80,7 +80,7 @@ export class BusinessService {
     if (!business) throw new NotFoundException('Business not found');
 
     // 🔥 EVENTS (IMPORTANT FOR SMARTPAGE + CACHE)
-    this.eventBus.emit('restaurant.settings.updated', {
+    this.eventBus.emit('catalog.settings.updated', {
       businessId: id,
       storefront: business.storefront,
     });

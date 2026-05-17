@@ -3,7 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { CHECKOUT_EVENTS, CONVERSATION_EVENTS } from '@core/events/event.constants';
 
 import { CheckoutOrchestratorService } from '../orchestrators/checkout-orchestrator.service';
-import { RecoverCheckoutUseCase } from '../use-cases/recover-checkout.use-case';
+import { RecoverCheckoutSessionUseCase } from '../use-cases/recover-checkout-session.use-case';
 
 @Injectable()
 export class ConversationCheckoutListener {
@@ -11,7 +11,7 @@ export class ConversationCheckoutListener {
 
   constructor(
     private readonly checkout: CheckoutOrchestratorService,
-    private readonly recoverCheckout: RecoverCheckoutUseCase,
+    private readonly recoverCheckout: RecoverCheckoutSessionUseCase,
   ) {}
 
   @OnEvent(CHECKOUT_EVENTS.CHECKOUT_STARTED)

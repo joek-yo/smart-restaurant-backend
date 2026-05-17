@@ -1,8 +1,8 @@
 // src/modules/channels/handlers/send-reply.ts
 
 import { Injectable, Logger } from '@nestjs/common';
-import { WhatsAppDeliveryService } from '../application/services/whatsapp-delivery.service';
-import { WhatsAppRateLimitService } from '../application/services/whatsapp-rate-limit.service';
+import { WhatsAppDeliveryService } from '@modules/conversation/infrastructure/adapters/whatsapp/whatsapp-delivery.service';
+import { WhatsAppRateLimitService } from '@modules/conversation/infrastructure/adapters/whatsapp/whatsapp-rate-limit.service';
 
 /**
  * SendReplyUseCase

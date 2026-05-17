@@ -50,7 +50,7 @@ export class ResponseBuilderService {
         return '🛒 Here is your cart. You can "checkout" or "add more items".';
 
       case 'VIEW_PRODUCTS':
-        return '🛍️ Here is our menu. Type "add [item]" to select products.';
+        return '🛍️ Here is our catalog. Type "add [item]" to select products.';
 
       case 'CHECKOUT':
         return '💳 You are now in checkout. Type "confirm" to place your order or "cancel" to stop.';
@@ -59,7 +59,7 @@ export class ResponseBuilderService {
         return '⏳ Processing your order... Please wait.';
 
       case 'CANCEL_ORDER':
-        return '❌ Order cancelled. You can type "menu" to start again.';
+        return '❌ Order cancelled. You can type "catalog" to start again.';
 
       case 'ASK_HELP':
         return this.helpMessage();
@@ -103,7 +103,7 @@ export class ResponseBuilderService {
   private stateBasedFallback(state: string): string {
     switch (state) {
       case 'IDLE':
-        return '👋 Welcome! Type "menu" to start browsing.';
+        return '👋 Welcome! Type "catalog" to start browsing.';
 
       case 'BROWSING':
         return '🛍️ You are browsing. Type "add [item]" to add products.';
@@ -130,7 +130,7 @@ export class ResponseBuilderService {
     return [
       '👋 Here is what you can do:',
       '',
-      '• "menu" — browse products',
+      '• "catalog" — browse products',
       '• "add [item]" — add to cart',
       '• "cart" — view your cart',
       '• "checkout" — place order',

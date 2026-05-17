@@ -6,7 +6,7 @@ export type CatalogSettingsDocument = CatalogSettings & Document;
 
 @Schema({ timestamps: true })
 export class CatalogSettings {
-  @Prop({ type: Types.ObjectId, ref: 'Restaurant', required: true, unique: true })
+  @Prop({ type: Types.ObjectId, ref: 'Business', required: true, unique: true })
   businessId!: Types.ObjectId;
 
   @Prop({ default: '08:00' })

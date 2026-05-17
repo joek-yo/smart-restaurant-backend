@@ -51,7 +51,7 @@ export class AbandonedCartFlow implements ConversationFlow, OnModuleInit {
           ctx.context?.setMemory('flow:abandoned-cart:step', null);
           return {
             handled: true,
-            response: '🗑️ No problem! Your cart has been cleared. Type *menu* to start fresh.',
+            response: '🗑️ No problem! Your cart has been cleared. Type *catalog* to start fresh.',
             endFlow: true,
           };
         }

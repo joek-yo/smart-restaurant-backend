@@ -2,8 +2,8 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { WhatsAppMessageOrchestratorService } from '../orchestrators/whatsapp-message-orchestrator.service';
-import { WhatsAppRateLimitService } from '../services/whatsapp-rate-limit.service';
-import { WhatsAppIdempotencyService } from '../services/whatsapp-idempotency.service';
+import { WhatsAppRateLimitService } from '@modules/conversation/infrastructure/adapters/whatsapp/whatsapp-rate-limit.service';
+import { WhatsAppIdempotencyService } from '@modules/conversation/infrastructure/adapters/whatsapp/whatsapp-idempotency.service';
 
 // ✅ ADD THIS
 import { OptOutProtectionService } from '@modules/protection/application/services/opt-out-protection.service';

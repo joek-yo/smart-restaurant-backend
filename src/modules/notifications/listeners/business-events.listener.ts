@@ -8,7 +8,7 @@ import { ORDER_EVENTS, BUSINESS_EVENTS } from '@core/events/event.constants';
 export class BusinessEventsListener {
   
   /**
-   * Reacts when a new business/restaurant is registered.
+   * Reacts when a new business is registered.
    * Perfect for triggering the onboarding sequence.
    */
   @OnEvent(BUSINESS_EVENTS.BUSINESS_CREATED)

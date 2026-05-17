@@ -11,7 +11,7 @@ export class Category {
   name!: string; // ✅ non-null assertion
 
   // Multi-tenant: Business
-  @Prop({ type: Types.ObjectId, ref: 'Restaurant', required: true, index: true })
+  @Prop({ type: Types.ObjectId, ref: 'Business', required: true, index: true })
   businessId!: Types.ObjectId; // ✅ non-null assertion
 
   // Multi-branch support (optional)

@@ -9,7 +9,7 @@ import {
 } from '@core/events/event.constants';
 
 import { SendReplyUseCase } from '../../handlers/send-reply';
-import { WhatsAppDeliveryService } from '../services/whatsapp-delivery.service';
+import { WhatsAppDeliveryService } from '@modules/conversation/infrastructure/adapters/whatsapp/whatsapp-delivery.service';
 
 // ✅ ADD THIS
 import { OptOutProtectionService } from '@modules/protection/application/services/opt-out-protection.service';

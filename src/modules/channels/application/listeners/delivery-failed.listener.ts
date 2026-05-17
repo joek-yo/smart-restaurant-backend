@@ -4,8 +4,8 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EventBus } from '@core/events';
 import { WHATSAPP_EVENTS } from '@core/events/event.constants';
 
-import { WhatsAppRetryService } from '../services/whatsapp-retry.service';
-import { WhatsAppDeliveryService } from '../services/whatsapp-delivery.service';
+import { WhatsAppRetryService } from '@modules/conversation/infrastructure/adapters/whatsapp/whatsapp-retry.service';
+import { WhatsAppDeliveryService } from '@modules/conversation/infrastructure/adapters/whatsapp/whatsapp-delivery.service';
 
 @Injectable()
 export class DeliveryFailedListener {

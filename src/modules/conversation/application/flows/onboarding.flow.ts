@@ -52,7 +52,7 @@ export class OnboardingFlow implements ConversationFlow, OnModuleInit {
         // Handle menu choice
         ctx.context?.setMemory('flow:onboarding:step', null);
         if (message.includes('1') || message.includes('browse') || message.includes('product')) {
-          return { handled: true, response: '🛍️ Great! Type *menu* to see our products.', endFlow: true };
+          return { handled: true, response: '🛍️ Great! Type *catalog* to see our products.', endFlow: true };
         }
         if (message.includes('2') || message.includes('offer')) {
           return { handled: true, response: '🎁 Check out our latest deals at /products?featured=true', endFlow: true };

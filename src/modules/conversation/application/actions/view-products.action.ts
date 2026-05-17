@@ -18,7 +18,7 @@ export class ViewProductsAction extends BaseAction implements OnModuleInit {
 
   async execute(ctx: PipelineContext): Promise<void> {
     ctx.output = {
-      response: '📋 Here is our menu! Reply with the item name or number to add to your cart.',
+      response: '📋 Here is our catalog! Reply with the item name or number to add to your cart.',
     };
   }
 }

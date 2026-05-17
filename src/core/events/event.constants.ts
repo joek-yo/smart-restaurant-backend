@@ -93,7 +93,7 @@ export const BUSINESS_EVENTS = {
   BUSINESS_UPDATED: 'business.updated',
   BUSINESS_DELETED: 'business.deleted',
 
-  RESTAURANT_SETTINGS_UPDATED: 'restaurant.settings.updated',
+  CATALOG_SETTINGS_UPDATED: 'catalog.settings.updated',
 } as const;
 
 /**

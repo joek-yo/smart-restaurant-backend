@@ -1,3 +1,2 @@
-// src/common/base.entity.ts
-// Re-export from core — @common/base.entity still works for all modules
-export { BaseEntity } from '../core/base/base.entity';
+// Re-export from canonical location — do not duplicate
+export { BaseEntity } from '@core/base/base.entity';

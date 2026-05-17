@@ -60,7 +60,7 @@ export class IntentClassifierService {
     // BROWSING
     // =========================
     if (
-      this.exact(text, ['menu', 'products']) ||
+      this.exact(text, ['menu', 'catalog', 'products']) ||
       text.includes('what do you have') ||
       text.includes('what can i order')
     ) {

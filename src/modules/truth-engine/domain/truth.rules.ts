@@ -45,7 +45,7 @@ export const TruthEventRules = {
       'business.created',
       'business.updated',
       'business.deleted',
-      'restaurant.settings.updated',
+      'catalog.settings.updated',
     ],
   },
 

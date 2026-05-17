@@ -1,4 +1,4 @@
-// 📁 src/domains/menu/events/restaurant-settings-updated.event.ts
+// 📁 src/domains/menu/events/catalog-settings-updated.event.ts
 
 export class CatalogSettingsUpdatedEvent {
   constructor(

@@ -34,7 +34,7 @@ export class ReorderFlow implements ConversationFlow, OnModuleInit {
         if (!lastOrder) {
           return {
             handled: true,
-            response: "I couldn't find a previous order to reorder. Type *menu* to browse products.",
+            response: "I couldn't find a previous order to reorder. Type *catalog* to browse products.",
             endFlow: true,
           };
         }
@@ -59,7 +59,7 @@ export class ReorderFlow implements ConversationFlow, OnModuleInit {
 
         return {
           handled: true,
-          response: '👍 No problem! Type *menu* to browse something new.',
+          response: '👍 No problem! Type *catalog* to browse something new.',
           endFlow: true,
         };
       }

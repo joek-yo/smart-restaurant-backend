@@ -19,7 +19,7 @@ export type EventPayloadMap = {
   'business.updated': { businessId: string };
   'business.deleted': { businessId: string };
 
-  'restaurant.settings.updated': {
+  'catalog.settings.updated': {
     businessId: string;
     settings: any;
   };
