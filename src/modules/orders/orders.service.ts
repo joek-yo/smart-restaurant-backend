@@ -1,85 +1,89 @@
 // src/modules/orders/orders.service.ts
 
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 
-import { OrderDocument } from './infrastructure/schemas/order.schema';
+import { ORDER_REPOSITORY } from './domain/repositories/order.tokens';
+import { OrderRepository } from './domain/repositories/order.repository';
+import { CreateOrderUseCase } from './application/use-cases/create-order.use-case';
 import { CreateOrderDto } from './application/dto/create-order.dto';
-import { UpdateOrderStatusDto } from './application/dto/update-order-status.dto';
 import { EventBus } from '@core/events';
 import { ORDER_EVENTS } from '@core/events/event.constants';
+import { OrderStatus } from './domain/entities/order-status.enum';
 
 @Injectable()
 export class OrdersService {
   constructor(
-    @InjectModel('Order')
-    private readonly orderModel: Model<OrderDocument>,
+    @Inject(ORDER_REPOSITORY)
+    private readonly orderRepo: OrderRepository,
+
+    private readonly createOrderUseCase: CreateOrderUseCase,
+
     private readonly eventBus: EventBus,
   ) {}
 
-  async create(dto: CreateOrderDto) {
-    const tenantId = Types.ObjectId.isValid(dto.businessId)
-      ? new Types.ObjectId(dto.businessId).toString()
-      : dto.businessId;
+  async create(dto: CreateOrderDto & { businessId: string }) {
+    const tenantId = dto.businessId;
 
-    const order = await this.orderModel.create({
+    const items = (dto.items ?? []).map((item) => ({
+      productId: item.productId,
+      name: item.name ?? item.productId,
+      quantity: item.quantity,
+      price: item.price ?? 0,
+      total: (item.price ?? 0) * item.quantity,
+    }));
+
+    const totalAmount = items.reduce((sum, i) => sum + i.total, 0);
+    const sessionId = `${tenantId}:${dto.customerId ?? 'guest'}:${Date.now()}`;
+
+    const order = await this.createOrderUseCase.execute({
       tenantId,
-      items: dto.items,
-      status: 'PENDING',
-      queueNumber: Date.now(),
+      customerId: dto.customerId ?? 'guest',
+      sessionId,
+      items,
+      totalAmount,
+      customerName: dto.customerName,
+      source: 'api',
     });
 
-    const orderId = (order._id as any).toString();
-
     this.eventBus.emit(ORDER_EVENTS.ORDER_CREATED, {
-      orderId,
-      businessId: dto.businessId,
+      orderId: order.id,
+      businessId: tenantId,
     });
 
     return order;
   }
 
   async findAll(businessId: string) {
-    return this.orderModel
-      .find({ tenantId: businessId })
-      .sort({ createdAt: -1 })
-      .exec();
+    return this.orderRepo.findByBusinessId(businessId);
   }
 
   async findOne(id: string) {
-    return this.orderModel.findById(id).exec();
-  }
-
-  async updateStatus(id: string, dto: UpdateOrderStatusDto) {
-    return this.orderModel
-      .findByIdAndUpdate(id, { $set: { status: dto.status } }, { new: true })
-      .exec();
+    const order = await this.orderRepo.findById(id);
+    if (!order) throw new NotFoundException(`Order ${id} not found`);
+    return order;
   }
 
   async markAsCompleted(orderId: string) {
-    const order = await this.orderModel
-      .findByIdAndUpdate(orderId, { status: 'COMPLETED' }, { new: true })
-      .exec();
-
+    const order = await this.orderRepo.findById(orderId);
     if (!order) return null;
-
+    const updated = await this.orderRepo.update(orderId, { status: OrderStatus.COMPLETED });
     this.eventBus.emit(ORDER_EVENTS.ORDER_COMPLETED, { orderId });
-    return order;
+    return updated;
   }
 
   async cancelOrder(orderId: string) {
-    const order = await this.orderModel
-      .findByIdAndUpdate(orderId, { status: 'CANCELLED' }, { new: true })
-      .exec();
-
+    const order = await this.orderRepo.findById(orderId);
     if (!order) return null;
-
+    const updated = await this.orderRepo.update(orderId, { status: OrderStatus.CANCELLED });
     this.eventBus.emit(ORDER_EVENTS.ORDER_CANCELLED, { orderId });
-    return order;
+    return updated;
+  }
+
+  async updateStatus(id: string, dto: { status: OrderStatus }) {
+    return this.orderRepo.update(id, { status: dto.status });
   }
 
   async remove(id: string) {
-    return this.orderModel.findByIdAndDelete(id).exec();
+    await this.orderRepo.delete(id);
   }
 }

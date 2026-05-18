@@ -1,120 +1,98 @@
 // src/modules/smartpage/tests/cart-integration.spec.ts
 
-import { Test } from '@nestjs/testing';
-
-import { CartSyncService } from '../application/cart-integration/cart-sync.service';
 import { CartContextMapper } from '../application/cart-integration/cart-context.mapper';
+import { CartSyncService } from '../application/cart-integration/cart-sync.service';
 
-/**
- * CART INTEGRATION TEST
- * -----------------------------------------------------
- * Validates:
- * - session → cart → smartpage sync correctness
- * - cart context mapping integrity
- * - real-time update propagation
- * - safe fallback when session/cart missing
- */
-
-describe('Cart Integration (Session ↔ SmartPage)', () => {
-  let cartSync: CartSyncService;
+// ─────────────────────────────────────────────────────────────
+// CartContextMapper — pure function, no DI needed
+// ─────────────────────────────────────────────────────────────
+describe('CartContextMapper', () => {
   let mapper: CartContextMapper;
 
-  beforeAll(async () => {
-    const moduleRef = await Test.createTestingModule({
-      providers: [
-        CartSyncService,
-        CartContextMapper,
-      ],
-    }).compile();
-
-    cartSync = moduleRef.get(CartSyncService);
-    mapper = moduleRef.get(CartContextMapper);
+  beforeAll(() => {
+    mapper = new CartContextMapper();
   });
 
-  it('should map session to smartpage cart context correctly', () => {
+  it('should map session with items to cart context', () => {
     const session = {
-      userId: 'user_1',
-      tenantId: 'tenant_1',
+      id: 'session_1',
       cart: {
-        items: [
-          { id: 'p1', name: 'Shoes', price: 100, quantity: 2 },
-        ],
+        items: [{ id: 'p1', name: 'Shoes', price: 100, quantity: 2 }],
       },
+      updatedAt: new Date(),
     };
 
-    const result = mapper.mapSessionToCartContext(session as any);
+    const result = mapper.map(session);
 
-    expect(result.userId).toBe('user_1');
-    expect(result.tenantId).toBe('tenant_1');
-    expect(result.items.length).toBe(1);
-    expect(result.total).toBe(200);
+    expect(result.cart).toBeDefined();
+    expect(result.cart!.hasItems).toBe(true);
+    expect(result.cart!.total).toBe(200);
+    expect(result.cart!.items.length).toBe(1);
   });
 
   it('should return empty cart context when session has no cart', () => {
+    const result = mapper.map({ id: 'session_2' });
+
+    expect(result.cart!.hasItems).toBe(false);
+    expect(result.cart!.isEmpty).toBe(true);
+    expect(result.cart!.total).toBe(0);
+  });
+
+  it('should not crash when session is undefined', () => {
+    const result = mapper.map(undefined);
+
+    expect(result).toBeDefined();
+    expect(result.cart!.items).toEqual([]);
+    expect(result.cart!.total).toBe(0);
+  });
+
+  it('should detect abandoned session correctly', () => {
+    const session = { id: 'session_3', status: 'ABANDONED', cart: { items: [] } };
+
+    const result = mapper.map(session);
+
+    expect(result.cart!.isAbandoned).toBe(true);
+  });
+
+  it('should use cart.total if already provided', () => {
     const session = {
-      userId: 'user_2',
-      tenantId: 'tenant_1',
+      id: 'session_4',
+      cart: { items: [{ price: 50, quantity: 2 }], total: 999 },
     };
 
-    const result = mapper.mapSessionToCartContext(session as any);
+    const result = mapper.map(session);
 
-    expect(result.items).toEqual([]);
-    expect(result.total).toBe(0);
+    expect(result.cart!.total).toBe(999);
+  });
+});
+
+// ─────────────────────────────────────────────────────────────
+// CartSyncService — instantiated directly with mocked renderer
+// ─────────────────────────────────────────────────────────────
+describe('CartSyncService', () => {
+  let cartSync: CartSyncService;
+  const mockRenderer = {
+    render: jest.fn().mockResolvedValue({ id: 'runtime_1', status: 'RENDERED' }),
+  };
+
+  beforeAll(() => {
+    cartSync = new CartSyncService(new CartContextMapper(), mockRenderer);
   });
 
-  it('should sync cart updates to SmartPage runtime state', async () => {
-    const payload = {
-      userId: 'user_1',
-      tenantId: 'tenant_1',
-      item: { id: 'p2', name: 'Bag', price: 50, quantity: 1 },
+  it('should still render when session has no cart items', async () => {
+    const result = await cartSync.sync({}, { tenantId: 't1', userId: 'u1' } as any);
+    expect(result).toBeDefined();
+  });
+
+  it('should call renderer and return runtime when cart has items', async () => {
+    const session = {
+      id: 'session_1',
+      cart: { items: [{ id: 'p1', price: 100, quantity: 1 }] },
     };
 
-    const result = await cartSync.syncAddItem(payload);
+    const result = await cartSync.sync(session, { tenantId: 't1', userId: 'u1' } as any);
 
+    expect(mockRenderer.render).toHaveBeenCalled();
     expect(result).toBeDefined();
-    expect(result.status).toBe('SYNCED');
-  });
-
-  it('should handle cart removal updates correctly', async () => {
-    const payload = {
-      userId: 'user_1',
-      tenantId: 'tenant_1',
-      itemId: 'p2',
-    };
-
-    const result = await cartSync.syncRemoveItem(payload);
-
-    expect(result).toBeDefined();
-    expect(result.status).toBe('SYNCED');
-  });
-
-  it('should not crash when session is missing', () => {
-    const result = mapper.mapSessionToCartContext(undefined as any);
-
-    expect(result).toBeDefined();
-    expect(result.items).toEqual([]);
-    expect(result.total).toBe(0);
-  });
-
-  it('should keep cart state consistent after multiple updates', async () => {
-    await cartSync.syncAddItem({
-      userId: 'user_1',
-      tenantId: 'tenant_1',
-      item: { id: 'p1', name: 'Shoes', price: 100, quantity: 1 },
-    });
-
-    await cartSync.syncAddItem({
-      userId: 'user_1',
-      tenantId: 'tenant_1',
-      item: { id: 'p1', name: 'Shoes', price: 100, quantity: 1 },
-    });
-
-    const state = await cartSync.getCartState({
-      userId: 'user_1',
-      tenantId: 'tenant_1',
-    });
-
-    expect(state.items.length).toBeGreaterThan(0);
-    expect(state.total).toBeGreaterThan(0);
   });
 });

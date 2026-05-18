@@ -1,82 +1,49 @@
 // src/modules/orders/orders.module.ts
 
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CoreEventModule } from '../../core/events/core-event.module';
+import { CoreEventModule } from '@core/events/core-event.module';
+import { CountersModule } from '@modules/counters/counters.module';
 
 import { OrdersController } from './presentation/orders.controller';
 import { OrdersService } from './orders.service';
 
+import { CreateOrderUseCase } from './application/use-cases/create-order.use-case';
 import { UpdateOrderStatusUseCase } from './application/use-cases/update-order-status.usecase';
 
-import { OrderRepositoryImpl } from './infrastructure/repositories/order.repository.impl';
 import { ORDER_REPOSITORY } from './domain/repositories/order.tokens';
-import { OrderSchema } from './infrastructure/schemas/order.schema';
+import { OrderRepositoryImpl } from './infrastructure/repositories/order.repository.impl';
 
-// ─────────────────────────────────────────────
-// EVENT HANDLERS (MISSING FIX)
-// ─────────────────────────────────────────────
+import { OrderTypeormEntity } from './infrastructure/persistence/postgres/entities/order.typeorm-entity';
+import { OrderItemTypeormEntity } from './infrastructure/persistence/postgres/entities/order-item.typeorm-entity';
+import { OrderTypeormRepository } from './infrastructure/persistence/postgres/order.typeorm.repository';
+
 import { OrderCreatedHandler } from './application/handlers/order-created.handler';
 import { OrderStatusUpdatedHandler } from './application/handlers/order-status-updated.handler';
 
-/**
- * OrdersModule
- * ------------
- * PURE BUSINESS OWNERSHIP LAYER
- *
- * RULES:
- * ❌ Does NOT initiate checkout
- * ❌ Does NOT read conversation state
- * ❌ Does NOT manage sessions
- *
- * ✅ ONLY:
- * - order lifecycle
- * - order status transitions
- * - order persistence
- * - reacting to checkout completion events
- */
 @Module({
   imports: [
     CoreEventModule,
-    MongooseModule.forFeature([
-      { name: 'Order', schema: OrderSchema },
+    CountersModule,
+    TypeOrmModule.forFeature([
+      OrderTypeormEntity,
+      OrderItemTypeormEntity,
     ]),
   ],
-
-  controllers: [
-    OrdersController,
-  ],
-
+  controllers: [OrdersController],
   providers: [
-    // ─────────────────────────────────────────────
-    // CORE SERVICE
-    // ─────────────────────────────────────────────
     OrdersService,
-
-    // ─────────────────────────────────────────────
-    // USE CASES
-    // ─────────────────────────────────────────────
+    CreateOrderUseCase,
     UpdateOrderStatusUseCase,
-
-    // ─────────────────────────────────────────────
-    // REPOSITORY BINDING
-    // ─────────────────────────────────────────────
+    OrderTypeormRepository,
     {
       provide: ORDER_REPOSITORY,
       useClass: OrderRepositoryImpl,
     },
-
-    // ─────────────────────────────────────────────
-    // EVENT HANDLERS (CRITICAL FIX)
-    // ─────────────────────────────────────────────
     OrderCreatedHandler,
     OrderStatusUpdatedHandler,
   ],
-
-  exports: [
-    ORDER_REPOSITORY,
-    OrdersService,
-  ],
+  exports: [ORDER_REPOSITORY, OrdersService],
 })
 export class OrdersModule {}

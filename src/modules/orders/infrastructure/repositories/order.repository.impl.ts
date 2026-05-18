@@ -1,74 +1,52 @@
-// src/modules/orders/infrastructure/repositories/order.repository.impl.ts
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-
 import { OrderRepository } from '@modules/orders/domain/repositories/order.repository';
 import { Order } from '@modules/orders/domain/entities/order.entity';
-import { OrderStatus } from '@modules/orders/domain/entities/order-status.enum';
-import { OrderDocument } from '@modules/orders/infrastructure/schemas/order.schema';
+import { OrderTypeormRepository } from '../persistence/postgres/order.typeorm.repository';
+import { OrderTypeormMapper } from '../persistence/postgres/mappers/order.typeorm.mapper';
 
 @Injectable()
 export class OrderRepositoryImpl implements OrderRepository {
-  constructor(
-    @InjectModel('Order')
-    private readonly orderModel: Model<OrderDocument>,
-  ) {}
+  constructor(private readonly pg: OrderTypeormRepository) {}
 
   async create(order: Order): Promise<Order> {
-    const created = await this.orderModel.create({
-      tenantId: order.tenantId,
-      sessionId: (order as any).sessionId,
-      items: order.items,
-      status: order.status,
-      queueNumber: order.queueNumber,
-    });
-    return this.toDomain(created);
+    const entity = OrderTypeormMapper.toPersistence(order);
+    const saved = await this.pg.save(entity);
+    return OrderTypeormMapper.toDomain(saved);
   }
 
   async findById(id: string): Promise<Order | null> {
-    if (!Types.ObjectId.isValid(id)) return null;
-    const doc = await this.orderModel.findById(id).exec();
-    return doc ? this.toDomain(doc) : null;
+    const row = await this.pg.findById(id);
+    return row ? OrderTypeormMapper.toDomain(row) : null;
   }
 
   async findBySessionId(sessionId: string): Promise<Order | null> {
-    const doc = await this.orderModel.findOne({ sessionId }).exec();
-    return doc ? this.toDomain(doc) : null;
+    const row = await this.pg.findBySessionId(sessionId);
+    return row ? OrderTypeormMapper.toDomain(row) : null;
   }
 
   async findByBusinessId(businessId: string): Promise<Order[]> {
-    const docs = await this.orderModel.find({ tenantId: businessId }).exec();
-    return docs.map((doc) => this.toDomain(doc));
+    const rows = await this.pg.findByTenantId(businessId);
+    return rows.map(OrderTypeormMapper.toDomain);
   }
 
   async update(id: string, partial: Partial<Order>): Promise<Order> {
-    const updateData = { ...partial } as any;
-    if (partial.tenantId) updateData.tenantId = partial.tenantId;
-    const updated = await this.orderModel
-      .findByIdAndUpdate(id, { $set: updateData }, { new: true })
-      .exec();
-    if (!updated) throw new Error(`Order ${id} not found`);
-    return this.toDomain(updated);
+    const current = await this.pg.findById(id);
+    if (!current) throw new Error(`Order ${id} not found`);
+
+    // Only update scalar columns — never re-save items (loses order_id FK)
+    const updated = await this.pg.save_partial(id, {
+      ...(partial.status !== undefined && { status: partial.status }),
+      ...(partial.totalAmount !== undefined && { totalAmount: partial.totalAmount }),
+      ...(partial.queueNumber !== undefined && { queueNumber: partial.queueNumber }),
+      ...(partial.notes !== undefined && { notes: partial.notes }),
+      ...(partial.customerName !== undefined && { customerName: partial.customerName }),
+      ...(partial.customerPhone !== undefined && { customerPhone: partial.customerPhone }),
+    });
+
+    return OrderTypeormMapper.toDomain(updated!);
   }
 
   async delete(id: string): Promise<void> {
-    await this.orderModel.findByIdAndDelete(id).exec();
-  }
-
-  private toDomain(doc: OrderDocument): Order {
-    const order = new Order({
-      id: doc._id.toString(),
-      tenantId: doc.tenantId,
-      items: doc.items,
-      status: Object.values(OrderStatus).includes(doc.status as OrderStatus)
-        ? (doc.status as OrderStatus)
-        : OrderStatus.PENDING,
-      queueNumber: doc.queueNumber,
-      createdAt: doc.createdAt,
-      updatedAt: doc.updatedAt,
-    });
-    (order as any).sessionId = doc.sessionId;
-    return order;
+    await this.pg.delete(id);
   }
 }

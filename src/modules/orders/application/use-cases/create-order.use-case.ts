@@ -32,6 +32,7 @@ export class CreateOrderUseCase {
   async execute(input: {
     tenantId: string;
     customerId: string;
+    customerName?: string;
     sessionId: string;
     items: any[];
     totalAmount: number;
@@ -66,6 +67,7 @@ export class CreateOrderUseCase {
     const order = new Order({
       tenantId: input.tenantId,
       customerId: input.customerId,
+      customerName: input.customerName,
       items: input.items,
       totalAmount: input.totalAmount,
       status: OrderStatus.PENDING,
